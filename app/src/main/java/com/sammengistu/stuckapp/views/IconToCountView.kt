@@ -19,8 +19,8 @@ class IconToCountView(context: Context, attrs: AttributeSet) : LinearLayout(cont
             0, 0).apply {
 
             try {
-                val iconId = getResourceId(R.styleable.IconToCountView_iconSrc, R.mipmap.peter_griffan_head_shot)
-                var textCount = getString(R.styleable.IconToCountView_textCount, 0)
+                val iconId = getResourceId(R.styleable.IconToCountView_iconSrc, 0)
+                var textCount = getString(R.styleable.IconToCountView_textCount)
                 iconView.setImageDrawable(context.getDrawable(iconId))
                 countView.text = textCount
             } finally {

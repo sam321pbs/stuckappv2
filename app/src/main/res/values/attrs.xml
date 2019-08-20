@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="IconToCountView">
-        <attr name="iconSrc" format="reference" />
+        <attr name="iconSrc" format="integer" />
         <attr name="textCount" format="string" />
     </declare-styleable>
 </resources>
