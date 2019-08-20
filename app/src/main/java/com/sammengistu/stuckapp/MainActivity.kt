@@ -19,9 +19,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        insertDummyData()
-
         fab.setOnClickListener { view ->
+            insertDummyData()
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
@@ -30,8 +29,22 @@ class MainActivity : AppCompatActivity() {
     private fun insertDummyData() {
         doAsync {
             //Execute all the lon running tasks here
-            var post = Post("", "Sam", "Sam","Sam","Sam","Sam",1,1,"Sam","Sam","Sam","Sam","Sam",1,1,1,1)
-            PostRepository.getInstance(AppDatabase.getInstance(this@MainActivity).postsDao()).insertPost(post)
+            var post = Post(
+                "1",
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam",
+                1,
+                1,
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam", "Sam", "Sam", "Sam",
+                1,1,1,1)
+            PostRepository.getInstance(AppDatabase.getInstance(this@MainActivity.applicationContext).postsDao()).insertPost(post)
 
             uiThread {
                 Snackbar.make(parent_view, "Replace with your own action", Snackbar.LENGTH_LONG)

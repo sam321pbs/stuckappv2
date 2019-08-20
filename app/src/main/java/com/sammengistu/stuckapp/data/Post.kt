@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "posts")
 data class Post(
-    @PrimaryKey @ColumnInfo(name = "id") val plantId: String,
+    @PrimaryKey @ColumnInfo(name = "id") val postId: String,
     val ownerId: String,
     val userName: String,
     val createdAt: String,
@@ -15,6 +15,9 @@ data class Post(
     val totalStars: Int,
     val totalComments: Int,
     val category: String,
+    val type: String,
+    val image1Loc: String,
+    val image2Loc: String,
     val choice1: String,
     val choice2: String,
     val choice3: String,
@@ -23,4 +26,8 @@ data class Post(
     val vote2: Int,
     val vote3: Int,
     val vote4: Int
-)
+) {
+    companion object {
+        const val TABLE_NAME = "posts"
+    }
+}
