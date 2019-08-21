@@ -16,7 +16,7 @@ class PostsAdapter(private var dataset: List<Post>) : RecyclerView.Adapter<Posts
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         // create a new view
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_no_image, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_no_image_card, parent, false)
         return PostViewHolder(view)
     }
 
