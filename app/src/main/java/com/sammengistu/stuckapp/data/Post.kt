@@ -25,9 +25,11 @@ data class Post(
     val vote1: Int,
     val vote2: Int,
     val vote3: Int,
-    val vote4: Int
-) {
-    companion object {
-        const val TABLE_NAME = "posts"
+    val vote4: Int) {
+
+    companion object Type {
+        const val PORTRAIT = "portrait"
+        const val LANDSCAPE = "landscape"
+        const val TEXT = "text"
     }
 }

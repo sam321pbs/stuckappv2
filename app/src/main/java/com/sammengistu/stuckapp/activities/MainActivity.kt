@@ -1,5 +1,6 @@
 package com.sammengistu.stuckapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -25,9 +26,8 @@ class MainActivity : BaseActivity() {
 
         addFragment(PostsListFragment())
         fab.setOnClickListener { view ->
-            insertDummyData()
-            Snackbar.make(view, "Sup Sam", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
+            startActivity(intentNewPost)
         }
     }
 
