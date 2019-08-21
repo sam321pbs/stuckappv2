@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp">
+
+    <RelativeLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/user_detail_and_options">
+
+        <ImageView android:layout_width="50dp"
+                   android:layout_height="50dp"
+                   android:id="@+id/avatar"
+                   android:src="@mipmap/peter_griffan_head_shot"
+                   android:layout_marginEnd="15dp"/>
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:layout_toRightOf="@+id/avatar"
+                      android:id="@+id/username_time_since_container">
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="sam321pbs"
+                      android:textColor="@color/black"
+                      android:layout_marginBottom="2dp"
+                      android:id="@+id/username"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="2 hours ago"
+                      android:id="@+id/time_since"/>
+        </LinearLayout>
+
+        <ImageView android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:src="@drawable/ic_more_vert_grey_300_24dp"
+                   android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Who should win MVP?"
+              android:textColor="@color/black"
+              android:id="@+id/question"
+              android:textSize="20sp"
+              android:layout_marginStart="5dp"
+              android:layout_below="@+id/user_detail_and_options"/>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_below="@+id/question">
+
+        <com.sammengistu.stuckapp.views.IconToCountView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/votesTotal"
+                custom:iconTag="votesTotal"
+                custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
+                custom:iconText="100"/>
+
+        <com.sammengistu.stuckapp.views.IconToCountView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/commentsTotal"
+                custom:iconTag="commentsTotal"
+                custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
+                custom:iconText="100"/>
+
+        <com.sammengistu.stuckapp.views.IconToCountView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/starsTotal"
+                custom:iconTag="starsTotal"
+                custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
+                custom:iconText="100"/>
+
+        <com.sammengistu.stuckapp.views.IconToCountView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:tag="categoryView"
+                android:id="@+id/category"
+                custom:iconTag="category"
+                custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
+                custom:iconText="Sports"/>
+    </LinearLayout>
+</RelativeLayout>
