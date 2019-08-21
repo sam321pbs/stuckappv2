@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.google.android.material.snackbar.Snackbar
+import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.data.PostRepository
 import com.sammengistu.stuckapp.fragments.PostsListFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,21 +34,7 @@ class MainActivity : BaseActivity() {
     private fun insertDummyData() {
         doAsync {
             //Execute all the lon running tasks here
-            var post = Post(
-                "1",
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam",
-                1,
-                1,
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam", "Sam", "Sam", "Sam",
-                1,1,1,1)
+            for (post in DummyDataStuck.DUMMY_DATA)
             PostRepository.getInstance(AppDatabase.getInstance(this@MainActivity.applicationContext).postsDao()).insertPost(post)
 
             uiThread {
