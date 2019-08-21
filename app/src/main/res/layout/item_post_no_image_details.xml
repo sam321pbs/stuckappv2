@@ -57,32 +57,40 @@
                   android:layout_below="@+id/question">
 
         <com.sammengistu.stuckapp.views.IconToCountView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
-            custom:textCount="100"/>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/votesTotal"
+                custom:iconTag="votesTotal"
+                custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
+                custom:iconText="100"/>
 
         <com.sammengistu.stuckapp.views.IconToCountView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:id="@+id/commentsTotal"
+                custom:iconTag="commentsTotal"
                 custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
-                custom:textCount="100"/>
+                custom:iconText="100"/>
 
         <com.sammengistu.stuckapp.views.IconToCountView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:id="@+id/starsTotal"
+                custom:iconTag="starsTotal"
                 custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
-                custom:textCount="100"/>
+                custom:iconText="100"/>
 
         <com.sammengistu.stuckapp.views.IconToCountView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tag="categoryView"
+                android:id="@+id/category"
+                custom:iconTag="category"
                 custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
-                custom:textCount="100"/>
-
+                custom:iconText="Sports"/>
     </LinearLayout>
 </RelativeLayout>

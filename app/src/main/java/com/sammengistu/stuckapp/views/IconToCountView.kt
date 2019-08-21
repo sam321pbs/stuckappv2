@@ -20,17 +20,20 @@ class IconToCountView(context: Context, attrs: AttributeSet) : LinearLayout(cont
 
             try {
                 val iconId = getResourceId(R.styleable.IconToCountView_iconSrc, 0)
-                var textCount = getString(R.styleable.IconToCountView_textCount)
+                val iconText = getString(R.styleable.IconToCountView_iconText)
+                val iconTag = getString(R.styleable.IconToCountView_iconTag)
+
                 iconView.setImageDrawable(context.getDrawable(iconId))
-                countView.text = textCount
+                countView.text = iconText
+                tag = "icon_$iconTag"
             } finally {
                 recycle()
             }
         }
     }
 
-    fun setCount(countTotal: Int) {
-        countView.text = countTotal.toString()
+    fun setText(countTotal: String) {
+        countView.text = countTotal
     }
 
     private fun buildView() {
@@ -43,5 +46,11 @@ class IconToCountView(context: Context, attrs: AttributeSet) : LinearLayout(cont
         iconView.layoutParams = params
         addView(iconView)
         addView(countView)
+    }
+
+    companion object {
+        fun getTag(iconName: String) : String {
+            return "icon_$iconName"
+        }
     }
 }
