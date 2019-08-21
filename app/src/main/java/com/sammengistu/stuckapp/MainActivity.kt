@@ -1,12 +1,16 @@
 package com.sammengistu.stuckapp
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
-
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
+import com.sammengistu.stuckapp.data.AppDatabase
+import com.sammengistu.stuckapp.data.Post
+import com.sammengistu.stuckapp.data.PostRepository
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,8 +20,36 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
+            insertDummyData()
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
+        }
+    }
+
+    private fun insertDummyData() {
+        doAsync {
+            //Execute all the lon running tasks here
+            var post = Post(
+                "1",
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam",
+                1,
+                1,
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam",
+                "Sam", "Sam", "Sam", "Sam",
+                1,1,1,1)
+            PostRepository.getInstance(AppDatabase.getInstance(this@MainActivity.applicationContext).postsDao()).insertPost(post)
+
+            uiThread {
+                Snackbar.make(parent_view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            }
         }
     }
 
