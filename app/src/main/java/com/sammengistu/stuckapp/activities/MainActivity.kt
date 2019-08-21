@@ -1,27 +1,32 @@
-package com.sammengistu.stuckapp
+package com.sammengistu.stuckapp.activities
 
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.sammengistu.stuckapp.DummyDataStuck
+import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.data.PostRepository
+import com.sammengistu.stuckapp.fragments.PostsListFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+
+    override fun getViewId(): Int {
+        return R.layout.activity_main
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        addFragment(PostsListFragment())
         fab.setOnClickListener { view ->
             insertDummyData()
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Sup Sam", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
     }
@@ -29,21 +34,7 @@ class MainActivity : AppCompatActivity() {
     private fun insertDummyData() {
         doAsync {
             //Execute all the lon running tasks here
-            var post = Post(
-                "1",
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam",
-                1,
-                1,
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam",
-                "Sam", "Sam", "Sam", "Sam",
-                1,1,1,1)
+            for (post in DummyDataStuck.DUMMY_DATA)
             PostRepository.getInstance(AppDatabase.getInstance(this@MainActivity.applicationContext).postsDao()).insertPost(post)
 
             uiThread {
