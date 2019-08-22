@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/new_post_container">
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_gravity="center">
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="20sp"
+                  android:layout_gravity="center"
+                  android:layout_marginBottom="60dp"
+                  android:text="@string/post_type_question"/>
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="10dp">
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:padding="10dp">
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="vertical"
+                              android:padding="5dp"
+                              android:gravity="center"
+                              android:id="@+id/image_post_choice_container">
+
+                    <TextView style="@style/new_post_choice_text"
+                              android:text="@string/image"/>
+
+                    <ImageView
+                            android:src="@drawable/ic_image_grey_500_24dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"/>
+                </LinearLayout>
+
+
+                <View android:layout_width="match_parent"
+                      android:layout_height="1dp"
+                      android:layout_marginTop="2dp"
+                      android:layout_marginBottom="2dp"
+                      android:background="@android:color/darker_gray"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:id="@+id/text_post_choice_container"
+                              android:padding="5dp"
+                              android:gravity="center"
+                              android:orientation="vertical">
+
+                    <TextView style="@style/new_post_choice_text"
+                              android:text="@string/text"/>
+
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_create_grey_500_24dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+</ScrollView>

@@ -1,8 +1,10 @@
 package com.sammengistu.stuckapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
@@ -15,7 +17,7 @@ import org.jetbrains.anko.uiThread
 
 class MainActivity : BaseActivity() {
 
-    override fun getViewId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
 
@@ -25,10 +27,10 @@ class MainActivity : BaseActivity() {
 
         addFragment(PostsListFragment())
         fab.setOnClickListener { view ->
-            insertDummyData()
-            Snackbar.make(view, "Sup Sam", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
+            startActivity(intentNewPost)
         }
+        fab.visibility = View.VISIBLE
     }
 
     private fun insertDummyData() {

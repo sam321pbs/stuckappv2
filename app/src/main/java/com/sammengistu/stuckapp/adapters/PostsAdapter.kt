@@ -48,9 +48,9 @@ class PostsAdapter(private var dataset: List<Post>) : RecyclerView.Adapter<Posts
         val avatarView: ImageView = parentView.find(R.id.avatar)
         val username: TextView = parentView.find(R.id.username)
         val timeSince: TextView = parentView.find(R.id.time_since)
-        val categoriesView: IconToCountView = parentView.findViewWithTag(IconToCountView.getTag("category"))
-        val commentsTotalView: IconToCountView = parentView.findViewWithTag(IconToCountView.getTag("commentsTotal"))
-        val voteTotalView: IconToCountView = parentView.findViewWithTag(IconToCountView.getTag("votesTotal"))
-        val starTotalView: IconToCountView = parentView.findViewWithTag(IconToCountView.getTag("starsTotal"))
+        val categoriesView: IconToCountView = parentView.find(R.id.category)
+        val commentsTotalView: IconToCountView = parentView.find(R.id.commentsTotal)
+        val voteTotalView: IconToCountView = parentView.find(R.id.votesTotal)
+        val starTotalView: IconToCountView = parentView.find(R.id.starsTotal)
     }
 }

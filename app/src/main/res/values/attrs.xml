@@ -3,6 +3,9 @@
     <declare-styleable name="IconToCountView">
         <attr name="iconSrc" format="integer" />
         <attr name="iconText" format="string" />
-        <attr name="iconTag" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="ChoiceCardView">
+        <attr name="hintText" format="string" />
     </declare-styleable>
 </resources>

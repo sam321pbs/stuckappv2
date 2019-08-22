@@ -6,7 +6,7 @@ class DummyDataStuck {
     companion object {
         val DUMMY_DATA = listOf(
             Post(
-                "1",
+                0,
                 "Sam_1",
                 "sam321pbs",
                 "15min ago",
@@ -21,7 +21,7 @@ class DummyDataStuck {
                 30, 23, 14, 2
             ),
             Post(
-                "2",
+                0,
                 "Sam_1",
                 "sam321pbs",
                 "30min ago",
@@ -36,7 +36,7 @@ class DummyDataStuck {
                 30, 23, 0, 0
             ),
             Post(
-                "3",
+                0,
                 "Sam_1",
                 "sam321pbs",
                 "1 hour ago",
@@ -51,7 +51,7 @@ class DummyDataStuck {
                 65, 12, 32, 0
             ),
             Post(
-                "4",
+                0,
                 "Sam_1",
                 "sam321pbs",
                 "1 day ago",
@@ -66,7 +66,7 @@ class DummyDataStuck {
                 45, 36, 36, 0
             ),
             Post(
-                "5",
+                0,
                 "Sam_1",
                 "sam321pbs",
                 "2 day ago",
