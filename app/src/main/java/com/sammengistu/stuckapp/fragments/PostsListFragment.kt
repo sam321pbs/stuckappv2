@@ -1,10 +1,7 @@
 package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +12,10 @@ import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckapp.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 
-class PostsListFragment : Fragment() {
+class PostsListFragment : BaseFragment() {
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_post_list
+    }
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: PostsAdapter
@@ -23,10 +23,6 @@ class PostsListFragment : Fragment() {
 
     private val listViewModel: PostListViewModel by viewModels {
         InjectorUtils.providePostListViewModelFactory(requireContext())
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_post_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

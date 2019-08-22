@@ -4,5 +4,6 @@
         <attr name="iconSrc" format="integer" />
         <attr name="iconText" format="string" />
         <attr name="iconTag" format="string" />
+        <attr name="backgroundImage" format="integer"/>
     </declare-styleable>
 </resources>

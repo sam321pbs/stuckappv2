@@ -1,41 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:custom="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@android:color/white">
 
     <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
+                  android:layout_height="match_parent"
                   android:orientation="vertical">
-        <RelativeLayout android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/user_detail_and_options">
+        <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                custom:cardCornerRadius="4dp">
 
-            <ImageView android:layout_width="50dp"
-                       android:layout_height="50dp"
-                       android:id="@+id/avatar"
-                       android:src="@mipmap/peter_griffan_head_shot"
-                       android:layout_marginEnd="15dp"/>
-
-            <LinearLayout android:layout_width="wrap_content"
+            <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:orientation="vertical"
-                          android:layout_toRightOf="@+id/avatar"
-                          android:id="@+id/username_time_since_container">
+                          android:layout_marginTop="10dp"
+                          android:layout_margin="15dp">
+
+                <RelativeLayout android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/user_detail_and_options">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/avatar"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@mipmap/peter_griffan_head_shot"
+                            android:layout_marginEnd="15dp"
+                            app:civ_border_width="2dp"
+                            app:civ_border_color="@android:color/transparent"/>
+
+                    <LinearLayout android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal"
+                                  android:layout_toEndOf="@+id/avatar"
+                                  android:id="@+id/username_time_since_container">
+
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="sam321pbs"
+                                  android:textColor="@color/black"
+                                  android:layout_marginBottom="2dp"
+                                  android:id="@+id/username"/>
+
+                        <com.sammengistu.stuckapp.views.IconToCountView
+                                style="@style/icon_to_text_style"
+                                android:layout_marginStart="20dp"
+                                android:id="@+id/starsTotal"
+                                custom:iconTag="starsTotal"
+                                custom:iconSrc="@drawable/ic_group_white_24dp"
+                                custom:iconText="public"
+                                custom:backgroundImage="@drawable/round_rectangle_shape_gray"/>
+
+                    </LinearLayout>
+                </RelativeLayout>
 
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:text="sam321pbs"
-                          android:textColor="@color/black"
-                          android:layout_marginBottom="2dp"
-                          android:id="@+id/username"/>
+                          android:text="What's on your mind?"
+                          android:textSize="20sp"
+                          android:layout_marginTop="20dp"/>
 
+                <EditText android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:hint="Ask your question here"/>
             </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            <ImageView android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:src="@drawable/ic_more_vert_grey_300_24dp"
-                       android:layout_alignParentEnd="true"/>
-        </RelativeLayout>
+        <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                custom:cardCornerRadius="4dp">
+
+            <EditText android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:hint="Choice 1"/>
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                custom:cardCornerRadius="4dp">
+
+            <EditText android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:hint="Choice 2"/>
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                custom:fabSize="mini"
+                android:src="@drawable/ic_add_white_24dp"/>
+
     </LinearLayout>
+
 
 </ScrollView>
