@@ -64,13 +64,11 @@
         <com.sammengistu.stuckapp.views.IconToCountView
                 style="@style/icon_to_text_style"
                 android:id="@+id/votesTotal"
-                custom:iconTag="votesTotal"
                 custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
                 custom:iconText="100"/>
 
         <com.sammengistu.stuckapp.views.IconToCountView
                 android:id="@+id/commentsTotal"
-                custom:iconTag="commentsTotal"
                 custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
                 custom:iconText="100"
                 style="@style/icon_to_text_style"/>
@@ -78,14 +76,12 @@
         <com.sammengistu.stuckapp.views.IconToCountView
                 style="@style/icon_to_text_style"
                 android:id="@+id/starsTotal"
-                custom:iconTag="starsTotal"
                 custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
                 custom:iconText="100"/>
 
         <com.sammengistu.stuckapp.views.IconToCountView
                 style="@style/icon_to_text_style"
                 android:id="@+id/category"
-                custom:iconTag="category"
                 custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
                 custom:iconText="Sports"/>
     </LinearLayout>
