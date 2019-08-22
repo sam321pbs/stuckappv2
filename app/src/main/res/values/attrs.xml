@@ -4,4 +4,8 @@
         <attr name="iconSrc" format="integer" />
         <attr name="iconText" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="ChoiceCardView">
+        <attr name="hintText" format="string" />
+    </declare-styleable>
 </resources>
