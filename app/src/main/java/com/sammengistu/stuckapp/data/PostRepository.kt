@@ -4,8 +4,6 @@ class PostRepository(val dao: PostDao) {
 
     fun getAllPosts() = dao.getAllPosts()
 
-    fun getPostById(id: Int) = dao.getPostById(id)
-
     fun insertPost(post: Post) = dao.insertPost(post)
 
     companion object {

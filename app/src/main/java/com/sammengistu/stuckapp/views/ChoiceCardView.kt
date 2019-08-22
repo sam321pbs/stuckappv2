@@ -32,6 +32,7 @@ class ChoiceCardView(context: Context, attrs: AttributeSet?) :
                 }
             }
         }
+        setPadding(5, 5, 5, 5)
         buildEditTextView()
     }
 
@@ -76,12 +77,18 @@ class ChoiceCardView(context: Context, attrs: AttributeSet?) :
         choiceEditText.hint = hint
     }
 
+    fun getChoiceText(): String {
+        return choiceEditText.text.toString()
+    }
+
     private fun buildEditTextView() {
-        val params = ViewGroup.LayoutParams(
+        val params = LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        setPadding(5, 5, 5, 5)
+        params.marginEnd = 10
+        params.marginStart = 10
+        params.topMargin = 10
         choiceEditText.layoutParams = params
         addView(choiceEditText)
     }
