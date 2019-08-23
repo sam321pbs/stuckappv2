@@ -3,19 +3,22 @@ package com.sammengistu.stuckapp.utils
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import android.graphics.BitmapFactory
+import java.io.*
 
 
 class StorageUtils {
     companion object {
-        fun saveToInternalStorage(context: Context, bitmapImage: Bitmap, imageName: String): String {
+        fun saveToInternalStorage(
+            context: Context,
+            bitmapImage: Bitmap,
+            imageName: String
+        ): String {
             val cw = ContextWrapper(context)
             // path to /data/data/yourapp/app_data/imageDir
             val directory = cw.getDir("imageDir", Context.MODE_PRIVATE)
             // Create imageDir
-            val mypath = File(directory, imageName)
+            val mypath = File(directory, "$imageName.png")
 
             var fos: FileOutputStream? = null
             try {
@@ -32,7 +35,17 @@ class StorageUtils {
                 }
 
             }
-            return directory.absolutePath
+            return mypath.absolutePath
+        }
+
+        fun loadImageFromStorage(path: String): Bitmap? {
+            try {
+                val f = File(path)
+                return BitmapFactory.decodeStream(FileInputStream(f))
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            }
+            return null
         }
     }
 }

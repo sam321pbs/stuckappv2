@@ -9,18 +9,24 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.constants.PostType
 import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.views.IconToCountView
-import com.sammengistu.stuckapp.views.VotableChoiceView
+import com.sammengistu.stuckapp.views.VotableChoiceView.Companion.createView
+import com.squareup.picasso.Picasso
 import org.jetbrains.anko.find
+import java.io.File
 
 class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<Post>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        // create a new view
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post_no_image_card, parent, false)
-        return PostViewHolder(view)
+        return when (viewType) {
+            LANDSCAPE_VIEW_TYPE, PORTRAIT_VIEW_TYPE ->
+                PostImageViewHolder(createView(parent, R.layout.item_post_image))
+            else ->
+                PostTextViewHolder(createView(parent, R.layout.item_post_text_card))
+        }
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
@@ -34,14 +40,23 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
         holder.starTotalView.setText(post.totalStars.toString())
         holder.categoriesView.setText(post.category)
 
-        buildVotableChoices(holder, post)
+        if (holder is PostTextViewHolder) {
+            buildVotableChoices(holder, post)
+        } else if (holder is PostImageViewHolder) {
+            // Todo: possibly rework this to be async
+//            holder.imageView1.setImageBitmap(StorageUtils.loadImageFromStorage(post.image1Loc))
+//            holder.imageView2.setImageBitmap(StorageUtils.loadImageFromStorage(post.image2Loc))
+            Picasso.get().load(File(post.image1Loc)).into(holder.imageView1)
+            Picasso.get().load(File(post.image2Loc)).into(holder.imageView2)
+        }
     }
 
-    private fun buildVotableChoices(holder: PostViewHolder, post: Post) {
-        val container = holder.votableChoiceContainer
-
-        for (tripleItem in post.getChoicesToVoteList()) {
-            container.addView(VotableChoiceView.createView(context, tripleItem))
+    override fun getItemViewType(position: Int): Int {
+        val post = dataset[position]
+        return when (post.type) {
+            PostType.LANDSCAPE -> LANDSCAPE_VIEW_TYPE
+            PostType.PORTRAIT -> PORTRAIT_VIEW_TYPE
+            else -> TEXT_VIEW_TYPE
         }
     }
 
@@ -52,7 +67,33 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
         notifyDataSetChanged()
     }
 
-    class PostViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {
+    private fun createView(parent: ViewGroup, layoutId: Int) =
+        LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
+
+    private fun buildVotableChoices(holder: PostTextViewHolder, post: Post) {
+        val container = holder.votableChoiceContainer
+        container.removeAllViews()
+        for (tripleItem in post.getChoicesToVoteList()) {
+            container.addView(createView(context, tripleItem))
+        }
+    }
+
+    companion object {
+        const val LANDSCAPE_VIEW_TYPE = 0
+        const val PORTRAIT_VIEW_TYPE = 1
+        const val TEXT_VIEW_TYPE = 2
+    }
+
+    class PostTextViewHolder(parentView: View) : PostViewHolder(parentView) {
+        val votableChoiceContainer: LinearLayout = parentView.find(R.id.votable_choice_container)
+    }
+
+    class PostImageViewHolder(parentView: View) : PostViewHolder(parentView) {
+        val imageView1: ImageView = parentView.find(R.id.image_1)
+        val imageView2: ImageView = parentView.find(R.id.image_2)
+    }
+
+    open class PostViewHolder(var parentView: View) : RecyclerView.ViewHolder(parentView) {
         val questionView: TextView = parentView.find(R.id.question)
         val avatarView: ImageView = parentView.find(R.id.avatar)
         val username: TextView = parentView.find(R.id.username)
@@ -61,6 +102,5 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
         val commentsTotalView: IconToCountView = parentView.find(R.id.commentsTotal)
         val voteTotalView: IconToCountView = parentView.find(R.id.votesTotal)
         val starTotalView: IconToCountView = parentView.find(R.id.starsTotal)
-        val votableChoiceContainer: LinearLayout = parentView.find(R.id.votable_choice_container)
     }
 }
