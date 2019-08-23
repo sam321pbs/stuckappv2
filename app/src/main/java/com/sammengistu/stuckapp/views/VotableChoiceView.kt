@@ -1,9 +1,7 @@
 package com.sammengistu.stuckapp.views
 
 import android.content.Context
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -11,12 +9,13 @@ import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import org.jetbrains.anko.centerVertically
 
-class VotableChoiceView(context: Context, voteItem: Int) :
+class VotableChoiceView(context: Context, voteId: Int) :
     RelativeLayout(context) {
 
     val mBullet = ImageView(context)
     val mChoiceText = TextView(context)
     val mVotesText = TextView(context)
+    var mGestureDetector = GestureDetector(context, GestureListener())
 
     init {
         buildViews()
@@ -32,6 +31,10 @@ class VotableChoiceView(context: Context, voteItem: Int) :
         }
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return mGestureDetector.onTouchEvent(event)
+    }
+
     fun setChoiceText(choiceText: String) {
         mChoiceText.text = choiceText
     }
@@ -44,6 +47,11 @@ class VotableChoiceView(context: Context, voteItem: Int) :
         buildBullet()
         buildVotesText()
         buildChoiceText()
+        addOnDoubleClickListener()
+    }
+
+    private fun addOnDoubleClickListener() {
+
     }
 
     private fun buildBullet() {
@@ -118,5 +126,17 @@ class VotableChoiceView(context: Context, voteItem: Int) :
         params.bottomMargin = marginAndPadding.toInt()
         setPadding(marginAndPadding.toInt(), marginAndPadding.toInt(), marginAndPadding.toInt(), marginAndPadding.toInt())
         setBackgroundColor(resources.getColor(R.color.white))
+    }
+
+    private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
+
+        override fun onDown(e: MotionEvent): Boolean {
+            return true
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            this@VotableChoiceView.setBackgroundColor(resources.getColor(R.color.green))
+            return true
+        }
     }
 }
