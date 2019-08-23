@@ -2,6 +2,7 @@ package com.sammengistu.stuckapp.views
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -36,6 +37,7 @@ class IconToCountView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     private fun buildView() {
         setPadding(10, 10, 10, 10)
         orientation = HORIZONTAL
+        countView.gravity = Gravity.CENTER_VERTICAL
 
         val params = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         params.marginEnd = 10

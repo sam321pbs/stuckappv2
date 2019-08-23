@@ -18,14 +18,14 @@ data class Post(
     val type: String,
     val image1Loc: String,
     val image2Loc: String,
-    val choice1: String,
-    val choice2: String,
-    val choice3: String,
-    val choice4: String,
-    val vote1: Int,
-    val vote2: Int,
-    val vote3: Int,
-    val vote4: Int
+    protected val choice1: String,
+    protected val choice2: String,
+    protected val choice3: String,
+    protected val choice4: String,
+    protected val vote1: Int,
+    protected val vote2: Int,
+    protected val vote3: Int,
+    protected val vote4: Int
 ) {
 
     /**
@@ -76,4 +76,25 @@ data class Post(
         "", "", "", "",
         0, 0, 0, 0
     )
+
+    fun getTotalVotes(): Int {
+        return vote1.plus(vote2).plus(vote3).plus(vote4)
+    }
+
+    fun getChoicesToVoteList(): List<Triple<Int, String, Int>> {
+        val list = mutableListOf<Triple<Int, String, Int>>()
+        if (!choice1.isEmpty()) {
+            list.add(Triple(1, choice1, vote1))
+        }
+        if (!choice2.isEmpty()) {
+            list.add(Triple(2, choice2, vote2))
+        }
+        if (!choice3.isEmpty()) {
+            list.add(Triple(3, choice3, vote3))
+        }
+        if (!choice4.isEmpty()) {
+            list.add(Triple(4, choice4, vote4))
+        }
+        return list
+    }
 }

@@ -33,4 +33,11 @@
         <item name="android:layout_marginEnd">10dp</item>
     </style>
 
+    <style name="votable_choice_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
 </resources>

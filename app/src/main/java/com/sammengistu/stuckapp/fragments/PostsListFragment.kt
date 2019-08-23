@@ -33,7 +33,7 @@ class PostsListFragment : BaseFragment() {
 
     private fun setupRecyclerView() {
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = PostsAdapter(emptyList())
+        viewAdapter = PostsAdapter(this.context!!)
 
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
