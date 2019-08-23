@@ -8,4 +8,9 @@
     <declare-styleable name="ChoiceCardView">
         <attr name="hintText" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="VotableChoiceView">
+        <attr name="choiceText" format="string" />
+        <attr name="voteTotal" format="string" />
+    </declare-styleable>
 </resources>
