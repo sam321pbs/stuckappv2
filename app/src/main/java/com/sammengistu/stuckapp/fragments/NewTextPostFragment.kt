@@ -7,19 +7,21 @@ import androidx.core.view.children
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckapp.utils.CreatePostItem
 import com.sammengistu.stuckapp.views.ChoiceCardView
-import kotlinx.android.synthetic.main.fragment_new_post_text.*
+import kotlinx.android.synthetic.main.fragment_new_text_post.*
+import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 
-class NewTextPostFragment : BaseFragment() {
+class NewTextPostFragment : BaseFragment(), CreatePostItem {
 
     lateinit var mChoicesContainer: LinearLayout
     val MAX_NUMBER_OF_CHOICES = 4
 
     override fun getLayoutId(): Int {
-        return com.sammengistu.stuckapp.R.layout.fragment_new_post_text
+        return com.sammengistu.stuckapp.R.layout.fragment_new_text_post
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,12 +41,27 @@ class NewTextPostFragment : BaseFragment() {
         }
 
         submit_button.setOnClickListener {
-            sendPost(view)
+            createPost(view)
         }
     }
 
-    private fun sendPost(view: View) {
-        if (fieldsAreValid()) {
+    override fun fieldsValidated(): Boolean {
+        if (question.text.toString().isEmpty()) {
+            Snackbar.make(view!!, "Question is empty", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        for (choiceView in mChoicesContainer.children) {
+            if (choiceView is ChoiceCardView && choiceView.getChoiceText().isEmpty()) {
+                Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        return true
+    }
+
+    override fun createPost(view: View) {
+        if (fieldsValidated()) {
             doAsync {
                 uiThread {
                     progress_bar.visibility = View.VISIBLE
@@ -67,21 +84,6 @@ class NewTextPostFragment : BaseFragment() {
                 }
             }
         }
-    }
-
-    private fun fieldsAreValid(): Boolean {
-        if (question.text.toString().isEmpty()) {
-            Snackbar.make(view!!, "Question is empty", Snackbar.LENGTH_SHORT).show()
-            return false
-        }
-
-        for (choiceView in mChoicesContainer.children) {
-            if (choiceView is ChoiceCardView && choiceView.getChoiceText().isEmpty()) {
-                Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT).show()
-                return false
-            }
-        }
-        return true
     }
 
     private fun getChoiceAt(pos: Int): String {

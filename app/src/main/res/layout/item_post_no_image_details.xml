@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -7,91 +7,7 @@
         android:orientation="vertical"
         android:padding="3dp">
 
-    <RelativeLayout
-            android:id="@+id/user_detail_and_options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/avatar"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="15dp"
-                android:src="@mipmap/peter_griffan_head_shot"
-                app:civ_border_color="@android:color/transparent"
-                app:civ_border_width="2dp" />
-
-        <LinearLayout
-                android:id="@+id/username_time_since_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/avatar"
-                android:orientation="vertical">
-
-            <TextView
-                    android:id="@+id/username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:text="sam321pbs"
-                    android:textColor="@color/black" />
-
-            <TextView
-                    android:id="@+id/time_since"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2 hours ago" />
-        </LinearLayout>
-
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_more_vert_grey_300_24dp" />
-    </RelativeLayout>
-
-
-    <TextView
-            android:id="@+id/question"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/user_detail_and_options"
-            android:layout_marginStart="5dp"
-            android:text="Who should win MVP?"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-    <LinearLayout
-            android:id="@+id/post_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/question"
-            android:orientation="horizontal">
-
-        <com.sammengistu.stuckapp.views.IconToCountView
-                android:id="@+id/votesTotal"
-                style="@style/icon_to_text_style"
-                custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
-                custom:iconText="100" />
-
-        <com.sammengistu.stuckapp.views.IconToCountView
-                android:id="@+id/commentsTotal"
-                style="@style/icon_to_text_style"
-                custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
-                custom:iconText="100" />
-
-        <com.sammengistu.stuckapp.views.IconToCountView
-                android:id="@+id/starsTotal"
-                style="@style/icon_to_text_style"
-                custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
-                custom:iconText="100" />
-
-        <com.sammengistu.stuckapp.views.IconToCountView
-                android:id="@+id/category"
-                style="@style/icon_to_text_style"
-                custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
-                custom:iconText="Sports" />
-    </LinearLayout>
+    <include layout="@layout/top_portion_post" />
 
     <LinearLayout
             android:id="@+id/votable_choice_container"
@@ -108,4 +24,4 @@
 <!--                custom:voteTotal="25" />-->
 
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

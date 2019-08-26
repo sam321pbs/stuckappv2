@@ -1,6 +1,12 @@
 package com.sammengistu.stuckapp
 
+import android.content.Context
+import android.widget.Toast
+import com.sammengistu.stuckapp.data.AppDatabase
 import com.sammengistu.stuckapp.data.Post
+import com.sammengistu.stuckapp.data.PostRepository
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class DummyDataStuck {
     companion object {
@@ -81,5 +87,17 @@ class DummyDataStuck {
                 67, 55, 36, 0
             )
         )
+
+        fun insertDummyData(context: Context) {
+            doAsync {
+                //Execute all the lon running tasks here
+                for (post in DummyDataStuck.DUMMY_DATA)
+                    PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).insertPost(post)
+
+                uiThread {
+                   Toast.makeText(context, "Dummy Data added", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }
