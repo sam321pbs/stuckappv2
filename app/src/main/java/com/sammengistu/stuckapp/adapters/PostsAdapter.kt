@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.constants.PostType
 import com.sammengistu.stuckapp.data.Post
@@ -17,6 +16,7 @@ import com.sammengistu.stuckapp.views.VotableChoiceView.Companion.createView
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.find
 import java.io.File
+
 
 class PostsAdapter(
     val mContext: Context,
@@ -27,9 +27,19 @@ class PostsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         return when (viewType) {
             LANDSCAPE_VIEW_TYPE, PORTRAIT_VIEW_TYPE ->
-                PostImageViewHolder(createView(parent, R.layout.item_post_image))
+                PostImageViewHolder(
+                    createView(
+                        parent,
+                        com.sammengistu.stuckapp.R.layout.item_post_image
+                    )
+                )
             else ->
-                PostTextViewHolder(createView(parent, R.layout.item_post_text_card))
+                PostTextViewHolder(
+                    createView(
+                        parent,
+                        com.sammengistu.stuckapp.R.layout.item_post_text_card
+                    )
+                )
         }
     }
 
@@ -48,8 +58,8 @@ class PostsAdapter(
         if (holder is PostTextViewHolder) {
             buildVotableChoices(holder, post)
         } else if (holder is PostImageViewHolder) {
-            Picasso.get().load(File(post.image1Loc)).into(holder.imageView1)
-            Picasso.get().load(File(post.image2Loc)).into(holder.imageView2)
+            holder.imageView1.post { loadImageIntoView(post.image1Loc, holder.imageView1) }
+            holder.imageView2.post { loadImageIntoView(post.image2Loc, holder.imageView2) }
         }
     }
 
@@ -67,6 +77,14 @@ class PostsAdapter(
     fun swapData(dataset: List<Post>) {
         this.dataset = dataset
         notifyDataSetChanged()
+    }
+
+    private fun loadImageIntoView(imageLoc: String, imageView: ImageView) {
+        Picasso.get()
+            .load(File(imageLoc))
+            .fit()
+            .centerCrop()
+            .into(imageView)
     }
 
     private fun createView(parent: ViewGroup, layoutId: Int) =
@@ -87,23 +105,28 @@ class PostsAdapter(
     }
 
     class PostTextViewHolder(parentView: View) : PostViewHolder(parentView) {
-        val votableChoiceContainer: LinearLayout = parentView.find(R.id.votable_choice_container)
+        val votableChoiceContainer: LinearLayout =
+            parentView.find(com.sammengistu.stuckapp.R.id.votable_choice_container)
     }
 
     class PostImageViewHolder(parentView: View) : PostViewHolder(parentView) {
-        val imageView1: ImageView = parentView.find(R.id.image_1)
-        val imageView2: ImageView = parentView.find(R.id.image_2)
+        val imageView1: ImageView = parentView.find(com.sammengistu.stuckapp.R.id.image_1)
+        val imageView2: ImageView = parentView.find(com.sammengistu.stuckapp.R.id.image_2)
     }
 
     open class PostViewHolder(var parentView: View) : RecyclerView.ViewHolder(parentView) {
-        val questionView: TextView = parentView.find(R.id.question)
-        val avatarView: ImageView = parentView.find(R.id.avatar)
-        val username: TextView = parentView.find(R.id.username)
-        val timeSince: TextView = parentView.find(R.id.time_since)
-        val categoriesView: IconToCountView = parentView.find(R.id.category)
-        val commentsTotalView: IconToCountView = parentView.find(R.id.commentsTotal)
-        val voteTotalView: IconToCountView = parentView.find(R.id.votesTotal)
-        val starTotalView: IconToCountView = parentView.find(R.id.starsTotal)
-        val menuIcon: ImageView = parentView.find(R.id.menu_icon)
+        val questionView: TextView = parentView.find(com.sammengistu.stuckapp.R.id.question)
+        val avatarView: ImageView = parentView.find(com.sammengistu.stuckapp.R.id.avatar)
+        val username: TextView = parentView.find(com.sammengistu.stuckapp.R.id.username)
+        val timeSince: TextView = parentView.find(com.sammengistu.stuckapp.R.id.time_since)
+        val categoriesView: IconToCountView =
+            parentView.find(com.sammengistu.stuckapp.R.id.category)
+        val commentsTotalView: IconToCountView =
+            parentView.find(com.sammengistu.stuckapp.R.id.commentsTotal)
+        val voteTotalView: IconToCountView =
+            parentView.find(com.sammengistu.stuckapp.R.id.votesTotal)
+        val starTotalView: IconToCountView =
+            parentView.find(com.sammengistu.stuckapp.R.id.starsTotal)
+        val menuIcon: ImageView = parentView.find(com.sammengistu.stuckapp.R.id.menu_icon)
     }
 }

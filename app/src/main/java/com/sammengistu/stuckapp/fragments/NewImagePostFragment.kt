@@ -114,7 +114,11 @@ class NewImagePostFragment : BaseFragment(), CreatePostItem {
         try {
             val imageUri = data!!.getData()
             val imageStream = activity!!.contentResolver.openInputStream(imageUri!!)
-            Picasso.get().load(imageUri).into(imageView)
+            Picasso.get()
+                .load(imageUri)
+                .fit()
+                .centerCrop()
+                .into(imageView)
             return BitmapFactory.decodeStream(imageStream)
         } catch (e: FileNotFoundException) {
             e.printStackTrace()

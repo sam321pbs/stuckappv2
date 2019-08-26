@@ -6,7 +6,7 @@ import com.sammengistu.stuckapp.fragments.NewPostTypeFragment
 
 class NewPostActivity : BaseActivity() {
     override fun getLayoutId(): Int {
-        return R.layout.activity_main
+        return R.layout.activity_base
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
