@@ -6,6 +6,8 @@ class PostRepository(val dao: PostDao) {
 
     fun insertPost(post: Post) = dao.insertPost(post)
 
+    fun deletePost(post: Post) = dao.deletePost(post)
+
     companion object {
         @Volatile
         private var instance: PostRepository? = null

@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.constants.PostType
 import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.views.IconToCountView
@@ -17,7 +18,10 @@ import com.squareup.picasso.Picasso
 import org.jetbrains.anko.find
 import java.io.File
 
-class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
+class PostsAdapter(
+    val mContext: Context,
+    val mBottomSheetMenu: BottomSheetMenu
+) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<Post>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -39,13 +43,11 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
         holder.voteTotalView.setText(post.getTotalVotes().toString())
         holder.starTotalView.setText(post.totalStars.toString())
         holder.categoriesView.setText(post.category)
+        holder.menuIcon.setOnClickListener { mBottomSheetMenu.showMenu(post) }
 
         if (holder is PostTextViewHolder) {
             buildVotableChoices(holder, post)
         } else if (holder is PostImageViewHolder) {
-            // Todo: possibly rework this to be async
-//            holder.imageView1.setImageBitmap(StorageUtils.loadImageFromStorage(post.image1Loc))
-//            holder.imageView2.setImageBitmap(StorageUtils.loadImageFromStorage(post.image2Loc))
             Picasso.get().load(File(post.image1Loc)).into(holder.imageView1)
             Picasso.get().load(File(post.image2Loc)).into(holder.imageView2)
         }
@@ -74,7 +76,7 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
         val container = holder.votableChoiceContainer
         container.removeAllViews()
         for (tripleItem in post.getChoicesToVoteList()) {
-            container.addView(createView(context, tripleItem))
+            container.addView(createView(mContext, tripleItem))
         }
     }
 
@@ -102,5 +104,6 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
         val commentsTotalView: IconToCountView = parentView.find(R.id.commentsTotal)
         val voteTotalView: IconToCountView = parentView.find(R.id.votesTotal)
         val starTotalView: IconToCountView = parentView.find(R.id.starsTotal)
+        val menuIcon: ImageView = parentView.find(R.id.menu_icon)
     }
 }
