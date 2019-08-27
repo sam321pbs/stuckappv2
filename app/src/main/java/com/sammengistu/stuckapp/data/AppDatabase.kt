@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sammengistu.stuckapp.constants.DATABASE_NAME
 
-@Database(entities = [Post::class], version = 2, exportSchema = false)
+@Database(entities = [Post::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postsDao(): PostDao
 
@@ -22,11 +24,20 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private fun buildDatabase(context: Context): AppDatabase {
-            return Room.databaseBuilder(context, AppDatabase::class.java,
+
+            val MIGRATION_2_3 = object : Migration(2, 3) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE posts ADD COLUMN privacy TEXT DEFAULT 'public' NOT NULL")
+                }
+            }
+
+            return Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
                 DATABASE_NAME
             )
-                .fallbackToDestructiveMigration()
-                .build()
+                .addMigrations(MIGRATION_2_3)
+                .fallbackToDestructiveMigration().build()
         }
     }
 }

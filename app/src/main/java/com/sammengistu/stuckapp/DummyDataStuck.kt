@@ -2,6 +2,7 @@ package com.sammengistu.stuckapp
 
 import android.content.Context
 import android.widget.Toast
+import com.sammengistu.stuckapp.constants.PrivacyChoice
 import com.sammengistu.stuckapp.data.AppDatabase
 import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.data.PostRepository
@@ -20,6 +21,7 @@ class DummyDataStuck {
                 "Who is the best player in the NBA?",
                 12,
                 23,
+                PrivacyChoice.privacyChoices[0],
                 "Sports",
                 "text",
                 "", "",
@@ -35,6 +37,7 @@ class DummyDataStuck {
                 "Should I have my honey in Jamaica or Bali?",
                 0,
                 4,
+                PrivacyChoice.privacyChoices[0],
                 "Travel",
                 "text",
                 "", "",
@@ -50,6 +53,7 @@ class DummyDataStuck {
                 "Which Avengers movies did you like best?",
                 41,
                 55,
+                PrivacyChoice.privacyChoices[0],
                 "Entertainment",
                 "text",
                 "", "",
@@ -65,6 +69,7 @@ class DummyDataStuck {
                 "Which phone among these is the best in the market?",
                 50,
                 72,
+                PrivacyChoice.privacyChoices[0],
                 "Tech",
                 "text",
                 "", "",
@@ -80,6 +85,7 @@ class DummyDataStuck {
                 "Which of these systems would you buy?",
                 23,
                 72,
+                PrivacyChoice.privacyChoices[0],
                 "Tech",
                 "text",
                 "", "",

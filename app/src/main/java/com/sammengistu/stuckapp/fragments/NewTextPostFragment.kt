@@ -74,6 +74,7 @@ class NewTextPostFragment : BaseNewPostFragment(), CreatePostItem {
                     "Sam_1",
                     username.text.toString(),
                     question.text.toString(),
+                    mSelectedPrivacy,
                     mSelectedCategory,
                     getChoiceAt(0), getChoiceAt(1), getChoiceAt(2), getChoiceAt(3)
                 )

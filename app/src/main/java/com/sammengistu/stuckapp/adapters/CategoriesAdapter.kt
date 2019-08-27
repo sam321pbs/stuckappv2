@@ -6,14 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.RecyclerViewHelper
-import com.sammengistu.stuckapp.constants.Category
 import com.sammengistu.stuckapp.views.IconToTextView
 import org.jetbrains.anko.find
 
 
-class CategoriesAdapter(private val itemClickListener: RecyclerViewHelper.OnItemClickListener<String>) :
+class CategoriesAdapter(private val itemClickListener: RecyclerViewHelper.OnItemClickListener<String>,
+                        private val dataset: List<String>) :
     RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>() {
-    private var dataset = Category.categories
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         return CategoryViewHolder(

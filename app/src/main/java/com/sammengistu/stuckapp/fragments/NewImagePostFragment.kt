@@ -32,8 +32,6 @@ class NewImagePostFragment : BaseNewPostFragment(), CreatePostItem {
         return com.sammengistu.stuckapp.R.layout.fragment_new_image_post
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         image_1_container.setOnClickListener {
@@ -70,6 +68,7 @@ class NewImagePostFragment : BaseNewPostFragment(), CreatePostItem {
                         "Sam_1",
                         username.text.toString(),
                         question.text.toString(),
+                        mSelectedPrivacy,
                         mSelectedCategory,
                         PostType.LANDSCAPE,
                         StorageUtils.saveToInternalStorage(activity!!, mImage1Bitmap!!, getTimeAsString()),

@@ -14,6 +14,7 @@ data class Post(
     val question: String,
     val totalStars: Int,
     val totalComments: Int,
+    val privacy: String,
     val category: String,
     val type: String,
     val image1Loc: String,
@@ -35,6 +36,7 @@ data class Post(
         ownerId: String,
         userName: String,
         question: String,
+        privacy: String,
         category: String,
         choice1: String, choice2: String, choice3: String, choice4: String
     ) : this(
@@ -45,6 +47,7 @@ data class Post(
         "",
         question,
         0, 0,
+        privacy,
         category,
         PostType.TEXT,
         "", "",
@@ -59,6 +62,7 @@ data class Post(
         ownerId: String,
         userName: String,
         question: String,
+        privacy: String,
         category: String,
         type: String,
         image1Loc: String, image2Loc: String
@@ -70,6 +74,7 @@ data class Post(
         "",
         question,
         0, 0,
+        privacy,
         category,
         type,
         image1Loc, image2Loc,
