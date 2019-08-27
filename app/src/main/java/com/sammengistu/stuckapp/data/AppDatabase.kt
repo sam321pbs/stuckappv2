@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.sammengistu.stuckapp.utils.DATABASE_NAME
+import com.sammengistu.stuckapp.constants.DATABASE_NAME
 
 @Database(entities = [Post::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -22,7 +22,9 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private fun buildDatabase(context: Context): AppDatabase {
-            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+            return Room.databaseBuilder(context, AppDatabase::class.java,
+                DATABASE_NAME
+            )
                 .fallbackToDestructiveMigration()
                 .build()
         }

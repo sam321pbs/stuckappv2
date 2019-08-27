@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
 
-class IconToCountView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+class IconToTextView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     var iconView: ImageView = ImageView(context)
     var countView: TextView = TextView(context)
 
@@ -16,13 +16,15 @@ class IconToCountView(context: Context, attrs: AttributeSet) : LinearLayout(cont
         buildView()
         context.theme.obtainStyledAttributes(
             attrs,
-            R.styleable.IconToCountView,
+            R.styleable.IconToTextView,
             0, 0).apply {
 
             try {
-                val iconId = getResourceId(R.styleable.IconToCountView_iconSrc, 0)
-                val iconText = getString(R.styleable.IconToCountView_iconText)
-                iconView.setImageDrawable(context.getDrawable(iconId))
+                val iconId = getResourceId(R.styleable.IconToTextView_iconSrc, 0)
+                val iconText = getString(R.styleable.IconToTextView_iconText)
+                if (iconId != 0) {
+                    iconView.setImageDrawable(context.getDrawable(iconId))
+                }
                 countView.text = iconText
             } finally {
                 recycle()
@@ -30,8 +32,8 @@ class IconToCountView(context: Context, attrs: AttributeSet) : LinearLayout(cont
         }
     }
 
-    fun setText(countTotal: String) {
-        countView.text = countTotal
+    fun setText(text: String) {
+        countView.text = text
     }
 
     private fun buildView() {

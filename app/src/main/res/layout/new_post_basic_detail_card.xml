@@ -42,7 +42,7 @@
                         android:text="sam321pbs"
                         android:textColor="@color/black" />
 
-                <com.sammengistu.stuckapp.views.IconToCountView
+                <com.sammengistu.stuckapp.views.IconToTextView
                         android:id="@+id/privacy_choice"
                         style="@style/icon_to_text_style"
                         android:layout_marginStart="20dp"
@@ -50,7 +50,7 @@
                         custom:iconSrc="@drawable/ic_group_white_24dp"
                         custom:iconText="public" />
 
-                <com.sammengistu.stuckapp.views.IconToCountView
+                <com.sammengistu.stuckapp.views.IconToTextView
                         android:id="@+id/category_choice"
                         style="@style/icon_to_text_style"
                         android:layout_marginStart="20dp"

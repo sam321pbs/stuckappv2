@@ -5,8 +5,10 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.core.view.children
 import com.google.android.material.snackbar.Snackbar
+import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.utils.CreatePostItem
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
@@ -15,13 +17,13 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 
-class NewTextPostFragment : BaseFragment(), CreatePostItem {
+class NewTextPostFragment : BaseNewPostFragment(), CreatePostItem {
 
     lateinit var mChoicesContainer: LinearLayout
     val MAX_NUMBER_OF_CHOICES = 4
 
     override fun getLayoutId(): Int {
-        return com.sammengistu.stuckapp.R.layout.fragment_new_text_post
+        return R.layout.fragment_new_text_post
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,7 +55,8 @@ class NewTextPostFragment : BaseFragment(), CreatePostItem {
 
         for (choiceView in mChoicesContainer.children) {
             if (choiceView is ChoiceCardView && choiceView.getChoiceText().isEmpty()) {
-                Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT)
+                    .show()
                 return false
             }
         }
@@ -71,7 +74,7 @@ class NewTextPostFragment : BaseFragment(), CreatePostItem {
                     "Sam_1",
                     username.text.toString(),
                     question.text.toString(),
-                    "Tech",
+                    mSelectedCategory,
                     getChoiceAt(0), getChoiceAt(1), getChoiceAt(2), getChoiceAt(3)
                 )
 

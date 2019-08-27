@@ -13,13 +13,14 @@ import com.sammengistu.stuckapp.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 
 class PostsListFragment : BasePostListsFragment() {
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_post_list
-    }
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: PostsAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_post_list
+    }
 
     private val listViewModel: PostListViewModel by viewModels {
         InjectorUtils.providePostListViewModelFactory(requireContext())
@@ -34,12 +35,10 @@ class PostsListFragment : BasePostListsFragment() {
     private fun setupRecyclerView() {
         viewManager = LinearLayoutManager(this.context)
         viewAdapter = PostsAdapter(this.context!!, mBottomSheetMenu)
-
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
-
         }
     }
 

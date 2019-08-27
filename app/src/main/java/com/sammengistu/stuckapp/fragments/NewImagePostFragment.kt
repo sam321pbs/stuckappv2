@@ -23,7 +23,7 @@ import java.io.FileNotFoundException
 import java.util.*
 
 
-class NewImagePostFragment : BaseFragment(), CreatePostItem {
+class NewImagePostFragment : BaseNewPostFragment(), CreatePostItem {
 
     var mImage1Bitmap: Bitmap? = null
     var mImage2Bitmap: Bitmap? = null
@@ -31,6 +31,8 @@ class NewImagePostFragment : BaseFragment(), CreatePostItem {
     override fun getLayoutId(): Int {
         return com.sammengistu.stuckapp.R.layout.fragment_new_image_post
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,7 +70,7 @@ class NewImagePostFragment : BaseFragment(), CreatePostItem {
                         "Sam_1",
                         username.text.toString(),
                         question.text.toString(),
-                        "Tech",
+                        mSelectedCategory,
                         PostType.LANDSCAPE,
                         StorageUtils.saveToInternalStorage(activity!!, mImage1Bitmap!!, getTimeAsString()),
                         StorageUtils.saveToInternalStorage(activity!!, mImage2Bitmap!!, getTimeAsString())

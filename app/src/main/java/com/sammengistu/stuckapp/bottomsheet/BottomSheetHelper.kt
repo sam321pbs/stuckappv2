@@ -66,7 +66,6 @@ class BottomSheetHelper(private val context: Context, private val bottomSheetLL:
         // Todo: Change to handle server post vs db post/ also check that it is users posts before deleting
         if (mPost != null) {
             val postCopy = mPost!!.copy()
-
             val builder: AlertDialog.Builder? = context.let { AlertDialog.Builder(it) }
 
             builder
