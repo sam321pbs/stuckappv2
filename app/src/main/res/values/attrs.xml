@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="IconToTextView">
+    <declare-styleable name="HorizontalIconToTextView">
         <attr name="iconSrc" format="integer" />
         <attr name="iconText" format="string" />
     </declare-styleable>
@@ -12,5 +12,10 @@
     <declare-styleable name="VotableChoiceView">
         <attr name="choiceText" format="string" />
         <attr name="voteTotal" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="VerticalIconToTextView">
+        <attr name="verticalIconSrc" format="integer" />
+        <attr name="verticalIconText" format="string" />
     </declare-styleable>
 </resources>

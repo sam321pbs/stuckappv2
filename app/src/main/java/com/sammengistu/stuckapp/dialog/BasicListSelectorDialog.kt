@@ -5,11 +5,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
+import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.RecyclerViewHelper
 import com.sammengistu.stuckapp.adapters.CategoriesAdapter
 
-abstract class BasicListSelectorDialog: DialogFragment(),
-    RecyclerViewHelper.OnItemClickListener<String> {
+abstract class BasicListSelectorDialog : DialogFragment(), OnItemClickListener<String> {
     abstract fun getDialogTitle(): String
     abstract fun getListDataSet(): List<String>
 
@@ -17,12 +17,16 @@ abstract class BasicListSelectorDialog: DialogFragment(),
         return activity?.let {
             val builder = AlertDialog.Builder(it)
             val inflater = requireActivity().layoutInflater
-            val containerView = inflater.inflate(com.sammengistu.stuckapp.R.layout.dialog_list, null)
+            val containerView =
+                inflater.inflate(com.sammengistu.stuckapp.R.layout.basic_list_view, null)
 
             RecyclerViewHelper.setupRecyclerView(
                 activity!!,
                 containerView.findViewById(com.sammengistu.stuckapp.R.id.recycler_view),
-                CategoriesAdapter(this, getListDataSet()) as RecyclerView.Adapter<RecyclerView.ViewHolder>
+                CategoriesAdapter(
+                    this,
+                    getListDataSet()
+                ) as RecyclerView.Adapter<RecyclerView.ViewHolder>
             )
             builder.setView(containerView)
                 .setNegativeButton(android.R.string.cancel) { _, _ ->

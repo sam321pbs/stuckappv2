@@ -5,10 +5,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class RecyclerViewHelper {
-    interface OnItemClickListener<I> {
-        fun onItemClicked(item: I)
-    }
-
     companion object {
         fun setupRecyclerView(
             context: Context, recyclerView: RecyclerView,

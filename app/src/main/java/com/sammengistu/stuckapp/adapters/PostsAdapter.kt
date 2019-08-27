@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.constants.PostType
 import com.sammengistu.stuckapp.data.Post
-import com.sammengistu.stuckapp.views.IconToTextView
+import com.sammengistu.stuckapp.views.HorizontalIconToTextView
 import com.sammengistu.stuckapp.views.VotableChoiceView.Companion.createView
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.find
@@ -119,13 +119,13 @@ class PostsAdapter(
         val avatarView: ImageView = parentView.find(com.sammengistu.stuckapp.R.id.avatar)
         val username: TextView = parentView.find(com.sammengistu.stuckapp.R.id.username)
         val timeSince: TextView = parentView.find(com.sammengistu.stuckapp.R.id.time_since)
-        val categoriesView: IconToTextView =
+        val categoriesView: HorizontalIconToTextView =
             parentView.find(com.sammengistu.stuckapp.R.id.category)
-        val commentsTotalView: IconToTextView =
+        val commentsTotalView: HorizontalIconToTextView =
             parentView.find(com.sammengistu.stuckapp.R.id.commentsTotal)
-        val voteTotalView: IconToTextView =
+        val voteTotalView: HorizontalIconToTextView =
             parentView.find(com.sammengistu.stuckapp.R.id.votesTotal)
-        val starTotalView: IconToTextView =
+        val starTotalView: HorizontalIconToTextView =
             parentView.find(com.sammengistu.stuckapp.R.id.starsTotal)
         val menuIcon: ImageView = parentView.find(com.sammengistu.stuckapp.R.id.menu_icon)
     }

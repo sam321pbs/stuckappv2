@@ -21,7 +21,24 @@ class Category {
             "education"
         )
 
-        val sortCategories = listOf("popular", categories)
+        val sortCategories = listOf(
+            "popular",
+            "text_only",
+            "image_only",
+            "general",
+            "opinion",
+            "business",
+            "sports",
+            "technology",
+            "entertainment",
+            "travel",
+            "science",
+            "food",
+            "politics",
+            "history",
+            "style",
+            "lifestyle",
+            "education")
     }
 }
 

@@ -67,28 +67,28 @@
             android:layout_below="@+id/question"
             android:orientation="horizontal">
 
-        <com.sammengistu.stuckapp.views.IconToTextView
+        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/votesTotal"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"
                 custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
                 custom:iconText="100" />
 
-        <com.sammengistu.stuckapp.views.IconToTextView
+        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/commentsTotal"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"
                 custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
                 custom:iconText="100" />
 
-        <com.sammengistu.stuckapp.views.IconToTextView
+        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/starsTotal"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"
                 custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
                 custom:iconText="100" />
 
-        <com.sammengistu.stuckapp.views.IconToTextView
+        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/category"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"

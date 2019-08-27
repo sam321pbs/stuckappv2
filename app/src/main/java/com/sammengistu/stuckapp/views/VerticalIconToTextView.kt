@@ -8,24 +8,27 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
 
-class IconToTextView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+class VerticalIconToTextView(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     var iconView: ImageView = ImageView(context)
-    var countView: TextView = TextView(context)
+    var textView: TextView = TextView(context)
 
     init {
         buildView()
         context.theme.obtainStyledAttributes(
             attrs,
-            R.styleable.IconToTextView,
+            R.styleable.VerticalIconToTextView,
             0, 0).apply {
 
+            if (attrs == null) {
+                return@apply
+            }
             try {
-                val iconId = getResourceId(R.styleable.IconToTextView_iconSrc, 0)
-                val iconText = getString(R.styleable.IconToTextView_iconText)
+                val iconId = getResourceId(R.styleable.VerticalIconToTextView_verticalIconSrc, 0)
+                val iconText = getString(R.styleable.VerticalIconToTextView_verticalIconText)
                 if (iconId != 0) {
                     iconView.setImageDrawable(context.getDrawable(iconId))
                 }
-                countView.text = iconText
+                textView.text = iconText
             } finally {
                 recycle()
             }
@@ -33,19 +36,25 @@ class IconToTextView(context: Context, attrs: AttributeSet) : LinearLayout(conte
     }
 
     fun setText(text: String) {
-        countView.text = text
+        textView.text = text
+    }
+
+    fun setIcon(drawableId: Int) {
+        iconView.setImageResource(drawableId)
     }
 
     private fun buildView() {
         setPadding(10, 10, 10, 10)
-        orientation = HORIZONTAL
-        countView.gravity = Gravity.CENTER_VERTICAL
+        orientation = VERTICAL
+        textView.gravity = Gravity.CENTER_VERTICAL
 
         val params = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        params.marginEnd = 10
+        params.gravity = Gravity.CENTER
 
         iconView.layoutParams = params
+        textView.layoutParams = params
+
         addView(iconView)
-        addView(countView)
+        addView(textView)
     }
 }

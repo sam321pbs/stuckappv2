@@ -1,34 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/parent_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activities.MainActivity"
-        android:id="@+id/parent_view">
+        tools:context=".activities.MainActivity">
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical">
-        <com.google.android.material.appbar.AppBarLayout
-                android:layout_height="wrap_content"
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+                android:id="@+id/main_container"
                 android:layout_width="match_parent"
-                android:theme="@style/AppTheme.AppBarOverlay">
+                android:layout_height="match_parent"
+                android:layout_above="@+id/stuck_navigation_bar"
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
+            <com.google.android.material.appbar.AppBarLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
-                    app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                    android:layout_height="wrap_content"
+                    android:theme="@style/AppTheme.AppBarOverlay">
 
-        </com.google.android.material.appbar.AppBarLayout>
+                <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:background="?attr/colorPrimary"
+                        app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <FrameLayout android:id="@+id/fragment_container"
-                     android:layout_height="match_parent"
-                     android:layout_width="match_parent"/>
-    </LinearLayout>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <FrameLayout
+                    android:id="@+id/fragment_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <com.sammengistu.stuckapp.views.StuckNavigationBar
+                android:id="@+id/stuck_navigation_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -38,8 +54,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             android:visibility="gone"
-            app:srcCompat="@drawable/ic_create_white_24dp"/>
-
+            app:srcCompat="@drawable/ic_create_white_24dp" />
 
     <include layout="@layout/bottom_sheet_post_view" />
 

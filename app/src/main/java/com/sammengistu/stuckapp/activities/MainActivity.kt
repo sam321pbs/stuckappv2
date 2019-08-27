@@ -5,17 +5,34 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
+import com.sammengistu.stuckapp.constants.CATEGORIES
+import com.sammengistu.stuckapp.constants.CREATE
+import com.sammengistu.stuckapp.constants.HOME
 import com.sammengistu.stuckapp.data.Post
+import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
+import com.sammengistu.stuckapp.views.StuckNavigationBar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 
-class MainActivity : BaseActivity(), BottomSheetMenu {
+class MainActivity : BaseActivity(), BottomSheetMenu, OnItemClickListener<Int> {
+    override fun onItemClicked(item: Int) {
+        when(item) {
+            HOME -> addFragment(PostsListFragment())
+            CATEGORIES -> addFragment(CategoriesFragment())
+            CREATE -> {
+                val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
+                startActivity(intentNewPost)
+            }
+        }
+    }
 
-    lateinit var mBottomSheetHelper: BottomSheetHelper
+    private lateinit var mBottomSheetHelper: BottomSheetHelper
+    private lateinit var mNavigationBar: StuckNavigationBar
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -26,6 +43,8 @@ class MainActivity : BaseActivity(), BottomSheetMenu {
         setSupportActionBar(toolbar)
         addFragment(PostsListFragment())
         setupFab()
+        mNavigationBar = stuck_navigation_bar
+        mNavigationBar.onItemClicked = this
         mBottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
         hideMenu()
     }
@@ -55,6 +74,6 @@ class MainActivity : BaseActivity(), BottomSheetMenu {
             val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
             startActivity(intentNewPost)
         }
-        fab.visibility = View.VISIBLE
+        fab.visibility = View.GONE
     }
 }
