@@ -2,8 +2,8 @@ package com.sammengistu.stuckapp.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.fragments.BaseFragment
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -12,12 +12,14 @@ abstract class BaseActivity : AppCompatActivity() {
         setContentView(getLayoutId())
     }
 
-    abstract fun getLayoutId() : Int
+    abstract fun getLayoutId(): Int
 
-    fun addFragment(fragment: Fragment) {
+    fun addFragment(fragment: BaseFragment) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragment_container, fragment)
-        fragmentTransaction.commit()
+        fragmentTransaction
+            .add(R.id.fragment_container, fragment)
+            .addToBackStack(fragment.getFragmentTag())
+            .commit()
     }
 }

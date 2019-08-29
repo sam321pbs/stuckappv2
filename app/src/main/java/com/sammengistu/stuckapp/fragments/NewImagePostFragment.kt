@@ -20,6 +20,10 @@ class NewImagePostFragment : BaseNewPostFragment() {
     var mBitmap1: Bitmap? = null
     var mBitmap2: Bitmap? = null
 
+    override fun getFragmentTag(): String {
+        return TAG
+    }
+
     override fun getLayoutId(): Int {
         return com.sammengistu.stuckapp.R.layout.fragment_new_image_post
     }

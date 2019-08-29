@@ -1,6 +1,6 @@
 package com.sammengistu.stuckapp.dialog
 
-import com.sammengistu.stuckapp.constants.Category.Companion.categories
+import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -11,7 +11,7 @@ class CategoriesListDialog : BasicListSelectorDialog() {
     }
 
     override fun getListDataSet(): List<String> {
-        return categories
+        return Categories.asListRemoveSortCategories()
     }
 
     override fun onItemClicked(item: String) {

@@ -6,6 +6,15 @@ import com.sammengistu.stuckapp.R
 import kotlinx.android.synthetic.main.fragment_new_post_type.*
 
 class NewPostTypeFragment : BaseFragment() {
+
+    companion object {
+        val TAG: String = NewPostTypeFragment::class.java.simpleName
+    }
+
+    override fun getFragmentTag(): String {
+        return TAG
+    }
+
     override fun getLayoutId(): Int {
         return R.layout.fragment_new_post_type
     }

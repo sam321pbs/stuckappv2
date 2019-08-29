@@ -8,12 +8,22 @@ import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.RecyclerViewHelper
 import com.sammengistu.stuckapp.adapters.CategoriesAdapter
-import com.sammengistu.stuckapp.constants.Category
+import com.sammengistu.stuckapp.constants.Categories
 import kotlinx.android.synthetic.main.basic_list_view.*
 
 class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
-    override fun onItemClicked(item: String) {
-        Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
+
+    companion object {
+        val TAG: String = CategoriesFragment::class.java.simpleName
+    }
+
+    override fun getFragmentTag(): String {
+        return TAG
+    }
+
+    override fun onItemClicked(category: String) {
+        Toast.makeText(context, category, Toast.LENGTH_SHORT).show()
+        addFragment(PostsListFragment.newInstance(category))
     }
 
     override fun getLayoutId(): Int {
@@ -26,7 +36,7 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
             activity!!, recycler_view,
             CategoriesAdapter(
                 this,
-                Category.sortCategories
+                Categories.asList()
             ) as RecyclerView.Adapter<RecyclerView.ViewHolder>
         )
     }

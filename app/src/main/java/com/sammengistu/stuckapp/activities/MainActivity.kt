@@ -20,17 +20,7 @@ import com.sammengistu.stuckfirebase.data.Post
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 
-class MainActivity : BaseActivity(), BottomSheetMenu, OnItemClickListener<Int> {
-    override fun onItemClicked(item: Int) {
-        when(item) {
-            HOME -> addFragment(PostsListFragment())
-            CATEGORIES -> addFragment(CategoriesFragment())
-            CREATE -> {
-                val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
-                startActivity(intentNewPost)
-            }
-        }
-    }
+class MainActivity : BaseActivity(), BottomSheetMenu {
 
     private lateinit var mBottomSheetHelper: BottomSheetHelper
     private lateinit var mNavigationBar: StuckNavigationBar
@@ -46,7 +36,7 @@ class MainActivity : BaseActivity(), BottomSheetMenu, OnItemClickListener<Int> {
         FirebaseApp.initializeApp(this)
         setupFab()
         mNavigationBar = stuck_navigation_bar
-        mNavigationBar.onItemClicked = this
+        mNavigationBar.onItemClicked = getOnNavItemClicked()
         mBottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
         hideMenu()
     }
@@ -69,6 +59,21 @@ class MainActivity : BaseActivity(), BottomSheetMenu, OnItemClickListener<Int> {
 
     override fun hideMenu() {
         mBottomSheetHelper.hideMenu()
+    }
+
+    private fun getOnNavItemClicked(): OnItemClickListener<Int> {
+        return object : OnItemClickListener<Int> {
+            override fun onItemClicked(item: Int) {
+                when(item) {
+                    HOME -> addFragment(PostsListFragment())
+                    CATEGORIES -> addFragment(CategoriesFragment())
+                    CREATE -> {
+                        val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
+                        startActivity(intentNewPost)
+                    }
+                }
+            }
+        }
     }
 
     private fun setupFab() {

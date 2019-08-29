@@ -2,13 +2,12 @@ package com.sammengistu.stuckfirebase.data
 
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.PropertyName
 
 @Exclude
 const val MAX_NUMBER_OF_CHOICES = 4
 
 data class Post(
-    @PropertyName("owner_id") val ownerId: String,
+    val ownerId: String,
     val userName: String,
     val avatar: String,
     val question: String,
@@ -16,11 +15,8 @@ data class Post(
     val category: String,
     val type: String
 ) {
-    @PropertyName("created_at")
     var createdAt: Any? = FieldValue.serverTimestamp()
-    @PropertyName("total_stars")
     var totalStars: Int = 0
-    @PropertyName("total_comments")
     var totalComments: Int = 0
     var images: HashMap<String, String> = HashMap()
     var choices: HashMap<String, String> = HashMap()

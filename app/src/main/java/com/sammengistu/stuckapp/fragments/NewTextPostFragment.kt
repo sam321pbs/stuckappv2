@@ -21,6 +21,10 @@ class NewTextPostFragment : BaseNewPostFragment() {
     lateinit var mChoicesContainer: LinearLayout
     val MAX_NUMBER_OF_CHOICES = 4
 
+    override fun getFragmentTag(): String {
+        return TAG
+    }
+
     override fun getLayoutId(): Int {
         return R.layout.fragment_new_text_post
     }
@@ -60,5 +64,9 @@ class NewTextPostFragment : BaseNewPostFragment() {
             }
         }
         return true
+    }
+
+    companion object {
+        val TAG = NewTextPostFragment::class.java.simpleName
     }
 }

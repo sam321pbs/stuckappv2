@@ -1,6 +1,6 @@
 package com.sammengistu.stuckapp.dialog
 
-import com.sammengistu.stuckapp.constants.PrivacyChoice
+import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.events.PrivacySelectedEvent
 import org.greenrobot.eventbus.EventBus
 
@@ -10,7 +10,7 @@ class PostPrivacyDialog : BasicListSelectorDialog() {
     }
 
     override fun getListDataSet(): List<String> {
-        return PrivacyChoice.privacyChoices
+        return PrivacyOptions.asList()
     }
 
     override fun onItemClicked(item: String) {

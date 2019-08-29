@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
-import com.sammengistu.stuckapp.constants.Category
-import com.sammengistu.stuckapp.constants.PrivacyChoice
+import com.sammengistu.stuckapp.constants.Categories
+import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
@@ -30,8 +30,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
     val IMAGE_2 = "image_2"
     val CHOICES_VIEW = "choices_view"
 
-    var mSelectedCategory: String = Category.categories[0]
-    var mSelectedPrivacy: String = PrivacyChoice.privacyChoices[0]
+    var mSelectedCategory: String = Categories.GENERAL.toString()
+    var mSelectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
 
     abstract fun fieldsValidated(): Boolean
 
@@ -107,7 +107,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
                                 post.addChoice(choiceView.getChoiceText())
                             }
                         }
-                        FirestoreHelper.createPostInFB(post)
+                        FirestoreHelper.createTextPostInFB(post)
                     }
 //                    PostAccess.insertPost(activity!!.applicationContext, post)
                     success = true

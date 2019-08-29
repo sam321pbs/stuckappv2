@@ -21,22 +21,25 @@ class FirestoreHelper {
             var image1Url: String
             var image2Url: String
 
+            // Todo: delete post if it failed and this is probably not the best implementation
             FbStorageHelper.uploadImage(bitmap1, object : FbStorageHelper.UploadCompletionCallback {
                 override fun onSuccess(url: String) {
                     image1Url = url
 
-                    FbStorageHelper.uploadImage(bitmap2, object : FbStorageHelper.UploadCompletionCallback {
-                        override fun onSuccess(url: String) {
-                            image2Url = url
-                            post.addImage(image1Url)
-                            post.addImage(image2Url)
-                            createPostInFB(post)
-                        }
+                    FbStorageHelper.uploadImage(
+                        bitmap2,
+                        object : FbStorageHelper.UploadCompletionCallback {
+                            override fun onSuccess(url: String) {
+                                image2Url = url
+                                post.addImage(image1Url)
+                                post.addImage(image2Url)
+                                createTextPostInFB(post)
+                            }
 
-                        override fun onFailed() {
+                            override fun onFailed() {
 
-                        }
-                    })
+                            }
+                        })
                 }
 
                 override fun onFailed() {
@@ -45,19 +48,58 @@ class FirestoreHelper {
             })
         }
 
-        fun createPostInFB(post: Post) {
+        fun createTextPostInFB(post: Post) {
             getEnvironmentCollectionRef(POSTS)
                 .add(post)
                 .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "Post snapshot added with ID: ${documentReference.id}")
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "Post snapshot added with ID: ${documentReference.id}")
+                    }
                 }
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error adding post", e)
                 }
         }
 
-        fun getPostData(listener: OnItemRetrieved<Post>) {
+        fun getRecentPosts(listener: OnItemRetrieved<Post>) {
             getEnvironmentCollectionRef(POSTS)
+                //Todo: add limit
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        listener.onSuccess(document.toObjects(Post::class.java))
+                    } else {
+                        Log.d(TAG, "Couldn't get posts")
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "Failed to get posts", it)
+                    listener.onFailed()
+                }
+        }
+
+        fun getPostsInCategory(filterCategory: String, listener: OnItemRetrieved<Post>) {
+            getEnvironmentCollectionRef(POSTS)
+                .whereEqualTo("category", filterCategory)
+                //Todo: add limit
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        listener.onSuccess(document.toObjects(Post::class.java))
+                    } else {
+                        Log.d(TAG, "Couldn't get posts")
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "Failed to get posts", it)
+                    listener.onFailed()
+                }
+        }
+
+        fun getOwnerPosts(ownerId: String, listener: OnItemRetrieved<Post>) {
+            getEnvironmentCollectionRef(POSTS)
+                .whereEqualTo("owner_id", ownerId)
+                //Todo: add limit
                 .get()
                 .addOnSuccessListener { document ->
                     if (document != null) {

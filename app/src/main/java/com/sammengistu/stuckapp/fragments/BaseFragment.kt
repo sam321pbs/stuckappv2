@@ -9,15 +9,18 @@ import com.sammengistu.stuckapp.R
 
 abstract class BaseFragment : Fragment() {
     abstract fun getLayoutId() : Int
+    abstract fun getFragmentTag() : String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(getLayoutId(), container, false)
     }
 
-    fun addFragment(fragment: Fragment) {
+    fun addFragment(fragment: BaseFragment) {
         val fragmentManager = activity?.supportFragmentManager
-        val fragmentTransaction = fragmentManager?.beginTransaction()
-        fragmentTransaction?.add(R.id.fragment_container, fragment)
-        fragmentTransaction?.commit()
+        val fragmentTransaction = fragmentManager!!.beginTransaction()
+        fragmentTransaction
+            .add(R.id.fragment_container, fragment)
+            .addToBackStack(fragment.getFragmentTag())
+            .commit()
     }
 }

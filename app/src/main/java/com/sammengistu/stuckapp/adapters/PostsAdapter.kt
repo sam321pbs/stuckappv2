@@ -18,8 +18,8 @@ import org.jetbrains.anko.find
 
 
 class PostsAdapter(
-    val mContext: Context,
-    val mBottomSheetMenu: BottomSheetMenu
+    private val mContext: Context,
+    private val mBottomSheetMenu: BottomSheetMenu
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<Post>()
 

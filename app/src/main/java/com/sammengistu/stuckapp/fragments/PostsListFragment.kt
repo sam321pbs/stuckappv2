@@ -20,6 +20,10 @@ class PostsListFragment : BasePostListsFragment() {
     private lateinit var viewAdapter: PostsAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
 
+    override fun getFragmentTag(): String {
+        return TAG
+    }
+
     override fun getLayoutId(): Int {
         return R.layout.fragment_post_list
     }
@@ -45,18 +49,48 @@ class PostsListFragment : BasePostListsFragment() {
     }
 
     private fun subscribeUi(adapter: PostsAdapter) {
-      FirestoreHelper.getPostData(object : FirestoreHelper.OnItemRetrieved<Post> {
-          override fun onSuccess(list: List<Post>) {
-              adapter.swapData(list)
-          }
+        val category = getPostCategory()
+        if (category.isNotEmpty()) {
+            FirestoreHelper.getPostsInCategory(category, object : FirestoreHelper.OnItemRetrieved<Post> {
+                override fun onSuccess(list: List<Post>) {
+                    adapter.swapData(list)
+                }
 
-          override fun onFailed() {
-              Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
-          }
+                override fun onFailed() {
+                    Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
+                }
 
-      })
+            })
+        } else {
+            FirestoreHelper.getRecentPosts(object : FirestoreHelper.OnItemRetrieved<Post> {
+                override fun onSuccess(list: List<Post>) {
+                    adapter.swapData(list)
+                }
+
+                override fun onFailed() {
+                    Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
+                }
+
+            })
 //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
 //         adapter.swapData(posts)
 //        }
+        }
+    }
+
+    private fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
+
+    companion object {
+        val TAG: String = PostsListFragment::class.java.simpleName
+        const val EXTRA_CATEGORY = "category"
+
+        fun newInstance(category: String): PostsListFragment {
+            val bundle = Bundle()
+            bundle.putString(EXTRA_CATEGORY, category)
+
+            val fragment = PostsListFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
     }
 }

@@ -23,9 +23,15 @@ enum class Categories {
         return super.toString().toLowerCase()
     }
 
-    fun asList(): List<String> {
-        val list = ArrayList<String>()
-        listOf(values().)
+    companion object {
+        fun asList(): List<String> {
+            return values().map { it.toString() }
+        }
 
+        fun asListRemoveSortCategories(): List<String> {
+            return values().filter {
+                (it != POPULAR && it != TEXT_ONLY && it != IMAGE_ONLY)
+            }.map { it.toString() }
+        }
     }
 }
