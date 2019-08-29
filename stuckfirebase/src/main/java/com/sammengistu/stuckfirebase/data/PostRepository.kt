@@ -4,9 +4,9 @@ class PostRepository(val dao: PostDao) {
 
     fun getAllPosts() = dao.getAllPosts()
 
-    fun insertPost(post: Post) = dao.insertPost(post)
+    fun insertPost(post: DraftPost) = dao.insertPost(post)
 
-    fun deletePost(post: Post) = dao.deletePost(post)
+    fun deletePost(post: DraftPost) = dao.deletePost(post)
 
     companion object {
         @Volatile

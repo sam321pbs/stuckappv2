@@ -1,6 +1,6 @@
 package com.sammengistu.stuckapp.bottomsheet
 
-import com.sammengistu.stuckapp.data.Post
+import com.sammengistu.stuckfirebase.data.Post
 
 interface BottomSheetMenu {
     fun showMenu(post: Post)

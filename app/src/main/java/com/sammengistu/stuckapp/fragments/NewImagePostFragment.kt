@@ -9,11 +9,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
-import com.sammengistu.stuckapp.constants.PostType
-import com.sammengistu.stuckapp.data.Post
-import com.sammengistu.stuckapp.data.PostAccess
 import com.sammengistu.stuckapp.utils.CreatePostItem
-import com.sammengistu.stuckapp.utils.StorageUtils
+import com.sammengistu.stuckfirebase.FbStorageHelper
+import com.sammengistu.stuckfirebase.FirestoreHelper
+import com.sammengistu.stuckfirebase.constants.PostType
+import com.sammengistu.stuckfirebase.data.Post
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
@@ -67,15 +67,39 @@ class NewImagePostFragment : BaseNewPostFragment(), CreatePostItem {
                     val post = Post(
                         "Sam_1",
                         username.text.toString(),
+                        "ava",
                         question.text.toString(),
                         mSelectedPrivacy,
                         mSelectedCategory,
-                        PostType.LANDSCAPE,
-                        StorageUtils.saveToInternalStorage(activity!!, mImage1Bitmap!!, getTimeAsString()),
-                        StorageUtils.saveToInternalStorage(activity!!, mImage2Bitmap!!, getTimeAsString())
+                        PostType.LANDSCAPE
                     )
 
-                    PostAccess.insertPost(activity!!.applicationContext, post)
+                    val image1Path = FbStorageHelper.uploadImage(mImage1Bitmap!!, object : FbStorageHelper.StorageCompletionCallback {
+                        override fun onSuccess() {
+//                            Toast.makeText(activity!!, "Upload success 1", Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onFailed() {
+                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        }
+
+                    })
+
+                    val image2Path = FbStorageHelper.uploadImage(mImage1Bitmap!!, object : FbStorageHelper.StorageCompletionCallback {
+                        override fun onSuccess() {
+//                            Toast.makeText(activity!!, "Upload success 2", Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onFailed() {
+                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        }
+
+                    })
+                    post.addImage(image1Path)
+                    post.addImage(image2Path)
+
+                    FirestoreHelper.createPostInFB(post)
+//                    PostAccess.insertPost(activity!!.applicationContext, post)
                     success = true
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to create post", e)
@@ -84,10 +108,10 @@ class NewImagePostFragment : BaseNewPostFragment(), CreatePostItem {
                 uiThread {
                     progress_bar.visibility = View.GONE
                     if (success) {
-                        Toast.makeText(activity!!, "Post has been created", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity!!, "DraftPost has been created", Toast.LENGTH_SHORT).show()
                         activity!!.finish()
                     } else {
-                        Toast.makeText(activity!!, "Post failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity!!, "DraftPost failed", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

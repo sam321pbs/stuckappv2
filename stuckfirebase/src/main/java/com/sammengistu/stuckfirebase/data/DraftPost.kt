@@ -2,10 +2,11 @@ package com.sammengistu.stuckapp.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.sammengistu.stuckapp.constants.PostType
+import com.google.firebase.firestore.Exclude
+import com.sammengistu.stuckfirebase.constants.PostType
 
 @Entity(tableName = "posts")
-data class Post(
+data class DraftPost(
     @PrimaryKey(autoGenerate = true) val postId: Long,
     val ownerId: String,
     val userName: String,
@@ -19,14 +20,14 @@ data class Post(
     val type: String,
     val image1Loc: String,
     val image2Loc: String,
-    protected val choice1: String,
-    protected val choice2: String,
-    protected val choice3: String,
-    protected val choice4: String,
-    protected val vote1: Int,
-    protected val vote2: Int,
-    protected val vote3: Int,
-    protected val vote4: Int
+    val choice1: String,
+    val choice2: String,
+    val choice3: String,
+    val choice4: String,
+    val vote1: Int,
+    val vote2: Int,
+    val vote3: Int,
+    val vote4: Int
 ) {
 
     /**
@@ -82,10 +83,7 @@ data class Post(
         0, 0, 0, 0
     )
 
-    fun getTotalVotes(): Int {
-        return vote1.plus(vote2).plus(vote3).plus(vote4)
-    }
-
+    @Exclude
     fun getChoicesToVoteList(): List<Triple<Int, String, Int>> {
         val list = mutableListOf<Triple<Int, String, Int>>()
         if (!choice1.isEmpty()) {

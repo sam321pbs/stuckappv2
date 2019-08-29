@@ -6,11 +6,11 @@ import android.widget.LinearLayout
 import androidx.core.view.children
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.data.Post
-import com.sammengistu.stuckapp.data.PostAccess
-import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.utils.CreatePostItem
 import com.sammengistu.stuckapp.views.ChoiceCardView
+import com.sammengistu.stuckfirebase.FirestoreHelper
+import com.sammengistu.stuckfirebase.constants.PostType
+import com.sammengistu.stuckfirebase.data.Post
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.jetbrains.anko.doAsync
@@ -73,17 +73,27 @@ class NewTextPostFragment : BaseNewPostFragment(), CreatePostItem {
                 val post = Post(
                     "Sam_1",
                     username.text.toString(),
+                    "ava",
                     question.text.toString(),
                     mSelectedPrivacy,
                     mSelectedCategory,
-                    getChoiceAt(0), getChoiceAt(1), getChoiceAt(2), getChoiceAt(3)
+                    PostType.TEXT
                 )
 
-                PostAccess.insertPost(activity!!.applicationContext, post)
+                for (choiceView in mChoicesContainer.children) {
+                    if (choiceView is ChoiceCardView) {
+                        post.addChoice(choiceView.getChoiceText())
+                    }
+                }
+
+                //Todo: use this to create drafts
+//                PostAccess.insertPost(activity!!.applicationContext, post)
+
+                FirestoreHelper.createPostInFB(post)
 
                 uiThread {
                     progress_bar.visibility = View.GONE
-                    Snackbar.make(view, "Post has been created", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(view, "DraftPost has been created", Snackbar.LENGTH_SHORT).show()
                     this@NewTextPostFragment.activity!!.finish()
                 }
             }

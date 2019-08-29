@@ -9,10 +9,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
-import com.sammengistu.stuckapp.constants.PostType
-import com.sammengistu.stuckapp.data.Post
 import com.sammengistu.stuckapp.views.HorizontalIconToTextView
 import com.sammengistu.stuckapp.views.VotableChoiceView.Companion.createView
+import com.sammengistu.stuckfirebase.constants.PostType
+import com.sammengistu.stuckfirebase.data.Post
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.find
 import java.io.File
@@ -45,9 +45,11 @@ class PostsAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
+//        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+//            .format(Date(post.createdAt!!.seconds * 1000))
         holder.questionView.text = post.question
         holder.username.text = post.userName
-        holder.timeSince.text = post.createdAt
+//        holder.timeSince.text = simpleDateFormat
 
         holder.commentsTotalView.setText(post.totalComments.toString())
         holder.voteTotalView.setText(post.getTotalVotes().toString())
@@ -58,8 +60,8 @@ class PostsAdapter(
         if (holder is PostTextViewHolder) {
             buildVotableChoices(holder, post)
         } else if (holder is PostImageViewHolder) {
-            holder.imageView1.post { loadImageIntoView(post.image1Loc, holder.imageView1) }
-            holder.imageView2.post { loadImageIntoView(post.image2Loc, holder.imageView2) }
+            holder.imageView1.post { loadImageIntoView(post.images!!["1"]!!, holder.imageView1) }
+            holder.imageView2.post { loadImageIntoView(post.images!!["2"]!!, holder.imageView2) }
         }
     }
 

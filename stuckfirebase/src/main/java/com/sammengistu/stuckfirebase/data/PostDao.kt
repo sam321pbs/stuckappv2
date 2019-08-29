@@ -6,11 +6,11 @@ import androidx.room.*
 @Dao
 interface PostDao {
     @Query("SELECT * FROM posts ORDER BY createdAt")
-    fun getAllPosts(): LiveData<List<Post>>
+    fun getAllPosts(): LiveData<List<DraftPost>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertPost(post: Post)
+    fun insertPost(post: DraftPost)
 
     @Delete
-    fun deletePost(post: Post)
+    fun deletePost(post: DraftPost)
 }

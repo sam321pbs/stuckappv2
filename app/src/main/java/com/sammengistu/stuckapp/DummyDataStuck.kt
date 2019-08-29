@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import com.sammengistu.stuckapp.constants.PrivacyChoice
 import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckapp.data.Post
+import com.sammengistu.stuckapp.data.DraftPost
 import com.sammengistu.stuckapp.data.PostRepository
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -12,7 +12,7 @@ import org.jetbrains.anko.uiThread
 class DummyDataStuck {
     companion object {
         val DUMMY_DATA = listOf(
-            Post(
+            DraftPost(
                 0,
                 "Sam_1",
                 "sam321pbs",
@@ -28,7 +28,7 @@ class DummyDataStuck {
                 "Lebron James", "Steph Curry", "James Harden", "Lonzo Ball",
                 30, 23, 14, 2
             ),
-            Post(
+            DraftPost(
                 0,
                 "Sam_1",
                 "sam321pbs",
@@ -44,7 +44,7 @@ class DummyDataStuck {
                 "Jamaica", "Bali", "", "",
                 30, 23, 0, 0
             ),
-            Post(
+            DraftPost(
                 0,
                 "Sam_1",
                 "sam321pbs",
@@ -60,7 +60,7 @@ class DummyDataStuck {
                 "The Avengers", "Avengers: Infinity War", "Avengers: Endgame", "",
                 65, 12, 32, 0
             ),
-            Post(
+            DraftPost(
                 0,
                 "Sam_1",
                 "sam321pbs",
@@ -76,7 +76,7 @@ class DummyDataStuck {
                 "iPhone XS", "Google Pixel 3", "Samsung S10", "",
                 45, 36, 36, 0
             ),
-            Post(
+            DraftPost(
                 0,
                 "Sam_1",
                 "sam321pbs",

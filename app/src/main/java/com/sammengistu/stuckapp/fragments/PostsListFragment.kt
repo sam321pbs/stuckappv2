@@ -2,14 +2,16 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckapp.viewmodels.PostListViewModel
+import com.sammengistu.stuckfirebase.FirestoreHelper
+import com.sammengistu.stuckfirebase.data.Post
 import kotlinx.android.synthetic.main.fragment_post_list.*
 
 class PostsListFragment : BasePostListsFragment() {
@@ -43,8 +45,18 @@ class PostsListFragment : BasePostListsFragment() {
     }
 
     private fun subscribeUi(adapter: PostsAdapter) {
-        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
-         adapter.swapData(posts)
-        }
+      FirestoreHelper.getPostData(object : FirestoreHelper.OnItemRetrieved<Post> {
+          override fun onSuccess(list: List<Post>) {
+              adapter.swapData(list)
+          }
+
+          override fun onFailed() {
+              Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
+          }
+
+      })
+//        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
+//         adapter.swapData(posts)
+//        }
     }
 }

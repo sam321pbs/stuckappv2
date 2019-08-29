@@ -32,6 +32,7 @@ buildscript {
         googleServicesVersion = '4.3.1'
         firebaseAnalyticsVersion = '17.2.0'
         firebaseFirestoreVersion = '21.0.0'
+        firebaseStorageVersion = '19.0.0'
     }
 
     repositories {
@@ -40,7 +41,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "com.android.tools.build:gradle:${gradleVersion}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.google.gms:google-services:$googleServicesVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

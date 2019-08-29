@@ -1,16 +1,12 @@
 package com.sammengistu.stuckapp.bottomsheet
 
 import android.content.Context
-import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.data.Post
-import com.sammengistu.stuckapp.data.PostAccess
-import org.jetbrains.anko.doAsync
+import com.sammengistu.stuckfirebase.data.Post
 import org.jetbrains.anko.find
 
 class BottomSheetHelper(private val context: Context, private val bottomSheetLL: LinearLayout):
@@ -64,25 +60,25 @@ class BottomSheetHelper(private val context: Context, private val bottomSheetLL:
 
     private fun deletePost() {
         // Todo: Change to handle server post vs db post/ also check that it is users posts before deleting
-        if (mPost != null) {
-            val postCopy = mPost!!.copy()
-            val builder: AlertDialog.Builder? = context.let { AlertDialog.Builder(it) }
-
-            builder
-                ?.setMessage("Are you sure you want to delete this post?")
-                ?.setTitle("Delete Post")
-                ?.setPositiveButton("Delete") { _, _ ->
-                    doAsync {
-                        try {
-                            PostAccess.deletePost(context, postCopy)
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Error deleting post", e)
-                        }
-                    }
-                }
-                ?.setNegativeButton("Cancel", null)
-            builder?.show()
-        }
+//        if (mPost != null) {
+//            val postCopy = mPost!!.copy()
+//            val builder: AlertDialog.Builder? = context.let { AlertDialog.Builder(it) }
+//
+//            builder
+//                ?.setMessage("Are you sure you want to delete this post?")
+//                ?.setTitle("Delete DraftPost")
+//                ?.setPositiveButton("Delete") { _, _ ->
+//                    doAsync {
+//                        try {
+//                            PostAccess.deletePost(context, postCopy)
+//                        } catch (e: Exception) {
+//                            Log.e(TAG, "Error deleting post", e)
+//                        }
+//                    }
+//                }
+//                ?.setNegativeButton("Cancel", null)
+//            builder?.show()
+//        }
         hideMenu()
     }
 }

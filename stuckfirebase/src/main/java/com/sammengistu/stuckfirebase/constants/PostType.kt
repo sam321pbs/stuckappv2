@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp.constants
+package com.sammengistu.stuckfirebase.constants
 
 class PostType {
     companion object {
