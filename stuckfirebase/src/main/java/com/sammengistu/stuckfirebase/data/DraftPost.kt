@@ -50,7 +50,7 @@ data class DraftPost(
         0, 0,
         privacy,
         category,
-        PostType.TEXT,
+        PostType.TEXT.toString(),
         "", "",
         choice1, choice2, choice3, choice4,
         0, 0, 0, 0

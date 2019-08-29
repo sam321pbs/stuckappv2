@@ -1,6 +1,7 @@
 package com.sammengistu.stuckfirebase
 
 import android.content.ContentValues.TAG
+import android.graphics.Bitmap
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,6 +17,34 @@ class FirestoreHelper {
     }
 
     companion object {
+        fun createImagePost(post: Post, bitmap1: Bitmap, bitmap2: Bitmap) {
+            var image1Url: String
+            var image2Url: String
+
+            FbStorageHelper.uploadImage(bitmap1, object : FbStorageHelper.UploadCompletionCallback {
+                override fun onSuccess(url: String) {
+                    image1Url = url
+
+                    FbStorageHelper.uploadImage(bitmap2, object : FbStorageHelper.UploadCompletionCallback {
+                        override fun onSuccess(url: String) {
+                            image2Url = url
+                            post.addImage(image1Url)
+                            post.addImage(image2Url)
+                            createPostInFB(post)
+                        }
+
+                        override fun onFailed() {
+
+                        }
+                    })
+                }
+
+                override fun onFailed() {
+
+                }
+            })
+        }
+
         fun createPostInFB(post: Post) {
             getEnvironmentCollectionRef(POSTS)
                 .add(post)

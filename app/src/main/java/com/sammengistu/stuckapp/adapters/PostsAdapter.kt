@@ -15,7 +15,6 @@ import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.data.Post
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.find
-import java.io.File
 
 
 class PostsAdapter(
@@ -60,16 +59,16 @@ class PostsAdapter(
         if (holder is PostTextViewHolder) {
             buildVotableChoices(holder, post)
         } else if (holder is PostImageViewHolder) {
-            holder.imageView1.post { loadImageIntoView(post.images!!["1"]!!, holder.imageView1) }
-            holder.imageView2.post { loadImageIntoView(post.images!!["2"]!!, holder.imageView2) }
+            holder.imageView1.post { loadImageIntoView(post.images["1"]!!, holder.imageView1) }
+            holder.imageView2.post { loadImageIntoView(post.images["2"]!!, holder.imageView2) }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         val post = dataset[position]
         return when (post.type) {
-            PostType.LANDSCAPE -> LANDSCAPE_VIEW_TYPE
-            PostType.PORTRAIT -> PORTRAIT_VIEW_TYPE
+            PostType.LANDSCAPE.toString() -> LANDSCAPE_VIEW_TYPE
+            PostType.PORTRAIT.toString() -> PORTRAIT_VIEW_TYPE
             else -> TEXT_VIEW_TYPE
         }
     }
@@ -81,9 +80,9 @@ class PostsAdapter(
         notifyDataSetChanged()
     }
 
-    private fun loadImageIntoView(imageLoc: String, imageView: ImageView) {
+    private fun loadImageIntoView(imageUrl: String, imageView: ImageView) {
         Picasso.get()
-            .load(File(imageLoc))
+            .load(imageUrl)
             .fit()
             .centerCrop()
             .into(imageView)

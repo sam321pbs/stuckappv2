@@ -6,7 +6,6 @@ import android.widget.LinearLayout
 import androidx.core.view.children
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.utils.CreatePostItem
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import com.sammengistu.stuckfirebase.FirestoreHelper
 import com.sammengistu.stuckfirebase.constants.PostType
@@ -17,7 +16,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 
-class NewTextPostFragment : BaseNewPostFragment(), CreatePostItem {
+class NewTextPostFragment : BaseNewPostFragment() {
 
     lateinit var mChoicesContainer: LinearLayout
     val MAX_NUMBER_OF_CHOICES = 4
@@ -43,7 +42,7 @@ class NewTextPostFragment : BaseNewPostFragment(), CreatePostItem {
         }
 
         submit_button.setOnClickListener {
-            createPost(view)
+            createTextPost(mChoicesContainer)
         }
     }
 
@@ -61,47 +60,5 @@ class NewTextPostFragment : BaseNewPostFragment(), CreatePostItem {
             }
         }
         return true
-    }
-
-    override fun createPost(view: View) {
-        if (fieldsValidated()) {
-            doAsync {
-                uiThread {
-                    progress_bar.visibility = View.VISIBLE
-                }
-
-                val post = Post(
-                    "Sam_1",
-                    username.text.toString(),
-                    "ava",
-                    question.text.toString(),
-                    mSelectedPrivacy,
-                    mSelectedCategory,
-                    PostType.TEXT
-                )
-
-                for (choiceView in mChoicesContainer.children) {
-                    if (choiceView is ChoiceCardView) {
-                        post.addChoice(choiceView.getChoiceText())
-                    }
-                }
-
-                //Todo: use this to create drafts
-//                PostAccess.insertPost(activity!!.applicationContext, post)
-
-                FirestoreHelper.createPostInFB(post)
-
-                uiThread {
-                    progress_bar.visibility = View.GONE
-                    Snackbar.make(view, "DraftPost has been created", Snackbar.LENGTH_SHORT).show()
-                    this@NewTextPostFragment.activity!!.finish()
-                }
-            }
-        }
-    }
-
-    private fun getChoiceAt(pos: Int): String {
-        val child = mChoicesContainer.getChildAt(pos)
-        return if (child is ChoiceCardView) child.getChoiceText() else ""
     }
 }
