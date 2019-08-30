@@ -86,10 +86,19 @@ data class Post(
     }
 
     @Exclude
-    fun getChoicesToVoteList(): List<Triple<Int, String, Int>> {
-        val list = mutableListOf<Triple<Int, String, Int>>()
+    fun getChoicesToVoteList(): List<Triple<String, String, Int>> {
+        val list = mutableListOf<Triple<String, String, Int>>()
         for (choice in choices) {
-            list.add(Triple(1, choice.value, votes[choice.key]!!))
+            list.add(Triple(choice.key, choice.value, votes[choice.key]!!))
+        }
+        return list
+    }
+
+    @Exclude
+    fun getImagesToVoteList(): List<Triple<String, String, Int>> {
+        val list = mutableListOf<Triple<String, String, Int>>()
+        for (image in images) {
+            list.add(Triple(image.key, image.value, votes[image.key]!!))
         }
         return list
     }

@@ -7,11 +7,9 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.sammengistu.stuckfirebase.constants.FirebaseConstants
-import com.sammengistu.stuckfirebase.constants.POSTS
-import com.sammengistu.stuckfirebase.constants.STARRED_POSTS
-import com.sammengistu.stuckfirebase.constants.USERS
+import com.sammengistu.stuckfirebase.constants.*
 import com.sammengistu.stuckfirebase.data.Post
+import com.sammengistu.stuckfirebase.data.UserVote
 
 class FirestoreHelper {
 
@@ -99,6 +97,17 @@ class FirestoreHelper {
                 .add(post)
                 .addOnSuccessListener { Log.d(TAG, "Added starred post") }
                 .addOnFailureListener { e -> Log.w(TAG, "Error starring post", e) }
+        }
+
+        fun createVote(userVote: UserVote?) {
+            // Todo: handle errors
+            if (userVote == null) {
+                return
+            }
+            getUserCollection(userVote.ownerId, VOTES)
+                .add(userVote)
+                .addOnSuccessListener { Log.d(TAG, "Added vote") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error adding vote", e) }
         }
 
         private fun getPosts(collectionRef: CollectionReference, listener: OnItemRetrieved<Post>) {
