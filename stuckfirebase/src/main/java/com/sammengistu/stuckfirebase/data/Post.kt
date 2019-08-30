@@ -14,7 +14,7 @@ data class Post(
     val privacy: String,
     val category: String,
     val type: String
-) {
+) : FirebaseItem() {
     var createdAt: Any? = FieldValue.serverTimestamp()
     var totalStars: Int = 0
     var totalComments: Int = 0

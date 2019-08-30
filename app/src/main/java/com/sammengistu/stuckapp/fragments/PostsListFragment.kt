@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.utils.InjectorUtils
@@ -19,6 +20,7 @@ class PostsListFragment : BasePostListsFragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: PostsAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
 
     override fun getFragmentTag(): String {
         return TAG
@@ -35,7 +37,16 @@ class PostsListFragment : BasePostListsFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        subscribeUi(viewAdapter)
+        setupSwipeToRefresh()
+        refreshAdapter(viewAdapter)
+    }
+
+    private fun setupSwipeToRefresh() {
+        swipeToRefreshLayout = swipe_to_refresh
+        swipeToRefreshLayout.setOnRefreshListener {
+            swipeToRefreshLayout.isRefreshing = true
+            refreshAdapter(viewAdapter)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -48,33 +59,29 @@ class PostsListFragment : BasePostListsFragment() {
         }
     }
 
-    private fun subscribeUi(adapter: PostsAdapter) {
+    private fun refreshAdapter(adapter: PostsAdapter) {
         val category = getPostCategory()
         if (category.isNotEmpty()) {
-            FirestoreHelper.getPostsInCategory(category, object : FirestoreHelper.OnItemRetrieved<Post> {
-                override fun onSuccess(list: List<Post>) {
-                    adapter.swapData(list)
-                }
-
-                override fun onFailed() {
-                    Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
-                }
-
-            })
+            FirestoreHelper.getPostsInCategory(category, getOnPostRetrievedListener(adapter))
         } else {
-            FirestoreHelper.getRecentPosts(object : FirestoreHelper.OnItemRetrieved<Post> {
-                override fun onSuccess(list: List<Post>) {
-                    adapter.swapData(list)
-                }
-
-                override fun onFailed() {
-                    Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
-                }
-
-            })
+            FirestoreHelper.getRecentPosts(getOnPostRetrievedListener(adapter))
 //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
 //         adapter.swapData(posts)
 //        }
+        }
+    }
+
+    private fun getOnPostRetrievedListener(adapter: PostsAdapter): FirestoreHelper.OnItemRetrieved<Post> {
+        return object : FirestoreHelper.OnItemRetrieved<Post> {
+            override fun onSuccess(list: List<Post>) {
+                adapter.swapData(list)
+                swipeToRefreshLayout.isRefreshing = false
+            }
+
+            override fun onFailed() {
+                Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 

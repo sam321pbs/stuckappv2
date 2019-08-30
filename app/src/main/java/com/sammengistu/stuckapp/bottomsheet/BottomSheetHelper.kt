@@ -5,7 +5,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckfirebase.FirestoreHelper
+import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.data.Post
 import org.jetbrains.anko.find
 
@@ -60,6 +63,9 @@ class BottomSheetHelper(private val context: Context, private val bottomSheetLL:
 
     private fun deletePost() {
         // Todo: Change to handle server post vs db post/ also check that it is users posts before deleting
+        if (mPost != null && DummyDataStuck.ownerId == mPost!!.ownerId) {
+            FirestoreHelper.deleteItem(POSTS, mPost!!.ref)
+        }
 //        if (mPost != null) {
 //            val postCopy = mPost!!.copy()
 //            val builder: AlertDialog.Builder? = context.let { AlertDialog.Builder(it) }

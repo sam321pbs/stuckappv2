@@ -11,10 +11,12 @@ import org.jetbrains.anko.uiThread
 
 class DummyDataStuck {
     companion object {
+        val ownerId = "Sam_1"
+
         val DUMMY_DATA = listOf(
             DraftPost(
                 0,
-                "Sam_1",
+                ownerId,
                 "sam321pbs",
                 "15min ago",
                 "avatar_loc",
@@ -30,7 +32,7 @@ class DummyDataStuck {
             ),
             DraftPost(
                 0,
-                "Sam_1",
+                ownerId,
                 "sam321pbs",
                 "30min ago",
                 "avatar_loc",
@@ -46,7 +48,7 @@ class DummyDataStuck {
             ),
             DraftPost(
                 0,
-                "Sam_1",
+                ownerId,
                 "sam321pbs",
                 "1 hour ago",
                 "avatar_loc",
@@ -62,7 +64,7 @@ class DummyDataStuck {
             ),
             DraftPost(
                 0,
-                "Sam_1",
+                ownerId,
                 "sam321pbs",
                 "1 day ago",
                 "avatar_loc",
@@ -78,7 +80,7 @@ class DummyDataStuck {
             ),
             DraftPost(
                 0,
-                "Sam_1",
+                ownerId,
                 "sam321pbs",
                 "2 day ago",
                 "avatar_loc",
