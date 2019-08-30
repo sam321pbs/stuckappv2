@@ -7,12 +7,15 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckfirebase.FirestoreHelper
 import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.data.Post
 import org.jetbrains.anko.find
 
-class BottomSheetHelper(private val context: Context, private val bottomSheetLL: LinearLayout):
+class BottomSheetHelper(private val context: Context,
+                        private val bottomSheetLL: LinearLayout,
+                        private val notifyAdapter: NotifyAdapter):
     BottomSheetMenu {
 
     val TAG = BottomSheetHelper::class.java.simpleName
@@ -51,14 +54,19 @@ class BottomSheetHelper(private val context: Context, private val bottomSheetLL:
 
     private fun reportPost() {
         TODO("report post")
+        hideMenu()
     }
 
     private fun showComments() {
         TODO("show comments")
+        hideMenu()
     }
 
     private fun favoritePost() {
-        TODO("favorite post")
+        mPost!!.totalStars = mPost!!.totalStars + 1
+        notifyAdapter.onDataUpdated()
+        hideMenu()
+        // todo: call firebase cloud function
     }
 
     private fun deletePost() {

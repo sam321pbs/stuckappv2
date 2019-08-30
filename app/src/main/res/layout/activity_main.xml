@@ -56,6 +56,4 @@
             android:visibility="gone"
             app:srcCompat="@drawable/ic_create_white_24dp" />
 
-    <include layout="@layout/bottom_sheet_post_view" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

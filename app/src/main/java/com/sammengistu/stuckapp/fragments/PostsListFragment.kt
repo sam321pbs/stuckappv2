@@ -22,6 +22,10 @@ class PostsListFragment : BasePostListsFragment() {
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
 
+    private val listViewModel: PostListViewModel by viewModels {
+        InjectorUtils.providePostListViewModelFactory(requireContext())
+    }
+
     override fun getFragmentTag(): String {
         return TAG
     }
@@ -30,15 +34,16 @@ class PostsListFragment : BasePostListsFragment() {
         return R.layout.fragment_post_list
     }
 
-    private val listViewModel: PostListViewModel by viewModels {
-        InjectorUtils.providePostListViewModelFactory(requireContext())
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupSwipeToRefresh()
         refreshAdapter(viewAdapter)
+        hideMenu()
+    }
+
+    override fun onDataUpdated() {
+        viewAdapter.notifyDataSetChanged()
     }
 
     private fun setupSwipeToRefresh() {
@@ -81,7 +86,6 @@ class PostsListFragment : BasePostListsFragment() {
             override fun onFailed() {
                 Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
             }
-
         }
     }
 

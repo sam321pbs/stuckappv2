@@ -2,9 +2,12 @@ package com.sammengistu.stuckapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Visibility
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
@@ -20,9 +23,8 @@ import com.sammengistu.stuckfirebase.data.Post
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 
-class MainActivity : BaseActivity(), BottomSheetMenu {
+class MainActivity : BaseActivity() {
 
-    private lateinit var mBottomSheetHelper: BottomSheetHelper
     private lateinit var mNavigationBar: StuckNavigationBar
 
     override fun getLayoutId(): Int {
@@ -37,8 +39,6 @@ class MainActivity : BaseActivity(), BottomSheetMenu {
         setupFab()
         mNavigationBar = stuck_navigation_bar
         mNavigationBar.onItemClicked = getOnNavItemClicked()
-        mBottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
-        hideMenu()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -53,12 +53,12 @@ class MainActivity : BaseActivity(), BottomSheetMenu {
         }
     }
 
-    override fun showMenu(post: Post) {
-        mBottomSheetHelper.showMenu(post)
+    fun hideNavBar() {
+        mNavigationBar.visibility = GONE
     }
 
-    override fun hideMenu() {
-        mBottomSheetHelper.hideMenu()
+    fun showNavBar() {
+        mNavigationBar.visibility = VISIBLE
     }
 
     private fun getOnNavItemClicked(): OnItemClickListener<Int> {
