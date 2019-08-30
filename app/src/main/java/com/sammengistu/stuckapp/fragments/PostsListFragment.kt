@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.utils.InjectorUtils
@@ -66,13 +67,13 @@ class PostsListFragment : BasePostListsFragment() {
 
     private fun refreshAdapter(adapter: PostsAdapter) {
         val category = getPostCategory()
-        if (category.isNotEmpty()) {
-            FirestoreHelper.getPostsInCategory(category, getOnPostRetrievedListener(adapter))
-        } else {
-            FirestoreHelper.getRecentPosts(getOnPostRetrievedListener(adapter))
-//        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
-//         adapter.swapData(posts)
-//        }
+        when {
+            getFavorites() -> FirestoreHelper.getFavoritePosts(DummyDataStuck.ownerId, getOnPostRetrievedListener(adapter))
+            category.isNotEmpty() -> FirestoreHelper.getPostsInCategory(category, getOnPostRetrievedListener(adapter))
+            else -> FirestoreHelper.getRecentPosts(getOnPostRetrievedListener(adapter))
+            //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
+            //         adapter.swapData(posts)
+            //        }
         }
     }
 
@@ -91,13 +92,26 @@ class PostsListFragment : BasePostListsFragment() {
 
     private fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
 
+    private fun getFavorites(): Boolean = arguments?.getBoolean(EXTRA_FAVORITES) ?: false
+
     companion object {
         val TAG: String = PostsListFragment::class.java.simpleName
         const val EXTRA_CATEGORY = "category"
+        const val EXTRA_FAVORITES = "favorite"
+        const val EXTRA_OWNER = "owner"
 
         fun newInstance(category: String): PostsListFragment {
             val bundle = Bundle()
             bundle.putString(EXTRA_CATEGORY, category)
+
+            val fragment = PostsListFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
+
+        fun newInstanceFavorites(): PostsListFragment {
+            val bundle = Bundle()
+            bundle.putBoolean(EXTRA_FAVORITES, true)
 
             val fragment = PostsListFragment()
             fragment.arguments = bundle

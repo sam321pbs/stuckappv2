@@ -15,6 +15,7 @@ import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.constants.CATEGORIES
 import com.sammengistu.stuckapp.constants.CREATE
+import com.sammengistu.stuckapp.constants.FAVORITE
 import com.sammengistu.stuckapp.constants.HOME
 import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
@@ -71,6 +72,7 @@ class MainActivity : BaseActivity() {
                         val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
                         startActivity(intentNewPost)
                     }
+                    FAVORITE -> addFragment(PostsListFragment.newInstanceFavorites())
                 }
             }
         }
@@ -81,6 +83,6 @@ class MainActivity : BaseActivity() {
             val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
             startActivity(intentNewPost)
         }
-        fab.visibility = View.GONE
+        fab.visibility = GONE
     }
 }

@@ -9,6 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.sammengistu.stuckfirebase.constants.FirebaseConstants
 import com.sammengistu.stuckfirebase.constants.POSTS
+import com.sammengistu.stuckfirebase.constants.STARRED_POSTS
+import com.sammengistu.stuckfirebase.constants.USERS
 import com.sammengistu.stuckfirebase.data.Post
 
 class FirestoreHelper {
@@ -66,38 +68,19 @@ class FirestoreHelper {
         }
 
         fun getRecentPosts(listener: OnItemRetrieved<Post>) {
-            getEnvironmentCollectionRef(POSTS)
-                //Todo: add limit
-                .get()
-                .addOnSuccessListener(getSuccessListener(listener))
-                .addOnFailureListener {
-                    Log.e(TAG, "Failed to get posts", it)
-                    listener.onFailed()
-                }
+            getPosts(getEnvironmentCollectionRef(POSTS), listener)
         }
 
         fun getPostsInCategory(filterCategory: String, listener: OnItemRetrieved<Post>) {
-            getEnvironmentCollectionRef(POSTS)
-                .whereEqualTo("category", filterCategory)
-                //Todo: add limit
-                .get()
-                .addOnSuccessListener(getSuccessListener(listener))
-                .addOnFailureListener {
-                    Log.e(TAG, "Failed to get posts", it)
-                    listener.onFailed()
-                }
+            getPostsWhereEqual(getEnvironmentCollectionRef(POSTS),"category", filterCategory, listener)
         }
 
         fun getOwnerPosts(ownerId: String, listener: OnItemRetrieved<Post>) {
-            getEnvironmentCollectionRef(POSTS)
-                .whereEqualTo("owner_id", ownerId)
-                //Todo: add limit
-                .get()
-                .addOnSuccessListener(getSuccessListener(listener))
-                .addOnFailureListener {
-                    Log.e(TAG, "Failed to get posts", it)
-                    listener.onFailed()
-                }
+            getPostsWhereEqual(getEnvironmentCollectionRef(POSTS),"owner_id", ownerId, listener)
+        }
+
+        fun getFavoritePosts(ownerId: String, listener: OnItemRetrieved<Post>) {
+            getPosts(getUserCollection(ownerId, STARRED_POSTS), listener)
         }
 
         fun deleteItem(collection: String, documentId: String) {
@@ -106,6 +89,44 @@ class FirestoreHelper {
                 .delete()
                 .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully deleted!") }
                 .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
+        }
+
+        fun starPost(ownerId: String, post: Post?) {
+            if (post == null) {
+                return
+            }
+            getUserCollection(ownerId, STARRED_POSTS)
+                .add(post)
+                .addOnSuccessListener { Log.d(TAG, "Added starred post") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error starring post", e) }
+        }
+
+        private fun getPosts(collectionRef: CollectionReference, listener: OnItemRetrieved<Post>) {
+            collectionRef
+                //Todo: add limit
+                .get()
+                .addOnSuccessListener(getSuccessListener(listener))
+                .addOnFailureListener {
+                    Log.e(TAG, "Failed to get posts", it)
+                    listener.onFailed()
+                }
+        }
+
+        private fun getPostsWhereEqual(
+            collectionRef: CollectionReference,
+            field: String,
+            value: Any,
+            listener: OnItemRetrieved<Post>
+        ) {
+            collectionRef
+                //Todo: add limit
+                .whereEqualTo(field, value)
+                .get()
+                .addOnSuccessListener(getSuccessListener(listener))
+                .addOnFailureListener {
+                    Log.e(TAG, "Failed to get posts", it)
+                    listener.onFailed()
+                }
         }
 
         private fun getSuccessListener(listener: OnItemRetrieved<Post>): OnSuccessListener<QuerySnapshot> {
@@ -137,6 +158,12 @@ class FirestoreHelper {
             val db = FirebaseFirestore.getInstance()
             return db.collection(FirebaseConstants.ENVIRONMENT_COLLECTION)
                 .document(FirebaseConstants.ENVIRONMENT_COLLECTION)
+                .collection(collection)
+        }
+
+        private fun getUserCollection(ownerId: String, collection: String): CollectionReference {
+            return getEnvironmentCollectionRef(USERS)
+                .document(ownerId)
                 .collection(collection)
         }
     }

@@ -7,12 +7,12 @@ import com.sammengistu.stuckapp.fragments.BaseFragment
 
 abstract class BaseActivity : AppCompatActivity() {
 
+    abstract fun getLayoutId(): Int
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
     }
-
-    abstract fun getLayoutId(): Int
 
     fun addFragment(fragment: BaseFragment) {
         val fragmentManager = supportFragmentManager

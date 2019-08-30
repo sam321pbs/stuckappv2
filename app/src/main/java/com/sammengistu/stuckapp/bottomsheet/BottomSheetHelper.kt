@@ -45,7 +45,7 @@ class BottomSheetHelper(private val context: Context,
         bottomSheetLL.find<TextView>(R.id.menu_delete_post)
             .setOnClickListener { deletePost() }
         bottomSheetLL.find<TextView>(R.id.menu_favorite)
-            .setOnClickListener { favoritePost() }
+            .setOnClickListener { starPost() }
         bottomSheetLL.find<TextView>(R.id.menu_view_comments)
             .setOnClickListener { showComments() }
         bottomSheetLL.find<TextView>(R.id.menu_report)
@@ -62,11 +62,14 @@ class BottomSheetHelper(private val context: Context,
         hideMenu()
     }
 
-    private fun favoritePost() {
-        mPost!!.totalStars = mPost!!.totalStars + 1
-        notifyAdapter.onDataUpdated()
-        hideMenu()
-        // todo: call firebase cloud function
+    private fun starPost() {
+        if (mPost != null) {
+            FirestoreHelper.starPost(DummyDataStuck.ownerId, mPost)
+            mPost!!.totalStars = mPost!!.totalStars + 1
+            notifyAdapter.onDataUpdated()
+            hideMenu()
+            // todo: call firebase cloud function
+        }
     }
 
     private fun deletePost() {
