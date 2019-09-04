@@ -15,7 +15,7 @@ import com.sammengistu.stuckapp.views.HorizontalIconToTextView
 import com.sammengistu.stuckapp.views.VotableChoiceView
 import com.sammengistu.stuckapp.views.VotableImageView
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.data.Post
+import com.sammengistu.stuckfirebase.data.PostModel
 import org.jetbrains.anko.find
 
 
@@ -23,7 +23,7 @@ class PostsAdapter(
     private val mContext: Context,
     private val mBottomSheetMenu: BottomSheetMenu
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
-    private var dataset = listOf<Post>()
+    private var dataset = listOf<PostModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         return when (viewType) {
@@ -66,7 +66,7 @@ class PostsAdapter(
 
     override fun getItemCount() = dataset.size
 
-    fun swapData(dataset: List<Post>) {
+    fun swapData(dataset: List<PostModel>) {
         this.dataset = dataset
         notifyDataSetChanged()
     }
@@ -74,7 +74,7 @@ class PostsAdapter(
     private fun createView(parent: ViewGroup, layoutId: Int) =
         LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
 
-    private fun buildVotableTextChoices(holder: PostTextViewHolder, post: Post) {
+    private fun buildVotableTextChoices(holder: PostTextViewHolder, post: PostModel) {
         val container = holder.votableChoiceContainer
         container.removeAllViews()
         for (tripleItem in post.getChoicesToVoteList()) {
@@ -83,7 +83,7 @@ class PostsAdapter(
         }
     }
 
-    private fun buildVotableImageChoices(holder: PostImageViewHolder, post: Post) {
+    private fun buildVotableImageChoices(holder: PostImageViewHolder, post: PostModel) {
         val container = holder.imageContainer
         container.removeAllViews()
         for (tripleItem in post.getImagesToVoteList()) {

@@ -2,17 +2,13 @@ package com.sammengistu.stuckapp.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.transition.Visibility
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
-import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.constants.CATEGORIES
 import com.sammengistu.stuckapp.constants.CREATE
 import com.sammengistu.stuckapp.constants.FAVORITE
@@ -20,9 +16,7 @@ import com.sammengistu.stuckapp.constants.HOME
 import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
 import com.sammengistu.stuckapp.views.StuckNavigationBar
-import com.sammengistu.stuckfirebase.data.Post
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 
 class MainActivity : BaseActivity() {
 

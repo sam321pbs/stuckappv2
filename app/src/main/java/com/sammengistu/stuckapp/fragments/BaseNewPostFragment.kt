@@ -9,14 +9,14 @@ import android.widget.Toast
 import androidx.core.view.children
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
+import com.sammengistu.stuckapp.data.PostAccess
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
 import com.sammengistu.stuckapp.events.PrivacySelectedEvent
 import com.sammengistu.stuckapp.views.ChoiceCardView
-import com.sammengistu.stuckfirebase.FirestoreHelper
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.data.Post
+import com.sammengistu.stuckfirebase.data.PostModel
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.EventBus
@@ -83,7 +83,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
 
                 var success = false
                 try {
-                    val post = Post(
+                    val post = PostModel(
                         "Sam_1",
                         username.text.toString(),
                         "ava",
@@ -98,7 +98,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
                         val data2 = data[IMAGE_2]
                         val bitmap1 = if (data1 is Bitmap) data1 else null
                         val bitmap2 = if (data2 is Bitmap) data2 else null
-                        FirestoreHelper.createImagePost(post, bitmap1!!, bitmap2!!)
+                        PostAccess().createImagePost(post, bitmap1!!, bitmap2!!)
                     } else if (data.containsKey(CHOICES_VIEW)) {
                         val data1 = data[CHOICES_VIEW]
                         val choiceContainer = if (data1 is LinearLayout) data1 else null
@@ -107,7 +107,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
                                 post.addChoice(choiceView.getChoiceText())
                             }
                         }
-                        FirestoreHelper.createTextPostInFB(post)
+                        PostAccess().createItemInFB(post)
                     }
 //                    PostAccess.insertPost(activity!!.applicationContext, post)
                     success = true

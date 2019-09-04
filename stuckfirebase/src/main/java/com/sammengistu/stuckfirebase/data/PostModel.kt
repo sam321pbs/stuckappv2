@@ -1,26 +1,24 @@
 package com.sammengistu.stuckfirebase.data
 
 import com.google.firebase.firestore.Exclude
-import com.google.firebase.firestore.FieldValue
 
 @Exclude
 const val MAX_NUMBER_OF_CHOICES = 4
 
-data class Post(
+data class PostModel(
     val ownerId: String,
     val userName: String,
     val avatar: String,
     val question: String,
     val privacy: String,
     val category: String,
-    val type: String
-) : FirebaseItem() {
-    var createdAt: Any? = FieldValue.serverTimestamp()
-    var totalStars: Int = 0
-    var totalComments: Int = 0
-    var images: HashMap<String, String> = HashMap()
-    var choices: HashMap<String, String> = HashMap()
+    val type: String,
+    var totalStars: Int = 0,
+    var totalComments: Int = 0,
+    var images: HashMap<String, String> = HashMap(),
+    var choices: HashMap<String, String> = HashMap(),
     var votes: HashMap<String, Int> = HashMap()
+) : FirebaseItem() {
 
     init {
         if (votes.isEmpty()) {

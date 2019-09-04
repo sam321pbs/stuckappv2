@@ -10,10 +10,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
+import com.sammengistu.stuckapp.data.PostAccess
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckapp.viewmodels.PostListViewModel
-import com.sammengistu.stuckfirebase.FirestoreHelper
-import com.sammengistu.stuckfirebase.data.Post
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
+import com.sammengistu.stuckfirebase.access.StarPostAccess
+import com.sammengistu.stuckfirebase.data.PostModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 
 class PostsListFragment : BasePostListsFragment() {
@@ -68,18 +70,19 @@ class PostsListFragment : BasePostListsFragment() {
     private fun refreshAdapter(adapter: PostsAdapter) {
         val category = getPostCategory()
         when {
-            getFavorites() -> FirestoreHelper.getFavoritePosts(DummyDataStuck.ownerId, getOnPostRetrievedListener(adapter))
-            category.isNotEmpty() -> FirestoreHelper.getPostsInCategory(category, getOnPostRetrievedListener(adapter))
-            else -> FirestoreHelper.getRecentPosts(getOnPostRetrievedListener(adapter))
+            getFavorites() -> StarPostAccess(DummyDataStuck.ownerId).getItems(getOnPostRetrievedListener(adapter))
+            category.isNotEmpty() -> PostAccess().getPostsInCategory(category, getOnPostRetrievedListener(adapter))
+            else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
             //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
             //         adapter.swapData(posts)
             //        }
         }
     }
 
-    private fun getOnPostRetrievedListener(adapter: PostsAdapter): FirestoreHelper.OnItemRetrieved<Post> {
-        return object : FirestoreHelper.OnItemRetrieved<Post> {
-            override fun onSuccess(list: List<Post>) {
+    private fun getOnPostRetrievedListener(adapter: PostsAdapter): FirebaseItemAccess.OnItemRetrieved<PostModel> {
+        return object :
+            FirebaseItemAccess.OnItemRetrieved<PostModel> {
+            override fun onSuccess(list: List<PostModel>) {
                 adapter.swapData(list)
                 swipeToRefreshLayout.isRefreshing = false
             }

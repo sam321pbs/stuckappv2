@@ -5,7 +5,7 @@ import android.view.View
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
-import com.sammengistu.stuckfirebase.data.Post
+import com.sammengistu.stuckfirebase.data.PostModel
 import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 
 abstract class BasePostListsFragment : BaseFragment(), BottomSheetMenu, NotifyAdapter {
@@ -19,7 +19,7 @@ abstract class BasePostListsFragment : BaseFragment(), BottomSheetMenu, NotifyAd
         mBottomSheetHelper = BottomSheetHelper(activity!!, bottom_sheet, this)
     }
 
-    override fun showMenu(post: Post) {
+    override fun showMenu(post: PostModel) {
 //        if (activity is MainActivity) {
 //            (activity as MainActivity).hideNavBar()
 //        }

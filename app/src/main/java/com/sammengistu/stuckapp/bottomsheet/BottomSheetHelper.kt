@@ -8,9 +8,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
-import com.sammengistu.stuckfirebase.FirestoreHelper
-import com.sammengistu.stuckfirebase.constants.POSTS
-import com.sammengistu.stuckfirebase.data.Post
+import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckfirebase.access.StarPostAccess
+import com.sammengistu.stuckfirebase.data.PostModel
 import org.jetbrains.anko.find
 
 class BottomSheetHelper(private val context: Context,
@@ -22,7 +22,7 @@ class BottomSheetHelper(private val context: Context,
 
     private var mBottomSheetBehavior: BottomSheetBehavior<LinearLayout> =
         BottomSheetBehavior.from(bottomSheetLL)
-    private var mPost: Post? = null
+    private var mPost: PostModel? = null
 
     init {
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -30,7 +30,7 @@ class BottomSheetHelper(private val context: Context,
         addClickListenersToViews()
     }
 
-    override fun showMenu(post: Post) {
+    override fun showMenu(post: PostModel) {
         mPost = post
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
@@ -64,7 +64,7 @@ class BottomSheetHelper(private val context: Context,
 
     private fun starPost() {
         if (mPost != null) {
-            FirestoreHelper.starPost(DummyDataStuck.ownerId, mPost)
+            StarPostAccess(DummyDataStuck.ownerId).createItemInFB(mPost!!)
             mPost!!.totalStars = mPost!!.totalStars + 1
             notifyAdapter.onDataUpdated()
             hideMenu()
@@ -75,7 +75,7 @@ class BottomSheetHelper(private val context: Context,
     private fun deletePost() {
         // Todo: Change to handle server post vs db post/ also check that it is users posts before deleting
         if (mPost != null && DummyDataStuck.ownerId == mPost!!.ownerId) {
-            FirestoreHelper.deleteItem(POSTS, mPost!!.ref)
+            PostAccess().deleteItemInFb(mPost!!.ref)
         }
 //        if (mPost != null) {
 //            val postCopy = mPost!!.copy()

@@ -7,13 +7,8 @@ import androidx.core.view.children
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.views.ChoiceCardView
-import com.sammengistu.stuckfirebase.FirestoreHelper
-import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.data.Post
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 
 class NewTextPostFragment : BaseNewPostFragment() {

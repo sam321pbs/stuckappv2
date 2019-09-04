@@ -3,8 +3,8 @@ package com.sammengistu.stuckapp.views
 import android.content.Context
 import android.view.MotionEvent
 import android.widget.RelativeLayout
-import com.sammengistu.stuckfirebase.FirestoreHelper
-import com.sammengistu.stuckfirebase.data.UserVote
+import com.sammengistu.stuckfirebase.access.UserVoteAccess
+import com.sammengistu.stuckfirebase.data.UserVoteModel
 
 abstract class VotableContainer(
     context: Context,
@@ -24,7 +24,7 @@ abstract class VotableContainer(
 
     override fun onDoubleTapped() {
 //        Log.d(VotableChoiceView.TAG, "$owner voted on $postId choice $votePos")
-        FirestoreHelper.createVote(UserVote(owner, postId, votePos))
+        UserVoteAccess(owner).createItemInFB(UserVoteModel(owner, postId, votePos))
         onItemVotedOn()
     }
 }
