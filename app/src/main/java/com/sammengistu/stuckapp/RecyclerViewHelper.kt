@@ -10,10 +10,10 @@ class RecyclerViewHelper {
             context: Context, recyclerView: RecyclerView,
             viewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
         ) {
-            val viewManager = LinearLayoutManager(context)
+            val manager = LinearLayoutManager(context)
             recyclerView.apply {
                 setHasFixedSize(true)
-                layoutManager = viewManager
+                layoutManager = manager
                 adapter = viewAdapter
             }
         }

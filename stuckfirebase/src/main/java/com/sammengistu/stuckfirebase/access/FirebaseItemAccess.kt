@@ -11,6 +11,7 @@ import com.sammengistu.stuckfirebase.constants.FirebaseConstants
 import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.constants.USERS
 import com.sammengistu.stuckfirebase.data.FirebaseItem
+import java.lang.ref.WeakReference
 
 abstract class FirebaseItemAccess<T : FirebaseItem> {
     abstract fun getCollectionRef(): CollectionReference
@@ -85,13 +86,17 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
     }
 
     private fun getSuccessListener(listener: OnItemRetrieved<T>): OnSuccessListener<QuerySnapshot> {
+        val weakRef = WeakReference(listener)
         return OnSuccessListener { document ->
-            if (document != null) {
-                val list = document.toObjects(getModelClass())
-                addRefToItems(document, list)
-                listener.onSuccess(list)
-            } else {
-                Log.d(TAG, "Couldn't get posts")
+            val listenerRef = weakRef.get()
+            if (listenerRef != null) {
+                if (document != null) {
+                    val list = document.toObjects(getModelClass())
+                    addRefToItems(document, list)
+                    listenerRef.onSuccess(list)
+                } else {
+                    listenerRef.onFailed()
+                }
             }
         }
     }

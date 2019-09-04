@@ -11,8 +11,16 @@ abstract class BaseFragment : Fragment() {
     abstract fun getLayoutId() : Int
     abstract fun getFragmentTag() : String
 
+    var mViewCreated = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        mViewCreated = true
         return inflater.inflate(getLayoutId(), container, false)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mViewCreated = false;
     }
 
     fun addFragment(fragment: BaseFragment) {

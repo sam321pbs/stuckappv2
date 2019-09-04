@@ -12,10 +12,10 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.data.PostAccess
 import com.sammengistu.stuckapp.utils.InjectorUtils
-import com.sammengistu.stuckapp.viewmodels.PostListViewModel
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 
 class PostsListFragment : BasePostListsFragment() {

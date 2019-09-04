@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp.viewmodels
+package com.sammengistu.stuckfirebase.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

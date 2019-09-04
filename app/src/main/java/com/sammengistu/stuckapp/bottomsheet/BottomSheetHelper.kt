@@ -7,6 +7,7 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.data.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
@@ -58,8 +59,8 @@ class BottomSheetHelper(private val context: Context,
     }
 
     private fun showComments() {
-        TODO("show comments")
         hideMenu()
+        CommentsActivity.startActivity(context, mPost!!.ref, 0)
     }
 
     private fun starPost() {
