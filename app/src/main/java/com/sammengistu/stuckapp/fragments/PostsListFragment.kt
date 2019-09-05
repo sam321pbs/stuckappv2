@@ -11,12 +11,15 @@ import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 
 class PostsListFragment : BasePostListsFragment() {
 
@@ -24,6 +27,11 @@ class PostsListFragment : BasePostListsFragment() {
     private lateinit var viewAdapter: PostsAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
+
+    @Subscribe
+    fun onUserVotesLoaded(event: UserVotesLoadedEvent) {
+        onDataUpdated()
+    }
 
     private val listViewModel: PostListViewModel by viewModels {
         InjectorUtils.providePostListViewModelFactory(requireContext())
@@ -43,6 +51,12 @@ class PostsListFragment : BasePostListsFragment() {
         setupSwipeToRefresh()
         refreshAdapter(viewAdapter)
         hideMenu()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onDataUpdated() {

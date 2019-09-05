@@ -6,7 +6,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.OnItemClickListener
-import com.sammengistu.stuckapp.RecyclerViewHelper
+import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.adapters.CategoriesAdapter
 
 abstract class BasicListSelectorDialog : DialogFragment(), OnItemClickListener<String> {

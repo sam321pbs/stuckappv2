@@ -8,7 +8,7 @@ import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.RecyclerViewHelper
+import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
 import com.sammengistu.stuckapp.adapters.CommentsAdapter

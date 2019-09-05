@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.google.firebase.FirebaseApp
+import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.constants.CATEGORIES
@@ -16,11 +17,13 @@ import com.sammengistu.stuckapp.constants.HOME
 import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
 import com.sammengistu.stuckapp.views.StuckNavigationBar
+import com.sammengistu.stuckapp.UserVotesCollection
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
 
     private lateinit var mNavigationBar: StuckNavigationBar
+    lateinit var mUserVotesCollection: UserVotesCollection
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -34,6 +37,8 @@ class MainActivity : BaseActivity() {
         setupFab()
         mNavigationBar = stuck_navigation_bar
         mNavigationBar.onItemClicked = getOnNavItemClicked()
+
+        UserVotesCollection.loadUserVotes(DummyDataStuck.ownerId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

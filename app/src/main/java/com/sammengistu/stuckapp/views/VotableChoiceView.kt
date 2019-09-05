@@ -8,10 +8,18 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.data.UserVoteModel
 import org.jetbrains.anko.centerVertically
 
-class VotableChoiceView(context: Context, owner: String, postId: String, votePos: Int)
-    : VotableContainer(context, owner, postId, votePos), DoubleTapGesture.DoubleTapListener {
+class VotableChoiceView(
+    context: Context,
+    owner: String,
+    post: PostModel,
+    choiceItem: Triple<String, String, Int>,
+    userVote: UserVoteModel?,
+    updateParentContainer: UpdateParentContainer
+) : VotableContainer(context, owner, post, choiceItem, userVote, updateParentContainer) {
 
     private val mBullet = ImageView(context)
     private val mChoiceText = TextView(context)
@@ -22,21 +30,9 @@ class VotableChoiceView(context: Context, owner: String, postId: String, votePos
         applyStyleManually(context)
     }
 
-    companion object {
-        val TAG = VotableChoiceView::class.java.simpleName
-
-        fun createView(context: Context, owner: String, postId: String,
-                       choiceItem: Triple<String, String, Int>): VotableChoiceView {
-            val votableChoice = VotableChoiceView(context, owner, postId, choiceItem.first.toInt())
-            votableChoice.setChoiceText(choiceItem.second)
-            votableChoice.setTotal(choiceItem.third)
-            return votableChoice
-        }
-    }
-
-    override fun onItemVotedOn() {
+    override fun onItemVotedOn(userVote: UserVoteModel?) {
         // Todo: start animation to show votes
-        this@VotableChoiceView.setBackgroundColor(resources.getColor(R.color.green))
+        handleVotedItem(userVote, true)
     }
 
     fun setChoiceText(choiceText: String) {
@@ -61,7 +57,7 @@ class VotableChoiceView(context: Context, owner: String, postId: String, votePos
         bulletParams.topMargin = 6
         bulletParams.bottomMargin = 6
         mBullet.id = View.generateViewId()
-        mBullet.setImageResource(R.drawable.circle)
+        mBullet.setImageResource(R.drawable.gray_circle)
         mBullet.layoutParams = bulletParams
         addView(mBullet)
     }
@@ -74,10 +70,29 @@ class VotableChoiceView(context: Context, owner: String, postId: String, votePos
         votesParams.addRule(ALIGN_PARENT_END)
         mVotesText.layoutParams = votesParams
         mVotesText.gravity = Gravity.CENTER
-        mVotesText.setBackgroundResource(R.drawable.circle)
+        mVotesText.setBackgroundResource(R.drawable.gray_circle)
         mVotesText.setPadding(5, 5, 5, 5)
         mVotesText.textSize = 15f
+        setBackgroundColor(resources.getColor(R.color.white))
+        setTotal(choiceItem.third)
+
+        handleVotedItem(userVote)
+
         addView(mVotesText)
+    }
+
+    private fun handleVotedItem(userVote: UserVoteModel?, isUpdate: Boolean = false) {
+        if (userVote == null) {
+            mVotesText.visibility = View.GONE
+        } else {
+            mVotesText.visibility = View.VISIBLE
+            if (choiceItem.first.toInt() == userVote.voteItem) {
+                setBackgroundColor(resources.getColor(R.color.green))
+                if (isUpdate) {
+                    setTotal(choiceItem.third + 1)
+                }
+            }
+        }
     }
 
     private fun buildChoiceText() {
@@ -89,6 +104,7 @@ class VotableChoiceView(context: Context, owner: String, postId: String, votePos
         mChoiceText.layoutParams = choiceTextParams
         mChoiceText.setTextColor(resources.getColor(android.R.color.black))
         mChoiceText.textSize = 21f
+        setChoiceText(choiceItem.second)
         addView(mChoiceText)
     }
 
@@ -123,7 +139,15 @@ class VotableChoiceView(context: Context, owner: String, postId: String, votePos
         params.marginStart = marginAndPadding.toInt()
         params.marginEnd = marginAndPadding.toInt()
         params.bottomMargin = marginAndPadding.toInt()
-        setPadding(marginAndPadding.toInt(), marginAndPadding.toInt(), marginAndPadding.toInt(), marginAndPadding.toInt())
-        setBackgroundColor(resources.getColor(R.color.white))
+        setPadding(
+            marginAndPadding.toInt(),
+            marginAndPadding.toInt(),
+            marginAndPadding.toInt(),
+            marginAndPadding.toInt()
+        )
+    }
+
+    companion object {
+        val TAG = VotableChoiceView::class.java.simpleName
     }
 }

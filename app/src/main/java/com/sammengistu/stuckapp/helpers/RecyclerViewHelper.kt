@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp
+package com.sammengistu.stuckapp.helpers
 
 import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
