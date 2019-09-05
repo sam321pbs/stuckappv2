@@ -2,10 +2,7 @@ package com.sammengistu.stuckfirebase.access
 
 import android.util.Log
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.*
 import com.sammengistu.stuckfirebase.BuildConfig
 import com.sammengistu.stuckfirebase.constants.FirebaseConstants
 import com.sammengistu.stuckfirebase.constants.POSTS
@@ -46,6 +43,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
     fun getItems(listener: OnItemRetrieved<T>) {
         getCollectionRef()
             //Todo: add limit
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
@@ -58,6 +56,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         getCollectionRef()
             //Todo: add limit
             .whereEqualTo(field, value)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
