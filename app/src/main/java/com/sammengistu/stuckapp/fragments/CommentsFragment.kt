@@ -72,7 +72,7 @@ class CommentsFragment : BaseFragment() {
         send_button.setOnClickListener {
             val commentModel = CommentModel(
                 mPostId,
-                DummyDataStuck.ownerId,
+                DummyDataStuck.userId,
                 "samtheman",
                 "ava_1",
                 mCommentET.text.toString(),

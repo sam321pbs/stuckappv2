@@ -22,8 +22,6 @@ import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 import org.jetbrains.anko.find
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class PostsAdapter(
@@ -87,7 +85,7 @@ class PostsAdapter(
         val updateParentContainer = getUpdateParentContainer(container)
         for (tripleItem in post.getChoicesToVoteList()) {
             container.addView(
-                VotableChoiceView(mContext, DummyDataStuck.ownerId, post, tripleItem, userVote, updateParentContainer))
+                VotableChoiceView(mContext, DummyDataStuck.userId, post, tripleItem, userVote, updateParentContainer))
         }
     }
 
@@ -97,7 +95,7 @@ class PostsAdapter(
         val updateParentContainer = getUpdateParentContainer(container)
         for (tripleItem in post.getImagesToVoteList()) {
             container.addView(
-                VotableImageView(mContext, DummyDataStuck.ownerId, post, tripleItem, userVote, updateParentContainer))
+                VotableImageView(mContext, DummyDataStuck.userId, post, tripleItem, userVote, updateParentContainer))
         }
     }
 

@@ -82,10 +82,10 @@ class PostsListFragment : BasePostListsFragment() {
     }
 
     private fun refreshAdapter(adapter: PostsAdapter) {
-        val category = getPostCategory()
         when {
-            getFavorites() -> StarPostAccess(DummyDataStuck.ownerId).getItems(getOnPostRetrievedListener(adapter))
-            category.isNotEmpty() -> PostAccess().getPostsInCategory(category, getOnPostRetrievedListener(adapter))
+            getFavorites().isNotBlank() -> StarPostAccess(DummyDataStuck.userId).getItems(getOnPostRetrievedListener(adapter))
+            getPostCategory().isNotEmpty() -> PostAccess().getPostsInCategory(getPostCategory(), getOnPostRetrievedListener(adapter))
+            getOwner().isNotEmpty() -> PostAccess().getOwnerPosts(DummyDataStuck.userId, getOnPostRetrievedListener(adapter))
             else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
             //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
             //         adapter.swapData(posts)
@@ -109,26 +109,19 @@ class PostsListFragment : BasePostListsFragment() {
 
     private fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
 
-    private fun getFavorites(): Boolean = arguments?.getBoolean(EXTRA_FAVORITES) ?: false
+    private fun getFavorites(): String = arguments?.getString(EXTRA_FAVORITES) ?: ""
+
+    private fun getOwner(): String = arguments?.getString(EXTRA_USER) ?: ""
 
     companion object {
         val TAG: String = PostsListFragment::class.java.simpleName
         const val EXTRA_CATEGORY = "category"
         const val EXTRA_FAVORITES = "favorite"
-        const val EXTRA_OWNER = "owner"
+        const val EXTRA_USER = "owner"
 
-        fun newInstance(category: String): PostsListFragment {
+        fun newInstance(extraName: String, value: String): PostsListFragment {
             val bundle = Bundle()
-            bundle.putString(EXTRA_CATEGORY, category)
-
-            val fragment = PostsListFragment()
-            fragment.arguments = bundle
-            return fragment
-        }
-
-        fun newInstanceFavorites(): PostsListFragment {
-            val bundle = Bundle()
-            bundle.putBoolean(EXTRA_FAVORITES, true)
+            bundle.putString(extraName, value)
 
             val fragment = PostsListFragment()
             fragment.arguments = bundle

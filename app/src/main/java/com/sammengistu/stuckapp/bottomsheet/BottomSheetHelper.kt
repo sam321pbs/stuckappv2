@@ -65,7 +65,7 @@ class BottomSheetHelper(private val context: Context,
 
     private fun starPost() {
         if (mPost != null) {
-            StarPostAccess(DummyDataStuck.ownerId).createItemInFB(mPost!!)
+            StarPostAccess(DummyDataStuck.userId).createItemInFB(mPost!!)
             mPost!!.totalStars = mPost!!.totalStars + 1
             notifyAdapter.onDataUpdated()
             hideMenu()
@@ -75,7 +75,7 @@ class BottomSheetHelper(private val context: Context,
 
     private fun deletePost() {
         // Todo: Change to handle server post vs db post/ also check that it is users posts before deleting
-        if (mPost != null && DummyDataStuck.ownerId == mPost!!.ownerId) {
+        if (mPost != null && DummyDataStuck.userId == mPost!!.ownerId) {
             PostAccess().deleteItemInFb(mPost!!.ref)
         }
 //        if (mPost != null) {

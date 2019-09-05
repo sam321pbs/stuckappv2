@@ -6,9 +6,10 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.adapters.CategoriesAdapter
 import com.sammengistu.stuckapp.constants.Categories
+import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_CATEGORY
+import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import kotlinx.android.synthetic.main.basic_list_view.*
 
 class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
@@ -23,7 +24,7 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
 
     override fun onItemClicked(category: String) {
         Toast.makeText(context, category, Toast.LENGTH_SHORT).show()
-        addFragment(PostsListFragment.newInstance(category))
+        addFragment(PostsListFragment.newInstance(EXTRA_CATEGORY, category))
     }
 
     override fun getLayoutId(): Int {

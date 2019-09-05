@@ -10,20 +10,18 @@ import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.constants.CATEGORIES
-import com.sammengistu.stuckapp.constants.CREATE
-import com.sammengistu.stuckapp.constants.FAVORITE
-import com.sammengistu.stuckapp.constants.HOME
 import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckapp.constants.*
+import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_FAVORITES
+import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_USER
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
 
     private lateinit var mNavigationBar: StuckNavigationBar
-    lateinit var mUserVotesCollection: UserVotesCollection
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -38,7 +36,7 @@ class MainActivity : BaseActivity() {
         mNavigationBar = stuck_navigation_bar
         mNavigationBar.onItemClicked = getOnNavItemClicked()
 
-        UserVotesCollection.loadUserVotes(DummyDataStuck.ownerId)
+        UserVotesCollection.loadUserVotes(DummyDataStuck.userId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -71,7 +69,8 @@ class MainActivity : BaseActivity() {
                         val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
                         startActivity(intentNewPost)
                     }
-                    FAVORITE -> addFragment(PostsListFragment.newInstanceFavorites())
+                    FAVORITE -> addFragment(PostsListFragment.newInstance(EXTRA_FAVORITES, "true"))
+                    ME -> addFragment(PostsListFragment.newInstance(EXTRA_USER, DummyDataStuck.userId))
                 }
             }
         }
