@@ -13,6 +13,7 @@ import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
+import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.HorizontalIconToTextView
 import com.sammengistu.stuckapp.views.VotableChoiceView
 import com.sammengistu.stuckapp.views.VotableContainer
@@ -21,6 +22,8 @@ import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 import org.jetbrains.anko.find
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class PostsAdapter(
@@ -40,11 +43,10 @@ class PostsAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
-//        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
-//            .format(Date(post.createdAt!!.seconds * 1000))
+
         holder.questionView.text = post.question
         holder.username.text = post.userName
-//        holder.timeSince.text = simpleDateFormat
+        holder.timeSince.text = DateUtils.convertDateToTimeElapsed(post.getDate())
 
         holder.commentsTotalView.setText(post.totalComments.toString())
         holder.voteTotalView.setText(post.getTotalVotes().toString())
