@@ -4,4 +4,6 @@
     <string name="post_type_question">What kind of post do you want to make?</string>
     <string name="image">Image</string>
     <string name="text">Text</string>
+    <string name="navigation_drawer_close">Close</string>
+    <string name="navigation_drawer_open">Open</string>
 </resources>

@@ -22,4 +22,15 @@ abstract class BaseActivity : AppCompatActivity() {
             .addToBackStack(fragment.getFragmentTag())
             .commit()
     }
+
+    fun addFragment(fragment: BaseFragment, title: String) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction
+            .add(R.id.fragment_container, fragment)
+            .addToBackStack(fragment.getFragmentTag())
+            .commit()
+
+        supportActionBar?.title = title
+    }
 }
