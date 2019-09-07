@@ -38,5 +38,6 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics:$rootProject.firebaseAnalyticsVersion"
     implementation "com.google.firebase:firebase-firestore-ktx:$rootProject.firebaseFirestoreVersion"
     implementation "com.google.firebase:firebase-storage:$rootProject.firebaseStorageVersion"
+    implementation "com.google.firebase:firebase-functions:$rootProject.firebaseCloudVersion"
 
 }

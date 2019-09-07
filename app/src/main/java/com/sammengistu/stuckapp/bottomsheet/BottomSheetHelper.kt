@@ -11,6 +11,7 @@ import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.data.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
+import com.sammengistu.stuckfirebase.access.UserStatsAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import org.jetbrains.anko.find
 
@@ -66,11 +67,16 @@ class BottomSheetHelper(private val context: Context,
     private fun starPost() {
         if (mPost != null) {
             StarPostAccess(DummyDataStuck.userId).createItemInFB(mPost!!)
+            PostAccess().incrementStarTotal(mPost!!.ref)
+            UserStatsAccess.incrementTotalStars(mPost!!.ownerId)
             mPost!!.totalStars = mPost!!.totalStars + 1
             notifyAdapter.onDataUpdated()
             hideMenu()
-            // todo: call firebase cloud function
         }
+    }
+
+    private fun unstarPost() {
+       TODO("Implement this")
     }
 
     private fun deletePost() {

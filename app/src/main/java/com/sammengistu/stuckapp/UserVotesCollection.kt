@@ -12,18 +12,19 @@ class UserVotesCollection {
         private val voteMap = HashMap<String, UserVoteModel>()
 
         fun loadUserVotes(userId: String) {
-            UserVoteAccess(userId).getItems(object : FirebaseItemAccess.OnItemRetrieved<UserVoteModel> {
-                override fun onSuccess(list: List<UserVoteModel>) {
-                    convertVotesToMap(list)
-                    isInitialized = true
-                    EventBus.getDefault().post(UserVotesLoadedEvent())
-                }
+            UserVoteAccess().getItemsWhereEqual("ownerId", userId,
+                object : FirebaseItemAccess.OnItemRetrieved<UserVoteModel> {
+                    override fun onSuccess(list: List<UserVoteModel>) {
+                        convertVotesToMap(list)
+                        isInitialized = true
+                        EventBus.getDefault().post(UserVotesLoadedEvent())
+                    }
 
-                override fun onFailed() {
-                    TODO("Failed to get user votes")
-                }
+                    override fun onFailed() {
+                        TODO("Failed to get user votes")
+                    }
 
-            })
+                })
         }
 
         fun isInitialized(): Boolean = isInitialized

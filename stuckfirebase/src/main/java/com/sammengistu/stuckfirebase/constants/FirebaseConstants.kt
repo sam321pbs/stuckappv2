@@ -12,6 +12,7 @@ class FirebaseConstants {
 // Collections naming
 const val POSTS = "posts"
 const val USERS = "users"
+const val USER_VOTES = "user_votes"
 const val COMMENTS = "comments"
 const val STARRED_POSTS = "starred_posts"
 const val VOTES = "votes"
@@ -19,3 +20,4 @@ const val COMMENT_UP_VOTES = "comment_up_votes"
 
 // Document naming
 const val USER_STATS = "user_stats"
+const val APP_STATS = "app_stats"

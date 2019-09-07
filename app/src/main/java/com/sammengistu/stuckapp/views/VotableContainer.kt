@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.MotionEvent
 import android.widget.RelativeLayout
 import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckfirebase.access.UserStatsAccess
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
@@ -31,12 +32,11 @@ abstract class VotableContainer(
     }
 
     override fun onDoubleTapped() {
-//        Log.d(VotableChoiceView.TAG, "$owner voted on $postId choice $votePos")
         if (userVote == null) {
             val userVote = UserVoteModel(owner, post.ref, choiceItem.first.toInt())
-            UserVoteAccess(owner).createItemInFB(userVote)
+            UserVoteAccess().createItemInFB(userVote)
             UserVotesCollection.addVoteToMap(userVote)
-            this.userVote = userVote
+            UserStatsAccess.incrementCollectedVote(post.ownerId)
             onItemVotedOn(userVote)
             updateParentContainer.updateContainer(userVote)
         }

@@ -19,6 +19,14 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
 //        fun onFailed()
 //    }
 
+    open fun onItemCreated(item: T) {
+        // Override me
+    }
+
+    open fun onItemDeleted() {
+        // Override me
+    }
+
     fun createItemInFB(item: T) {
         getCollectionRef()
             .add(item)
@@ -26,6 +34,8 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "Snapshot added with ID: ${documentReference.id}")
                 }
+                item.ref = documentReference.id
+                onItemCreated(item)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error creating item", e)
@@ -36,7 +46,10 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         getCollectionRef()
             .document(documentId)
             .delete()
-            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully deleted!") }
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                onItemDeleted()
+            }
             .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
     }
 
@@ -62,6 +75,18 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .addOnFailureListener {
                 Log.e(TAG, "Failed to get items", it)
                 listener.onFailed()
+            }
+    }
+
+    fun incrementField(documentRef: String, fieldToIncrement: String) {
+        getCollectionRef()
+            .document(documentRef)
+            .update(fieldToIncrement, FieldValue.increment(1))
+            .addOnSuccessListener {
+                Log.d(TAG, "Incremented: $fieldToIncrement")
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "Failed to increment: $fieldToIncrement", it)
             }
     }
 

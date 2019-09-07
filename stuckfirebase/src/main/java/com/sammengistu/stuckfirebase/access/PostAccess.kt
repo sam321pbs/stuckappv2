@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.google.firebase.firestore.CollectionReference
 import com.sammengistu.stuckfirebase.FbStorageHelper
+import com.sammengistu.stuckfirebase.access.AppStatsAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.data.PostModel
@@ -15,6 +16,26 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
 
     override fun getCollectionRef(): CollectionReference {
         return getEnvironmentCollectionRef(POSTS)
+    }
+
+    override fun onItemCreated(item: PostModel) {
+        AppStatsAccess.incrementPostsTotal()
+    }
+
+    override fun onItemDeleted() {
+        AppStatsAccess.decrementPostsTotal()
+    }
+
+    fun incrementVote(ref: String, pos: Int) {
+        incrementField(ref, "votes.$pos")
+    }
+
+    fun incrementStarTotal(ref: String) {
+        incrementField(ref, "totalStars")
+    }
+
+    fun incrementCommentsTotal(ref: String) {
+        incrementField(ref, "totalComments")
     }
 
     fun getRecentPosts(listener: OnItemRetrieved<PostModel>) {

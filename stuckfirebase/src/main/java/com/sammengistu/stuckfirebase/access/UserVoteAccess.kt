@@ -1,14 +1,23 @@
 package com.sammengistu.stuckfirebase.access
 
-import com.sammengistu.stuckfirebase.constants.VOTES
+import com.google.firebase.firestore.CollectionReference
+import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckfirebase.constants.USER_VOTES
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 
-class UserVoteAccess(userId: String) : FirebaseSubOwnerItemAccess<UserVoteModel>(userId) {
+class UserVoteAccess : FirebaseItemAccess<UserVoteModel>() {
+
     override fun getModelClass(): Class<UserVoteModel> {
         return UserVoteModel::class.java
     }
 
-    override fun getCollectionName(): String {
-        return VOTES
+    override fun getCollectionRef(): CollectionReference {
+        return getEnvironmentCollectionRef(USER_VOTES)
+    }
+
+    override fun onItemCreated(item: UserVoteModel) {
+        PostAccess().incrementVote(item.postRef, item.voteItem)
+        UserStatsAccess.incrementMadeVotes(item.ownerId)
+        AppStatsAccess.incrementVotesTotal()
     }
 }
