@@ -39,5 +39,6 @@ dependencies {
     implementation "com.google.firebase:firebase-firestore-ktx:$rootProject.firebaseFirestoreVersion"
     implementation "com.google.firebase:firebase-storage:$rootProject.firebaseStorageVersion"
     implementation "com.google.firebase:firebase-functions:$rootProject.firebaseCloudVersion"
+    implementation 'org.greenrobot:eventbus:3.1.1'
 
 }

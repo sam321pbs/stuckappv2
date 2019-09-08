@@ -8,10 +8,10 @@ import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
 import com.sammengistu.stuckapp.adapters.CommentsAdapter
+import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckfirebase.access.CommentAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.data.CommentModel
@@ -25,6 +25,7 @@ class CommentsFragment : BaseFragment() {
     lateinit var mCommentsAdapter: CommentsAdapter
     private var mPostId: String = ""
     private var mChoicePos: Int = 0
+    private var mListComments = ArrayList<CommentModel>()
 
     override fun getFragmentTag(): String {
         return TAG
@@ -52,20 +53,26 @@ class CommentsFragment : BaseFragment() {
                 mCommentsAdapter  as RecyclerView.Adapter<RecyclerView.ViewHolder>
             )
 
-            CommentAccess(mPostId).getItems(
-                object : FirebaseItemAccess.OnItemRetrieved<CommentModel> {
-                    override fun onSuccess(list: List<CommentModel>) {
-                        mCommentsAdapter.swapData(list)
-                    }
-
-                    override fun onFailed() {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
-                }
-            )
-
+            reloadAdapter()
             setupComposeArea()
         }
+    }
+
+    private fun reloadAdapter() {
+        CommentAccess().getItemsWhereEqual(
+            "postRef",
+            mPostId,
+            object : FirebaseItemAccess.OnItemRetrieved<CommentModel> {
+                override fun onSuccess(list: List<CommentModel>) {
+                    mListComments = list as ArrayList<CommentModel>
+                    mCommentsAdapter.swapData(mListComments)
+                }
+
+                override fun onFailed() {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            }
+        )
     }
 
     private fun setupComposeArea() {
@@ -77,7 +84,10 @@ class CommentsFragment : BaseFragment() {
                 "ava_1",
                 mCommentET.text.toString(),
                 mChoicePos)
-            CommentAccess(mPostId).createItemInFB(commentModel)
+            mListComments.add(commentModel)
+            mCommentsAdapter.swapData(mListComments)
+            mCommentET.setText("")
+            CommentAccess().createItemInFB(commentModel)
         }
     }
 

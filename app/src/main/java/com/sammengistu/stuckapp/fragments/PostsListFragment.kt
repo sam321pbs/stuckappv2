@@ -16,6 +16,7 @@ import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
@@ -27,10 +28,26 @@ class PostsListFragment : BasePostListsFragment() {
     private lateinit var viewAdapter: PostsAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
+    private var postsList = ArrayList<PostModel>()
 
     @Subscribe
     fun onUserVotesLoaded(event: UserVotesLoadedEvent) {
         onDataUpdated()
+    }
+
+    @Subscribe
+    fun onIncreaseCommentCount(event: IncreaseCommentCountEvent) {
+        var refresh = false
+        for (post in postsList) {
+            if (post.ref == event.postRef) {
+                post.totalComments += 1
+                refresh = true
+                break
+            }
+        }
+        if (refresh) {
+            viewAdapter.swapData(postsList)
+        }
     }
 
     private val listViewModel: PostListViewModel by viewModels {
@@ -97,7 +114,8 @@ class PostsListFragment : BasePostListsFragment() {
         return object :
             FirebaseItemAccess.OnItemRetrieved<PostModel> {
             override fun onSuccess(list: List<PostModel>) {
-                adapter.swapData(list)
+                postsList = list as ArrayList<PostModel>
+                adapter.swapData(postsList)
                 swipeToRefreshLayout.isRefreshing = false
             }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
@@ -66,9 +67,11 @@ class BottomSheetHelper(private val context: Context,
 
     private fun starPost() {
         if (mPost != null) {
-            StarPostAccess(DummyDataStuck.userId).createItemInFB(mPost!!)
-            PostAccess().incrementStarTotal(mPost!!.ref)
-            UserStatsAccess.incrementTotalStars(mPost!!.ownerId)
+            StarPostAccess(DummyDataStuck.userId).createItemInFB(mPost!!,
+                OnSuccessListener {
+                    PostAccess().incrementStarTotal(mPost!!.ref)
+                    UserStatsAccess.incrementTotalStars(mPost!!.ownerId)
+                })
             mPost!!.totalStars = mPost!!.totalStars + 1
             notifyAdapter.onDataUpdated()
             hideMenu()

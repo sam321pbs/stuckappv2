@@ -42,6 +42,15 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
+    fun createItemInFB(item: T, listener: OnSuccessListener<DocumentReference>) {
+        getCollectionRef()
+            .add(item)
+            .addOnSuccessListener(listener)
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error creating item", e)
+            }
+    }
+
     fun deleteItemInFb(documentId: String) {
         getCollectionRef()
             .document(documentId)
