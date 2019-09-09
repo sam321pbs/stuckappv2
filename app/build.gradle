@@ -55,9 +55,19 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics:$rootProject.firebaseAnalyticsVersion"
     implementation "com.google.firebase:firebase-firestore-ktx:$rootProject.firebaseFirestoreVersion"
     implementation "com.google.firebase:firebase-storage:$rootProject.firebaseStorageVersion"
+    implementation "com.firebaseui:firebase-ui-auth:$rootProject.firebaseUiAuthVersion"
 
-    implementation 'de.hdodenhof:circleimageview:3.0.1'
-    implementation 'org.greenrobot:eventbus:3.1.1'
+    // Required only if Facebook login support is required
+    // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
+    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookAndroidVersion"
+
+    // Required only if Twitter login support is required
+    // Find the latest Twitter SDK releases here: https://goo.gl/E5wZvQ
+    implementation "com.twitter.sdk.android:twitter-core:$rootProject.twitterCoreVersion"
+
+
+    implementation "de.hdodenhof:circleimageview:$rootProject.circleimageviewVersion"
+    implementation "org.greenrobot:eventbus:$rootProject.eventBusVersion"
 
     // picasso
     implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
