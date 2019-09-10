@@ -11,7 +11,7 @@ import org.jetbrains.anko.uiThread
 
 class DummyDataStuck {
     companion object {
-        val userId = "Sam_1"
+        private val userId = "Sam_1"
 
         val DUMMY_DATA = listOf(
             DraftPost(

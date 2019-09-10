@@ -6,7 +6,7 @@ import android.os.Bundle
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.CommentsFragment
 
-class CommentsActivity : BaseActivity() {
+class CommentsActivity : LoggedInActivity() {
 
     override fun getLayoutId(): Int {
         return R.layout.activity_base

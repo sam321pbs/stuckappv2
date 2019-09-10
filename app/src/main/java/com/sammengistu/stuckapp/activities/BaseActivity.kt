@@ -1,5 +1,6 @@
 package com.sammengistu.stuckapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sammengistu.stuckapp.R
@@ -32,5 +33,14 @@ abstract class BaseActivity : AppCompatActivity() {
             .commit()
 
         supportActionBar?.title = title
+    }
+
+    fun launchSplashScreenActivity() {
+        val intent = Intent(this, BaseActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+    }
+    companion object {
+        const val RC_SIGN_IN = 0
     }
 }

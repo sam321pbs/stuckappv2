@@ -7,10 +7,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
-import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -90,7 +89,7 @@ class PostsListFragment : BasePostListsFragment() {
 
     private fun setupRecyclerView() {
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = PostsAdapter(this.context!!, mBottomSheetMenu)
+        viewAdapter = PostsAdapter(this.context!!, getUserId(), mBottomSheetMenu)
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
@@ -100,9 +99,9 @@ class PostsListFragment : BasePostListsFragment() {
 
     private fun refreshAdapter(adapter: PostsAdapter) {
         when {
-            getFavorites().isNotBlank() -> StarPostAccess(DummyDataStuck.userId).getItems(getOnPostRetrievedListener(adapter))
+            getFavorites().isNotBlank() -> StarPostAccess(getUserId()).getItems(getOnPostRetrievedListener(adapter))
             getPostCategory().isNotEmpty() -> PostAccess().getPostsInCategory(getPostCategory(), getOnPostRetrievedListener(adapter))
-            getOwner().isNotEmpty() -> PostAccess().getOwnerPosts(DummyDataStuck.userId, getOnPostRetrievedListener(adapter))
+            getOwner().isNotEmpty() -> PostAccess().getOwnerPosts(getUserId(), getOnPostRetrievedListener(adapter))
             else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
             //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
             //         adapter.swapData(posts)

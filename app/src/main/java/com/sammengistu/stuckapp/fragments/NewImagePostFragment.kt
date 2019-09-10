@@ -71,7 +71,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
             Picasso.get()
                 .load(imageUri)
                 .fit()
-                .centerCrop()
+//                .centerCrop()
                 .into(imageView)
             return BitmapFactory.decodeStream(imageStream)
         } catch (e: FileNotFoundException) {

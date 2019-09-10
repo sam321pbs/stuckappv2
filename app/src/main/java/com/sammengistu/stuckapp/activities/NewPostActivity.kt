@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.NewPostTypeFragment
 
-class NewPostActivity : BaseActivity() {
+class NewPostActivity : LoggedInActivity() {
     override fun getLayoutId(): Int {
         return R.layout.activity_base
     }

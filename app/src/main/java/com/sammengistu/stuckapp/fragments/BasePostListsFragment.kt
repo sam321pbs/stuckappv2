@@ -16,7 +16,7 @@ abstract class BasePostListsFragment : BaseFragment(), BottomSheetMenu, NotifyAd
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBottomSheetMenu = this
-        mBottomSheetHelper = BottomSheetHelper(activity!!, bottom_sheet, this)
+        mBottomSheetHelper = BottomSheetHelper(activity!!, getUserId(), bottom_sheet, this)
     }
 
     override fun showMenu(post: PostModel) {

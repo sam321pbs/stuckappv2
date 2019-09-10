@@ -19,11 +19,11 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
 //        fun onFailed()
 //    }
 
-    open fun onItemCreated(item: T) {
+    protected open fun onItemCreated(item: T) {
         // Override me
     }
 
-    open fun onItemDeleted() {
+    protected open fun onItemDeleted() {
         // Override me
     }
 
@@ -106,13 +106,13 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .collection(collection)
     }
 
-    protected fun getUserCollection(ownerId: String, collection: String): CollectionReference {
+    protected fun getUserCollectionRef(userRef: String, collection: String): CollectionReference {
         return getEnvironmentCollectionRef(USERS)
-            .document(ownerId)
+            .document(userRef)
             .collection(collection)
     }
 
-    protected fun getPostCollection(postRef: String, collection: String): CollectionReference {
+    protected fun getPostCollectionRef(postRef: String, collection: String): CollectionReference {
         return getEnvironmentCollectionRef(POSTS)
             .document(postRef)
             .collection(collection)
@@ -122,14 +122,13 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         val weakRef = WeakReference(listener)
         return OnSuccessListener { document ->
             val listenerRef = weakRef.get()
+            var resultList: List<T> = ArrayList()
             if (listenerRef != null) {
                 if (document != null) {
-                    val list = document.toObjects(getModelClass())
-                    addRefToItems(document, list)
-                    listenerRef.onSuccess(list)
-                } else {
-                    listenerRef.onFailed()
+                    resultList = document.toObjects(getModelClass())
+                    addRefToItems(document, resultList)
                 }
+                listenerRef.onSuccess(resultList)
             }
         }
     }

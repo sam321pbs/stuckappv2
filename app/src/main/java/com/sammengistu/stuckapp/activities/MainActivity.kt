@@ -21,9 +21,10 @@ import com.sammengistu.stuckapp.fragments.PostsListFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_FAVORITES
 import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_USER
 import com.sammengistu.stuckapp.views.StuckNavigationBar
+import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var navigationBar: StuckNavigationBar
     private lateinit var drawer: DrawerLayout
@@ -44,7 +45,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         navigationBar.onItemClicked = getOnNavItemClicked()
         setupDrawer()
 
-        UserVotesCollection.loadUserVotes(DummyDataStuck.userId)
+        UserVotesCollection.loadUserVotes(getFirebaseUserId())
     }
 
     private fun setupDrawer() {
@@ -134,7 +135,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         addFragment(
                             PostsListFragment.newInstance(
                                 EXTRA_USER,
-                                DummyDataStuck.userId
+                                getFirebaseUserId()
                             ),
                             TITLE_ME
                         )
@@ -157,5 +158,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         const val TITLE_CATEGORIES = "Categories"
         const val TITLE_FAVORITE = "Favorite"
         const val TITLE_ME = "My Posts"
+
+        var currentUser: UserModel? = null
     }
 }

@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.core.view.children
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
-import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
@@ -84,7 +84,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
                 var success = false
                 try {
                     val post = PostModel(
-                        "Sam_1",
+                        getUserId(),
                         username.text.toString(),
                         "ava",
                         question.text.toString(),

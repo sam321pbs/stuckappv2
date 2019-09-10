@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
-import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
@@ -79,7 +78,7 @@ class CommentsFragment : BaseFragment() {
         send_button.setOnClickListener {
             val commentModel = CommentModel(
                 mPostId,
-                DummyDataStuck.userId,
+                getUserId(),
                 "samtheman",
                 "ava_1",
                 mCommentET.text.toString(),

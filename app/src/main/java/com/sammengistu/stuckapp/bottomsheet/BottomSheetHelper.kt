@@ -6,17 +6,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
-import com.sammengistu.stuckapp.data.PostAccess
+import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.access.UserStatsAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import org.jetbrains.anko.find
 
 class BottomSheetHelper(private val context: Context,
+                        private val userId: String,
                         private val bottomSheetLL: LinearLayout,
                         private val notifyAdapter: NotifyAdapter):
     BottomSheetMenu {
@@ -67,7 +67,7 @@ class BottomSheetHelper(private val context: Context,
 
     private fun starPost() {
         if (mPost != null) {
-            StarPostAccess(DummyDataStuck.userId).createItemInFB(mPost!!,
+            StarPostAccess(userId).createItemInFB(mPost!!,
                 OnSuccessListener {
                     PostAccess().incrementStarTotal(mPost!!.ref)
                     UserStatsAccess.incrementTotalStars(mPost!!.ownerId)
@@ -84,7 +84,7 @@ class BottomSheetHelper(private val context: Context,
 
     private fun deletePost() {
         // Todo: Change to handle server post vs db post/ also check that it is users posts before deleting
-        if (mPost != null && DummyDataStuck.userId == mPost!!.ownerId) {
+        if (mPost != null && userId == mPost!!.ownerId) {
             PostAccess().deleteItemInFb(mPost!!.ref)
         }
 //        if (mPost != null) {

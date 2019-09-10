@@ -1,11 +1,12 @@
-package com.sammengistu.stuckapp.data
+package com.sammengistu.stuckfirebase.access
 
 import android.content.Context
 import android.graphics.Bitmap
 import com.google.firebase.firestore.CollectionReference
+import com.sammengistu.stuckapp.data.AppDatabase
+import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.data.PostRepository
 import com.sammengistu.stuckfirebase.FbStorageHelper
-import com.sammengistu.stuckfirebase.access.AppStatsAccess
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.data.PostModel
 

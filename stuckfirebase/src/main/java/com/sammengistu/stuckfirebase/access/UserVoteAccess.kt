@@ -1,7 +1,6 @@
 package com.sammengistu.stuckfirebase.access
 
 import com.google.firebase.firestore.CollectionReference
-import com.sammengistu.stuckapp.data.PostAccess
 import com.sammengistu.stuckfirebase.constants.USER_VOTES
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 

@@ -7,7 +7,7 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_full_screen_image.*
 
 
-class FullScreenImageActivity: BaseActivity() {
+class FullScreenImageActivity: LoggedInActivity() {
     override fun getLayoutId(): Int {
         return com.sammengistu.stuckapp.R.layout.activity_full_screen_image
     }

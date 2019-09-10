@@ -9,6 +9,6 @@ abstract class FirebaseSubPostItemAccess<T : FirebaseItem>(private val postId: S
     abstract fun getCollectionName(): String
 
     override fun getCollectionRef(): CollectionReference {
-        return getPostCollection(postId, getCollectionName())
+        return getPostCollectionRef(postId, getCollectionName())
     }
 }

@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
-import com.sammengistu.stuckapp.DummyDataStuck
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
@@ -26,6 +25,7 @@ import org.jetbrains.anko.find
 
 class PostsAdapter(
     private val mContext: Context,
+    private val userId: String,
     private val mBottomSheetMenu: BottomSheetMenu
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<PostModel>()
@@ -85,7 +85,7 @@ class PostsAdapter(
         val updateParentContainer = getUpdateParentContainer(container)
         for (tripleItem in post.getChoicesToVoteList()) {
             container.addView(
-                VotableChoiceView(mContext, DummyDataStuck.userId, post, tripleItem, userVote, updateParentContainer))
+                VotableChoiceView(mContext, userId, post, tripleItem, userVote, updateParentContainer))
         }
     }
 
@@ -95,7 +95,7 @@ class PostsAdapter(
         val updateParentContainer = getUpdateParentContainer(container)
         for (tripleItem in post.getImagesToVoteList()) {
             container.addView(
-                VotableImageView(mContext, DummyDataStuck.userId, post, tripleItem, userVote, updateParentContainer))
+                VotableImageView(mContext, userId, post, tripleItem, userVote, updateParentContainer))
         }
     }
 
