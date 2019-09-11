@@ -85,7 +85,7 @@ class PostsAdapter(
         val updateParentContainer = getUpdateParentContainer(container)
         for (tripleItem in post.getChoicesToVoteList()) {
             container.addView(
-                VotableChoiceView(mContext, userId, post, tripleItem, userVote, updateParentContainer))
+                VotableChoiceView(mContext, post, tripleItem, userVote, updateParentContainer))
         }
     }
 
@@ -95,7 +95,7 @@ class PostsAdapter(
         val updateParentContainer = getUpdateParentContainer(container)
         for (tripleItem in post.getImagesToVoteList()) {
             container.addView(
-                VotableImageView(mContext, userId, post, tripleItem, userVote, updateParentContainer))
+                VotableImageView(mContext, post, tripleItem, userVote, updateParentContainer))
         }
     }
 

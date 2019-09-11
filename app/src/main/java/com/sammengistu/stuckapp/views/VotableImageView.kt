@@ -18,12 +18,11 @@ import com.squareup.picasso.Picasso
 
 class VotableImageView(
     context: Context,
-    owner: String,
     post: PostModel,
     choiceItem: Triple<String, String, Int>,
     userVote: UserVoteModel?,
     updateParentContainer: UpdateParentContainer
-) : VotableContainer(context, owner, post, choiceItem, userVote, updateParentContainer) {
+) : VotableContainer(context, post, choiceItem, userVote, updateParentContainer) {
 
     private val imageView = ImageView(context)
     private val votesTextView = TextView(context)

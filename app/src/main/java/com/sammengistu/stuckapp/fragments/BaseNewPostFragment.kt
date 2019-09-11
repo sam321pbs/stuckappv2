@@ -7,22 +7,23 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
+import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
-import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
 import com.sammengistu.stuckapp.events.PrivacySelectedEvent
 import com.sammengistu.stuckapp.views.ChoiceCardView
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
+import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 abstract class BaseNewPostFragment : BaseFragment() {
 
@@ -76,57 +77,103 @@ abstract class BaseNewPostFragment : BaseFragment() {
 
     private fun createPost(type: PostType, data: Map<String, Any?>) {
         if (fieldsValidated()) {
-            doAsync {
-                uiThread {
-                    progress_bar.visibility = View.VISIBLE
-                }
+            UserHelper.getCurrentUser {
+                progress_bar.visibility = View.VISIBLE
 
-                var success = false
-                try {
-                    val post = PostModel(
-                        getUserId(),
-                        username.text.toString(),
-                        "ava",
-                        question.text.toString(),
-                        mSelectedPrivacy,
-                        mSelectedCategory,
-                        type.toString()
-                    )
+                if (it != null) {
+                    try {
+                        val post = buildPost(it, type)
 
-                    if (data.containsKey(IMAGE_1) && data.containsKey(IMAGE_2)) {
-                        val data1 = data[IMAGE_1]
-                        val data2 = data[IMAGE_2]
-                        val bitmap1 = if (data1 is Bitmap) data1 else null
-                        val bitmap2 = if (data2 is Bitmap) data2 else null
-                        PostAccess().createImagePost(post, bitmap1!!, bitmap2!!)
-                    } else if (data.containsKey(CHOICES_VIEW)) {
-                        val data1 = data[CHOICES_VIEW]
-                        val choiceContainer = if (data1 is LinearLayout) data1 else null
-                        for (choiceView in choiceContainer!!.children) {
-                            if (choiceView is ChoiceCardView) {
-                                post.addChoice(choiceView.getChoiceText())
+                        if (data.containsKey(IMAGE_1) && data.containsKey(IMAGE_2)) {
+                            val data1 = data[IMAGE_1]
+                            val data2 = data[IMAGE_2]
+                            val bitmap1 = if (data1 is Bitmap) data1 else null
+                            val bitmap2 = if (data2 is Bitmap) data2 else null
+                            PostAccess().createImagePost(
+                                post,
+                                bitmap1!!,
+                                bitmap2!!,
+                                getOnItemCreatedCallback()
+                            )
+                        } else if (data.containsKey(CHOICES_VIEW)) {
+                            val data1 = data[CHOICES_VIEW]
+                            val choiceContainer = if (data1 is LinearLayout) data1 else null
+                            for (choiceView in choiceContainer!!.children) {
+                                if (choiceView is ChoiceCardView) {
+                                    post.addChoice(choiceView.getChoiceText())
+                                }
                             }
+                            PostAccess().createItemInFB(
+                                post,
+                                getOnItemCreatedCallback()
+                            )
                         }
-                        PostAccess().createItemInFB(post)
+                    } catch (e: Exception) {
+                        handleFailedToCreateItem("Exception building post", e)
                     }
-//                    PostAccess.insertPost(activity!!.applicationContext, post)
-                    success = true
-                } catch (e: Exception) {
-                    Log.e(NewImagePostFragment.TAG, "Failed to create post", e)
-                }
-
-                uiThread {
-                    progress_bar.visibility = View.GONE
-                    if (success) {
-                        Toast.makeText(activity!!, "DraftPost has been created", Toast.LENGTH_SHORT)
-                            .show()
-                        activity!!.finish()
-                    } else {
-                        Toast.makeText(activity!!, "DraftPost failed", Toast.LENGTH_SHORT).show()
-                    }
+                } else {
+                    handleFailedToCreateItem("User was null")
                 }
             }
+
+            // Todo: handle drafts
+//            doAsync {
+//                uiThread {
+//
+//                }
+//
+//                 PostAccess.insertPost(activity!!.applicationContext, post)
+//                uiThread {
+//
+//                }
+//            }
         }
+    }
+
+    private fun getOnItemCreatedCallback(): FirebaseItemAccess.OnItemCreated<PostModel> {
+        return object : FirebaseItemAccess.OnItemCreated<PostModel> {
+            override fun onSuccess(item: PostModel) {
+                handleItemCreated()
+            }
+
+            override fun onFailed(e: java.lang.Exception) {
+                handleFailedToCreateItem("Failed to create post in Firebase", e)
+            }
+        }
+    }
+
+    private fun handleItemCreated() {
+        progress_bar.visibility = View.GONE
+        Toast.makeText(activity!!, "Post has been created", Toast.LENGTH_SHORT)
+            .show()
+        activity!!.finish()
+    }
+
+    private fun handleFailedToCreateItem(message: String) {
+        progress_bar.visibility = View.GONE
+        Toast.makeText(activity!!, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleFailedToCreateItem(message: String, e: java.lang.Exception) {
+        progress_bar.visibility = View.GONE
+        Toast.makeText(activity!!, message, Toast.LENGTH_SHORT).show()
+        Log.e(TAG, message, e)
+    }
+
+    private fun buildPost(
+        user: UserModel,
+        type: PostType
+    ): PostModel {
+        return PostModel(
+            user.userId,
+            user.ref,
+            username.text.toString(),
+            "ava",
+            question.text.toString(),
+            mSelectedPrivacy,
+            mSelectedCategory,
+            type.toString()
+        )
     }
 
     override fun onStart() {
@@ -137,5 +184,9 @@ abstract class BaseNewPostFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    companion object {
+        val TAG = BaseNewPostFragment::class.java.simpleName
     }
 }

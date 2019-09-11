@@ -5,12 +5,9 @@ import android.content.Intent
 import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.sammengistu.stuckapp.ErrorNotifier.Companion.notifyError
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.access.UserAccess
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckapp.UserHelper
 
 class SplashScreenActivity : BaseActivity() {
 
@@ -20,14 +17,7 @@ class SplashScreenActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            // User is signed in
-            launchNextActivity(user)
-        } else {
-            // No user is signed in
-            launchSignInActivity()
-        }
+        launchNextActivity()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -37,38 +27,32 @@ class SplashScreenActivity : BaseActivity() {
             val response = IdpResponse.fromResultIntent(data)
 
             if (resultCode == Activity.RESULT_OK) {
-                // Successfully signed in
-                val user = FirebaseAuth.getInstance().currentUser
-                if (user != null) {
-                    launchNextActivity(user)
-                }
+                launchNextActivity()
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
                 // ...
+                notifyError(this, "Error signing in")
                 Log.d(TAG, "Error signing in: ${response!!.error!!.errorCode}")
             }
         }
     }
 
-    private fun launchNextActivity(user: FirebaseUser) {
-        UserAccess().getItemsWhereEqual("userId", user.uid,
-            object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
-                override fun onSuccess(list: List<UserModel>) {
-                    if (list.isEmpty()) {
-                        launchProfileActivity()
-                    } else {
-                        MainActivity.currentUser = list[0]
-                        launchMainActivity()
-                    }
+    private fun launchNextActivity() {
+        if (UserHelper.getFirebaseUser() == null) {
+            Log.e(TAG, "User is not signed in")
+            launchSignInActivity()
+        } else {
+            UserHelper.getCurrentUser {
+                if (it == null) {
+                    launchProfileActivity()
+                } else {
+                    launchMainActivity()
                 }
-
-                override fun onFailed() {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-            })
+            }
+        }
     }
 
     private fun launchSignInActivity() {
@@ -89,7 +73,6 @@ class SplashScreenActivity : BaseActivity() {
             RC_SIGN_IN
         )
     }
-
 
     fun launchProfileActivity() {
         val mainIntent = Intent(this, CreateProfileActivity::class.java)

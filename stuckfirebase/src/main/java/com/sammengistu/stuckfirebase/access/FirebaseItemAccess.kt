@@ -38,16 +38,22 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
                 onItemCreated(item)
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error creating item", e)
+                Log.e(TAG, "Error creating item", e)
             }
     }
 
-    fun createItemInFB(item: T, listener: OnSuccessListener<DocumentReference>) {
+    fun createItemInFB(item: T, listener: OnItemCreated<T>) {
         getCollectionRef()
             .add(item)
-            .addOnSuccessListener(listener)
+            .addOnSuccessListener {
+                if (it != null) {
+                    item.ref = it.id
+                    listener.onSuccess(item)
+                }
+            }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error creating item", e)
+                listener.onFailed(e)
+                Log.e(TAG, "Error creating item", e)
             }
     }
 
@@ -87,6 +93,20 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
+    fun getItemsWhereEqual(field: String, value: Any, limit: Long, listener: OnItemRetrieved<T>) {
+        getCollectionRef()
+            //Todo: add limit
+            .whereEqualTo(field, value)
+            .limit(limit)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener(getSuccessListener(listener))
+            .addOnFailureListener {
+                Log.e(TAG, "Failed to get items", it)
+                listener.onFailed()
+            }
+    }
+
     fun incrementField(documentRef: String, fieldToIncrement: String) {
         getCollectionRef()
             .document(documentRef)
@@ -99,23 +119,16 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
-    protected fun getEnvironmentCollectionRef(collection: String): CollectionReference {
-        val db = FirebaseFirestore.getInstance()
-        return db.collection(FirebaseConstants.ENVIRONMENT_COLLECTION)
-            .document(FirebaseConstants.ENVIRONMENT_COLLECTION)
-            .collection(collection)
-    }
-
-    protected fun getUserCollectionRef(userRef: String, collection: String): CollectionReference {
-        return getEnvironmentCollectionRef(USERS)
-            .document(userRef)
-            .collection(collection)
-    }
-
-    protected fun getPostCollectionRef(postRef: String, collection: String): CollectionReference {
-        return getEnvironmentCollectionRef(POSTS)
-            .document(postRef)
-            .collection(collection)
+    fun incrementField(documentRef: String, fieldToIncrement: String, amount: Int) {
+        getCollectionRef()
+            .document(documentRef)
+            .update(fieldToIncrement, FieldValue.increment(amount.toDouble()))
+            .addOnSuccessListener {
+                Log.d(TAG, "Incremented: $fieldToIncrement")
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "Failed to increment: $fieldToIncrement", it)
+            }
     }
 
     private fun getSuccessListener(listener: OnItemRetrieved<T>): OnSuccessListener<QuerySnapshot> {
@@ -144,10 +157,34 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
 
     companion object {
         val TAG = this::class.java.simpleName
+
+        fun getEnvironmentCollectionRef(collection: String): CollectionReference {
+            val db = FirebaseFirestore.getInstance()
+            return db.collection(FirebaseConstants.ENVIRONMENT_COLLECTION)
+                .document(FirebaseConstants.ENVIRONMENT_COLLECTION)
+                .collection(collection)
+        }
+
+        fun getUserCollectionRef(userRef: String, collection: String): CollectionReference {
+            return getEnvironmentCollectionRef(USERS)
+                .document(userRef)
+                .collection(collection)
+        }
+
+        fun getPostCollectionRef(postRef: String, collection: String): CollectionReference {
+            return getEnvironmentCollectionRef(POSTS)
+                .document(postRef)
+                .collection(collection)
+        }
     }
 
     interface OnItemRetrieved<T: FirebaseItem> {
         fun onSuccess(list: List<T>)
         fun onFailed()
+    }
+
+    interface OnItemCreated<T: FirebaseItem> {
+        fun onSuccess(item: T)
+        fun onFailed(e: Exception)
     }
 }

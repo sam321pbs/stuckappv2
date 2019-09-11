@@ -19,24 +19,12 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         return getEnvironmentCollectionRef(POSTS)
     }
 
-    override fun onItemCreated(item: PostModel) {
-        AppStatsAccess.incrementPostsTotal()
-    }
-
-    override fun onItemDeleted() {
-        AppStatsAccess.decrementPostsTotal()
-    }
-
     fun incrementVote(ref: String, pos: Int) {
         incrementField(ref, "votes.$pos")
     }
 
     fun incrementStarTotal(ref: String) {
         incrementField(ref, "totalStars")
-    }
-
-    fun incrementCommentsTotal(ref: String) {
-        incrementField(ref, "totalComments")
     }
 
     fun getRecentPosts(listener: OnItemRetrieved<PostModel>) {
@@ -51,7 +39,7 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         getItemsWhereEqual("ownerId", ownerId, listener)
     }
 
-    fun createImagePost(post: PostModel, bitmap1: Bitmap, bitmap2: Bitmap) {
+    fun createImagePost(post: PostModel, bitmap1: Bitmap, bitmap2: Bitmap, listener: OnItemCreated<PostModel>) {
         var image1Url: String
         var image2Url: String
 
@@ -67,17 +55,17 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
                             image2Url = url
                             post.addImage(image1Url)
                             post.addImage(image2Url)
-                            createItemInFB(post)
+                            createItemInFB(post, listener)
                         }
 
-                        override fun onFailed() {
-
+                        override fun onFailed(exception: Exception) {
+                            listener.onFailed(exception)
                         }
                     })
             }
 
-            override fun onFailed() {
-
+            override fun onFailed(exception: Exception) {
+                listener.onFailed(exception)
             }
         })
     }

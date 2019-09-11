@@ -7,6 +7,7 @@ const val MAX_NUMBER_OF_CHOICES = 4
 
 data class PostModel(
     val ownerId: String,
+    val ownerRef: String,
     val userName: String,
     val avatar: String,
     val question: String,
@@ -27,10 +28,11 @@ data class PostModel(
     }
 
     constructor():
-            this("", "", "", "", "", "", "")
+            this("", "","", "", "", "", "", "")
 
     constructor(
         ownerId: String,
+        ownerRef: String,
         userName: String,
         avatar: String,
         question: String,
@@ -43,7 +45,7 @@ data class PostModel(
         images: HashMap<String, String>,
         choices: HashMap<String, String>,
         votes: HashMap<String, Int>
-    ) : this(ownerId, userName, avatar, question, privacy, category, type) {
+    ) : this(ownerId, ownerRef, userName, avatar, question, privacy, category, type) {
         this.createdAt = createdAt
         this.totalStars = totalStars
         this.totalComments = totalComments

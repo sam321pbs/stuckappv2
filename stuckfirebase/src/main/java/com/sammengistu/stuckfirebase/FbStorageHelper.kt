@@ -16,12 +16,12 @@ class FbStorageHelper {
 
     interface UploadCompletionCallback {
         fun onSuccess(url: String)
-        fun onFailed()
+        fun onFailed(exception: Exception)
     }
 
     interface DownloadCompletionCallback {
         fun onSuccess(byte: ByteArray)
-        fun onFailed()
+        fun onFailed(exception: Exception)
     }
 
     companion object {
@@ -56,8 +56,8 @@ class FbStorageHelper {
             uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
                 if (!task.isSuccessful) {
                     task.exception?.let {
-                        Log.e(TAG, "Failed to up load", it)
-                        callback.onFailed()
+                        Log.e(TAG, "Failed to upload image", it)
+                        callback.onFailed(it)
                     }
                 }
                 return@Continuation imagesRef.downloadUrl
@@ -65,9 +65,9 @@ class FbStorageHelper {
                 if (task.isSuccessful) {
                     val downloadUri = task.result
                     callback.onSuccess(downloadUri.toString())
-                } else {
-                    callback.onFailed()
                 }
+            }.addOnFailureListener {
+                callback.onFailed(it)
             }
         }
 
@@ -80,7 +80,7 @@ class FbStorageHelper {
                 callback.onSuccess(it)
             }.addOnFailureListener {
                 Log.e(TAG, "Failed to download image", it)
-                callback.onFailed()
+                callback.onFailed(it)
             }
         }
     }

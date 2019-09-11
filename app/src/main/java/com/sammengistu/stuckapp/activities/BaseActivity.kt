@@ -40,7 +40,9 @@ abstract class BaseActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
     }
+
     companion object {
         const val RC_SIGN_IN = 0
+        val TAG = BaseActivity::class.java.simpleName
     }
 }

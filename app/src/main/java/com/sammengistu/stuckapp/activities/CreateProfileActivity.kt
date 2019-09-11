@@ -4,10 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
+import com.sammengistu.stuckapp.ErrorNotifier.Companion.notifyError
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.views.FormItemTextView
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.activity_create_profile.*
@@ -45,11 +46,19 @@ class CreateProfileActivity : LoggedInActivity() {
                     educationField.getText(),
                     descriptionField.getText(),
                     ageGroupField.getText(),
-                    genderField.getText()
-                )
+                    genderField.getText(),
+                    0,0,0
+                    )
 
-                UserAccess().createItemInFB(userModel,
-                    OnSuccessListener { launchMainActivity() })
+                UserAccess().createItemInFB(userModel, object : FirebaseItemAccess.OnItemCreated<UserModel> {
+                    override fun onSuccess(item: UserModel) {
+                        launchMainActivity()
+                    }
+
+                    override fun onFailed(e: Exception) {
+                        notifyError(this@CreateProfileActivity, TAG, "Failed to create post", e)
+                    }
+                })
             }
         }
     }

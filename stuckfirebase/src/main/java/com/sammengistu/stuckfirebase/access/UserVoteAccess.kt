@@ -16,7 +16,5 @@ class UserVoteAccess : FirebaseItemAccess<UserVoteModel>() {
 
     override fun onItemCreated(item: UserVoteModel) {
         PostAccess().incrementVote(item.postRef, item.voteItem)
-        UserStatsAccess.incrementMadeVotes(item.ownerId)
-        AppStatsAccess.incrementVotesTotal()
     }
 }

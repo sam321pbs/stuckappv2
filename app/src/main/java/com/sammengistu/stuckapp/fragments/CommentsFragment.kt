@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
 import com.sammengistu.stuckapp.adapters.CommentsAdapter
@@ -14,6 +15,7 @@ import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckfirebase.access.CommentAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.data.CommentModel
+import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.compose_area.*
 import kotlinx.android.synthetic.main.fragment_comments.*
 
@@ -76,17 +78,25 @@ class CommentsFragment : BaseFragment() {
 
     private fun setupComposeArea() {
         send_button.setOnClickListener {
+           UserHelper.getCurrentUser { createComment(it) }
+        }
+    }
+
+    private fun createComment(user: UserModel?) {
+        if (user != null) {
             val commentModel = CommentModel(
                 mPostId,
-                getUserId(),
-                "samtheman",
+                user.userId,
+                user.username,
                 "ava_1",
                 mCommentET.text.toString(),
-                mChoicePos)
+                mChoicePos
+            )
+            CommentAccess().createItemInFB(commentModel)
+            // Todo: check that view still exists
             mListComments.add(commentModel)
             mCommentsAdapter.swapData(mListComments)
             mCommentET.setText("")
-            CommentAccess().createItemInFB(commentModel)
         }
     }
 

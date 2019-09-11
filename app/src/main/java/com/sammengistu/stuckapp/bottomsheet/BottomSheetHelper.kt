@@ -4,21 +4,25 @@ import android.content.Context
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.sammengistu.stuckapp.ErrorNotifier
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.access.UserStatsAccess
+import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import org.jetbrains.anko.find
 
-class BottomSheetHelper(private val context: Context,
-                        private val userId: String,
-                        private val bottomSheetLL: LinearLayout,
-                        private val notifyAdapter: NotifyAdapter):
+class BottomSheetHelper(
+    private val context: Context,
+    private val userId: String,
+    private val bottomSheetLL: LinearLayout,
+    private val notifyAdapter: NotifyAdapter
+) :
     BottomSheetMenu {
 
     val TAG = BottomSheetHelper::class.java.simpleName
@@ -67,19 +71,31 @@ class BottomSheetHelper(private val context: Context,
 
     private fun starPost() {
         if (mPost != null) {
-            StarPostAccess(userId).createItemInFB(mPost!!,
-                OnSuccessListener {
-                    PostAccess().incrementStarTotal(mPost!!.ref)
-                    UserStatsAccess.incrementTotalStars(mPost!!.ownerId)
-                })
-            mPost!!.totalStars = mPost!!.totalStars + 1
-            notifyAdapter.onDataUpdated()
-            hideMenu()
+            UserHelper.getCurrentUser { user ->
+                if (user != null) {
+                    StarPostAccess(user.ref).createItemInFB(mPost!!,
+                        object : FirebaseItemAccess.OnItemCreated<PostModel> {
+                            override fun onSuccess(item: PostModel) {
+                                PostAccess().incrementStarTotal(item.ref)
+                                UserAccess().incrementTotalStars(item.ownerRef)
+                            }
+
+                            override fun onFailed(e: Exception) {
+                                ErrorNotifier.notifyError(context, TAG, "Error liking post", e)
+                            }
+                        })
+                    mPost!!.totalStars = mPost!!.totalStars + 1
+                    notifyAdapter.onDataUpdated()
+                    hideMenu()
+                } else {
+                    ErrorNotifier.notifyError(context, TAG, "Error liking post")
+                }
+            }
         }
     }
 
     private fun unstarPost() {
-       TODO("Implement this")
+        TODO("Implement this")
     }
 
     private fun deletePost() {

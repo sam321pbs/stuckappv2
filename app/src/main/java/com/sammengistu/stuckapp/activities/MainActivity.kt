@@ -6,15 +6,14 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
-import com.sammengistu.stuckapp.DummyDataStuck
-import com.sammengistu.stuckapp.OnItemClickListener
-import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckapp.*
+import com.sammengistu.stuckapp.UserHelper.Companion.currentUser
 import com.sammengistu.stuckapp.constants.*
 import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
@@ -23,12 +22,15 @@ import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_USER
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
+import org.jetbrains.anko.find
 
 class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var navigationBar: StuckNavigationBar
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var navigationView: NavigationView
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -46,24 +48,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         setupDrawer()
 
         UserVotesCollection.loadUserVotes(getFirebaseUserId())
-    }
-
-    private fun setupDrawer() {
-        drawer = drawer_layout
-        toggle = ActionBarDrawerToggle(
-            this,
-            drawer,
-            toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        drawer.addDrawerListener(toggle)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
-
-        val navigationView: NavigationView = nav_view
-        navigationView.setNavigationItemSelectedListener(this)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -114,6 +98,34 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         navigationBar.visibility = VISIBLE
     }
 
+    private fun setupDrawer() {
+        drawer = drawer_layout
+        toggle = ActionBarDrawerToggle(
+            this,
+            drawer,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawer.addDrawerListener(toggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
+
+        navigationView = nav_view
+        navigationView.setNavigationItemSelectedListener(this)
+
+        UserHelper.getCurrentUser{setupNavHeader(it)}
+    }
+
+    private fun setupNavHeader(user: UserModel?) {
+        if (user != null) {
+            val parentView = navigationView.getHeaderView(0)
+            parentView.findViewById<TextView>(R.id.nav_username).text = user.username
+            // Todo: setup avatar and check that view still exists
+        }
+    }
+
     private fun getOnNavItemClicked(): OnItemClickListener<Int> {
         return object : OnItemClickListener<Int> {
             override fun onItemClicked(item: Int) {
@@ -158,7 +170,5 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         const val TITLE_CATEGORIES = "Categories"
         const val TITLE_FAVORITE = "Favorite"
         const val TITLE_ME = "My Posts"
-
-        var currentUser: UserModel? = null
     }
 }

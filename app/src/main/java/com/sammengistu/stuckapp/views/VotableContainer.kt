@@ -3,21 +3,19 @@ package com.sammengistu.stuckapp.views
 import android.content.Context
 import android.view.MotionEvent
 import android.widget.RelativeLayout
+import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.UserVotesCollection
-import com.sammengistu.stuckfirebase.access.UserStatsAccess
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 
 abstract class VotableContainer(
     context: Context,
-    var owner: String,
     var post: PostModel,
     var choiceItem: Triple<String, String, Int>,
     var userVote: UserVoteModel?,
-    val updateParentContainer: UpdateParentContainer
-)
-: RelativeLayout(context), DoubleTapGesture.DoubleTapListener {
+    private val updateParentContainer: UpdateParentContainer
+) : RelativeLayout(context), DoubleTapGesture.DoubleTapListener {
 
     interface UpdateParentContainer {
         fun updateContainer(userVote: UserVoteModel?)
@@ -33,12 +31,23 @@ abstract class VotableContainer(
 
     override fun onDoubleTapped() {
         if (userVote == null) {
-            val userVote = UserVoteModel(owner, post.ref, choiceItem.first.toInt())
-            UserVoteAccess().createItemInFB(userVote)
-            UserVotesCollection.addVoteToMap(userVote)
-            UserStatsAccess.incrementCollectedVote(post.ownerId)
-            onItemVotedOn(userVote)
-            updateParentContainer.updateContainer(userVote)
+            UserHelper.getCurrentUser {
+                if (it != null) {
+                    val userVote = UserVoteModel(
+                        it.userId,
+                        it.ref,
+                        it.username,
+                        it.avatar,
+                        post.ref,
+                        post.ownerRef,
+                        choiceItem.first.toInt()
+                    )
+                    UserVoteAccess().createItemInFB(userVote)
+                    UserVotesCollection.addVoteToMap(userVote)
+                    onItemVotedOn(userVote)
+                    updateParentContainer.updateContainer(userVote)
+                }
+            }
         }
     }
 }

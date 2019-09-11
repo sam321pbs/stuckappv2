@@ -9,7 +9,11 @@ data class UserModel(
     var education: String,
     var bio: String,
     var ageGroup: String,
-    var gender: String
+    var gender: String,
+    var totalMadeVotes: Int,
+    var totalReceivedVotes: Int,
+    var totalReceivedStars: Int
 ) : FirebaseItem() {
-    constructor() : this(  "", "", "", "", "", "", "", "", "")
+
+    constructor() : this(  "", "", "", "", "", "", "", "", "", 0,0,0)
 }

@@ -14,12 +14,11 @@ import org.jetbrains.anko.centerVertically
 
 class VotableChoiceView(
     context: Context,
-    owner: String,
     post: PostModel,
     choiceItem: Triple<String, String, Int>,
     userVote: UserVoteModel?,
     updateParentContainer: UpdateParentContainer
-) : VotableContainer(context, owner, post, choiceItem, userVote, updateParentContainer) {
+) : VotableContainer(context, post, choiceItem, userVote, updateParentContainer) {
 
     private val mBullet = ImageView(context)
     private val mChoiceText = TextView(context)
