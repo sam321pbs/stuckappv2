@@ -64,9 +64,12 @@ abstract class BaseNewPostFragment : BaseFragment() {
             )
         }
 
+        username.text = "username"
+
         UserHelper.getCurrentUser {
             if (it != null) {
                 avatar_view.loadImage(it.avatar)
+                username.text = it.username
             }
         }
     }
