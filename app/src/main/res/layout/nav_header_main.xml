@@ -10,11 +10,10 @@
     android:paddingEnd="16dp"
     android:orientation="vertical">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.sammengistu.stuckapp.views.AvatarView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@mipmap/peter_griffan_head_shot"
-        android:id="@+id/avatar"/>
+        android:id="@+id/avatar_view"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -12,19 +12,23 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
-import com.sammengistu.stuckapp.*
-import com.sammengistu.stuckapp.UserHelper.Companion.currentUser
+import com.sammengistu.stuckapp.OnItemClickListener
+import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.constants.*
+import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_FAVORITES
 import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_USER
 import com.sammengistu.stuckapp.fragments.ProfileFragment
+import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.nav_header_main.*
-import org.jetbrains.anko.find
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,6 +36,11 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
+
+    @Subscribe
+    fun onUserProfileUpdated(event: UserUpdatedEvent) {
+        UserHelper.getCurrentUser{setupNavHeader(it)}
+    }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -49,6 +58,16 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         setupDrawer()
 
         UserVotesCollection.loadUserVotes(getFirebaseUserId())
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -70,7 +89,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_profile -> addFragment(ProfileFragment())
+            R.id.action_profile -> addFragment(ProfileFragment.newInstance(false), TITLE_PROFILE)
             R.id.action_stats -> Toast.makeText(this, "Clicked Stats", Toast.LENGTH_SHORT).show()
             R.id.action_drafts -> Toast.makeText(this, "Clicked Drafts", Toast.LENGTH_SHORT).show()
             R.id.action_favorite -> Toast.makeText(
@@ -120,6 +139,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         if (user != null) {
             val parentView = navigationView.getHeaderView(0)
             parentView.findViewById<TextView>(R.id.nav_username).text = user.username
+            parentView.findViewById<AvatarView>(R.id.avatar_view).loadImage(user.avatar)
             // Todo: setup avatar and check that view still exists
         }
     }
@@ -168,5 +188,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         const val TITLE_CATEGORIES = "Categories"
         const val TITLE_FAVORITE = "Favorite"
         const val TITLE_ME = "My Posts"
+        const val TITLE_PROFILE = "Profile"
     }
 }

@@ -23,4 +23,8 @@
         <attr name="formItemTitle" format="string" />
         <attr name="formItemHint" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="AvatarView">
+        <attr name="avatarSrc" format="string" />
+    </declare-styleable>
 </resources>

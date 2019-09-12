@@ -15,12 +15,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <com.sammengistu.stuckapp.views.AvatarView
+                android:id="@+id/avatar_view"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/ic_add_a_photo_blue_400_24dp" />
+                custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
 
             <com.sammengistu.stuckapp.views.FormItemView
                 android:id="@+id/username_field"

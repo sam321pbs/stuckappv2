@@ -44,13 +44,21 @@ class FbStorageHelper {
 //            return imagesRef.path
 //        }
 
+        fun uploadAvatar(bitmap: Bitmap, callback: UploadCompletionCallback) {
+            uploadImage("avatars/${UUID.randomUUID()}.png", bitmap, callback)
+        }
+
         fun uploadImage(bitmap: Bitmap, callback: UploadCompletionCallback) {
+            uploadImage("images/${UUID.randomUUID()}.png", bitmap, callback)
+        }
+
+        fun uploadImage(filePath: String, bitmap: Bitmap, callback: UploadCompletionCallback) {
             val baos = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data = baos.toByteArray()
 
             val storageRef = FirebaseStorage.getInstance().reference
-            val imagesRef = storageRef.child("images/${UUID.randomUUID()}.png")
+            val imagesRef = storageRef.child(filePath)
             val uploadTask = imagesRef.putBytes(data)
 
             uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->

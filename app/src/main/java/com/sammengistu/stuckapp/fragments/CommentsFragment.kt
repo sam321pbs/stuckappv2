@@ -88,7 +88,7 @@ class CommentsFragment : BaseFragment() {
                 mPostId,
                 user.userId,
                 user.username,
-                "ava_1",
+                user.avatar,
                 mCommentET.text.toString(),
                 mChoicePos
             )

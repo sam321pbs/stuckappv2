@@ -9,12 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/avatar"
+        <com.sammengistu.stuckapp.views.AvatarView
+            android:id="@+id/avatar_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="15dp"
-            android:src="@mipmap/peter_griffan_head_shot"
             app:civ_border_color="@android:color/transparent"
             app:civ_border_width="2dp" />
 

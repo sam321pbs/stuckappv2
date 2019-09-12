@@ -63,6 +63,12 @@ abstract class BaseNewPostFragment : BaseFragment() {
                 PostPrivacyDialog.TAG
             )
         }
+
+        UserHelper.getCurrentUser {
+            if (it != null) {
+                avatar_view.loadImage(it.avatar)
+            }
+        }
     }
 
     fun createImagePost(type: PostType, bitmap1: Bitmap?, bitmap2: Bitmap?) {
@@ -167,8 +173,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
         return PostModel(
             user.userId,
             user.ref,
-            username.text.toString(),
-            "ava",
+            user.username,
+            user.avatar,
             question.text.toString(),
             mSelectedPrivacy,
             mSelectedCategory,

@@ -2,17 +2,13 @@ package com.sammengistu.stuckapp.fragments
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
+import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
-import java.io.FileNotFoundException
 
 
 class NewImagePostFragment : BaseNewPostFragment() {
@@ -31,11 +27,11 @@ class NewImagePostFragment : BaseNewPostFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         image_1_container.setOnClickListener {
-            loadImageFromGallery(REQUEST_LOAD_IMG_1)
+            LoadImageFromGalleryHelper.loadImageFromGallery(this, REQUEST_LOAD_IMG_1)
         }
 
         image_2_container.setOnClickListener {
-            loadImageFromGallery(REQUEST_LOAD_IMG_2)
+            LoadImageFromGalleryHelper.loadImageFromGallery(this, REQUEST_LOAD_IMG_2)
         }
 
         submit_button.setOnClickListener {
@@ -46,8 +42,8 @@ class NewImagePostFragment : BaseNewPostFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_LOAD_IMG_1 -> mBitmap1 = addImageToView(image_1, data)
-            REQUEST_LOAD_IMG_2 -> mBitmap2 = addImageToView(image_2, data)
+            REQUEST_LOAD_IMG_1 -> mBitmap1 = LoadImageFromGalleryHelper.addImageToView(activity, image_1, data)
+            REQUEST_LOAD_IMG_2 -> mBitmap2 = LoadImageFromGalleryHelper.addImageToView(activity, image_2, data)
         }
     }
 
@@ -62,29 +58,6 @@ class NewImagePostFragment : BaseNewPostFragment() {
             return false
         }
         return true
-    }
-
-    private fun addImageToView(imageView: ImageView, data: Intent?): Bitmap? {
-        try {
-            val imageUri = data!!.data
-            val imageStream = activity!!.contentResolver.openInputStream(imageUri!!)
-            Picasso.get()
-                .load(imageUri)
-                .fit()
-//                .centerCrop()
-                .into(imageView)
-            return BitmapFactory.decodeStream(imageStream)
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-            Toast.makeText(activity, "Something went wrong", Toast.LENGTH_LONG).show()
-        }
-        return null
-    }
-
-    private fun loadImageFromGallery(requestCode: Int) {
-        val photoPickerIntent = Intent(Intent.ACTION_PICK)
-        photoPickerIntent.type = "image/*"
-        startActivityForResult(photoPickerIntent, requestCode)
     }
 
     companion object {

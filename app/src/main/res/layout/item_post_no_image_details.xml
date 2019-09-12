@@ -10,7 +10,7 @@
     <include layout="@layout/top_portion_post" />
 
     <LinearLayout
-            android:id="@+id/votable_choice_container"
+            android:id="@+id/choice_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/post_info"

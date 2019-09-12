@@ -13,10 +13,7 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.utils.DateUtils
-import com.sammengistu.stuckapp.views.HorizontalIconToTextView
-import com.sammengistu.stuckapp.views.VotableChoiceView
-import com.sammengistu.stuckapp.views.VotableContainer
-import com.sammengistu.stuckapp.views.VotableImageView
+import com.sammengistu.stuckapp.views.*
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
@@ -41,6 +38,8 @@ class PostsAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
+
+        holder.avatarView.loadImage(post.avatar)
 
         holder.questionView.text = post.question
         holder.username.text = post.userName
@@ -79,33 +78,53 @@ class PostsAdapter(
     private fun createView(parent: ViewGroup, layoutId: Int) =
         LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
 
-    private fun buildTextChoices(holder: PostTextViewHolder, post: PostModel, userVote: UserVoteModel?) {
-        val container = holder.votableChoiceContainer
+    private fun buildTextChoices(
+        holder: PostViewHolder,
+        post: PostModel,
+        userVote: UserVoteModel?
+    ) {
+        val container = holder.choiceContainer
         container.removeAllViews()
-        val updateParentContainer = getUpdateParentContainer(container)
+        val updateParentContainer = getUpdateParentContainer(container) {
+            holder.voteTotalView.setText((post.getTotalVotes() + 1).toString())
+        }
         for (tripleItem in post.getChoicesToVoteList()) {
             container.addView(
-                VotableChoiceView(mContext, post, tripleItem, userVote, updateParentContainer))
+                VotableChoiceView(mContext, post, tripleItem, userVote, updateParentContainer)
+            )
         }
     }
 
-    private fun buildImageChoices(holder: PostImageViewHolder, post: PostModel, userVote: UserVoteModel?) {
-        val container = holder.imageContainer
+    private fun buildImageChoices(
+        holder: PostViewHolder,
+        post: PostModel,
+        userVote: UserVoteModel?
+    ) {
+        val container = holder.choiceContainer
         container.removeAllViews()
-        val updateParentContainer = getUpdateParentContainer(container)
+        val updateParentContainer = getUpdateParentContainer(container) {
+            holder.voteTotalView.setText((post.getTotalVotes() + 1).toString())
+        }
         for (tripleItem in post.getImagesToVoteList()) {
             container.addView(
-                VotableImageView(mContext, post, tripleItem, userVote, updateParentContainer))
+                VotableImageView(mContext, post, tripleItem, userVote, updateParentContainer)
+            )
         }
     }
 
-    private fun getUpdateParentContainer(container: LinearLayout): VotableContainer.UpdateParentContainer {
+    private fun getUpdateParentContainer(
+        container: LinearLayout,
+        func: (choicePos: Int) -> Unit
+    ): VotableContainer.UpdateParentContainer {
         return object : VotableContainer.UpdateParentContainer {
             override fun updateContainer(userVote: UserVoteModel?) {
-                for (view in container.children) {
-                    if (view is VotableContainer) {
-                        view.onItemVotedOn(userVote)
-                        view.userVote = userVote
+                if (userVote != null) {
+                    for (view in container.children) {
+                        if (view is VotableContainer) {
+                            view.onItemVotedOn(userVote)
+                            view.userVote = userVote
+                            func.invoke(userVote.voteItem)
+                        }
                     }
                 }
             }
@@ -118,18 +137,15 @@ class PostsAdapter(
         const val TEXT_VIEW_TYPE = 2
     }
 
-    class PostTextViewHolder(parentView: View) : PostViewHolder(parentView) {
-        val votableChoiceContainer: LinearLayout =
-            parentView.find(R.id.votable_choice_container)
-    }
+    class PostTextViewHolder(parentView: View) : PostViewHolder(parentView)
 
-    class PostImageViewHolder(parentView: View) : PostViewHolder(parentView) {
-        val imageContainer: LinearLayout = parentView.find(R.id.image_container)
-    }
+    class PostImageViewHolder(parentView: View) : PostViewHolder(parentView)
 
     open class PostViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {
+        val choiceContainer: LinearLayout =
+            parentView.find(R.id.choice_container)
         val questionView: TextView = parentView.find(R.id.question)
-        val avatarView: ImageView = parentView.find(R.id.avatar)
+        val avatarView: AvatarView = parentView.find(R.id.avatar_view)
         val username: TextView = parentView.find(R.id.username)
         val timeSince: TextView = parentView.find(R.id.time_since)
         val categoriesView: HorizontalIconToTextView =
