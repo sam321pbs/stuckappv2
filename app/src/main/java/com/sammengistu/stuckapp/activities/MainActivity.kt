@@ -19,6 +19,7 @@ import com.sammengistu.stuckapp.fragments.CategoriesFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment
 import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_FAVORITES
 import com.sammengistu.stuckapp.fragments.PostsListFragment.Companion.EXTRA_USER
+import com.sammengistu.stuckapp.fragments.ProfileFragment
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -69,11 +70,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_profile -> Toast.makeText(
-                this,
-                "Clicked Profile",
-                Toast.LENGTH_SHORT
-            ).show()
+            R.id.action_profile -> addFragment(ProfileFragment())
             R.id.action_stats -> Toast.makeText(this, "Clicked Stats", Toast.LENGTH_SHORT).show()
             R.id.action_drafts -> Toast.makeText(this, "Clicked Drafts", Toast.LENGTH_SHORT).show()
             R.id.action_favorite -> Toast.makeText(
@@ -87,6 +84,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 Toast.LENGTH_SHORT
             ).show()
         }
+        drawer.closeDrawers()
         return true
     }
 

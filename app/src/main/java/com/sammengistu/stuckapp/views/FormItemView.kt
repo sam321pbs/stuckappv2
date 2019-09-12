@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
 
-class FormItemTextView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+class FormItemView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     var titleView: TextView = TextView(context)
     var itemEditText: EditText = EditText(context)
 
@@ -16,12 +16,12 @@ class FormItemTextView(context: Context, attrs: AttributeSet) : LinearLayout(con
         buildView()
         context.theme.obtainStyledAttributes(
             attrs,
-            R.styleable.FormItemTextView,
+            R.styleable.FormItemView,
             0, 0).apply {
 
             try {
-                var itemTitle = getString(R.styleable.FormItemTextView_formItemTitle)
-                var itemHint = getString(R.styleable.FormItemTextView_formItemHint)
+                var itemTitle = getString(R.styleable.FormItemView_formItemTitle)
+                var itemHint = getString(R.styleable.FormItemView_formItemHint)
                 if (itemHint.isNullOrBlank()) {
                     itemHint = "Enter Text"
                 }
@@ -35,6 +35,8 @@ class FormItemTextView(context: Context, attrs: AttributeSet) : LinearLayout(con
             }
         }
     }
+
+    fun setText(text: String) = itemEditText.setText(text)
 
     fun getText(): String = itemEditText.text.toString()
 

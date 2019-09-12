@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -12,8 +12,8 @@
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <androidx.appcompat.widget.Toolbar
@@ -21,91 +21,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_add_a_photo_blue_400_24dp"
-                android:layout_gravity="center_horizontal"/>
-
-            <com.sammengistu.stuckapp.views.FormItemTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/username_field"
-                custom:formItemTitle="Username"
-                custom:formItemHint="Enter Username"/>
-
-            <com.sammengistu.stuckapp.views.FormItemTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/description_field"
-                custom:formItemTitle="Description About You"
-                custom:formItemHint="Enter description"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:layout_gravity="center_horizontal"
-                android:text="About You"/>
-
-            <com.sammengistu.stuckapp.views.FormItemTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/name_field"
-                custom:formItemTitle="Full Name"
-                custom:formItemHint="Enter Full Name"/>
-
-            <com.sammengistu.stuckapp.views.FormItemTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/occupation_field"
-                custom:formItemTitle="Occupation"
-                custom:formItemHint="Enter Occupation"/>
-
-            <com.sammengistu.stuckapp.views.FormItemTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/education_field"
-                custom:formItemTitle="Education"
-                custom:formItemHint="Enter Education"/>
-
-            <com.sammengistu.stuckapp.views.FormItemTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/age_group_field"
-                custom:formItemTitle="Age Group"
-                custom:formItemHint="Enter age"/>
-
-            <com.sammengistu.stuckapp.views.FormItemTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/gender_field"
-                custom:formItemTitle="Gender"
-                custom:formItemHint="Enter gender"/>
-        </LinearLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create Profile"
-            android:id="@+id/create_profile_button"/>
+        <include layout="@layout/fragment_profile" />
     </LinearLayout>
 </ScrollView>

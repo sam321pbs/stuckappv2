@@ -57,6 +57,19 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
+    fun updateItemInFB(documentRef: String, updates: Map<String, Any>, listener: OnItemUpdated) {
+        getCollectionRef()
+            .document(documentRef)
+            .update(updates)
+            .addOnSuccessListener {
+                listener.onSuccess()
+            }
+            .addOnFailureListener { e ->
+                listener.onFailed(e)
+                Log.e(TAG, "Error updating item", e)
+            }
+    }
+
     fun deleteItemInFb(documentId: String) {
         getCollectionRef()
             .document(documentId)
@@ -178,13 +191,18 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         }
     }
 
-    interface OnItemRetrieved<T: FirebaseItem> {
+    interface OnItemRetrieved<T : FirebaseItem> {
         fun onSuccess(list: List<T>)
         fun onFailed()
     }
 
-    interface OnItemCreated<T: FirebaseItem> {
+    interface OnItemCreated<T : FirebaseItem> {
         fun onSuccess(item: T)
+        fun onFailed(e: Exception)
+    }
+
+    interface OnItemUpdated {
+        fun onSuccess()
         fun onFailed(e: Exception)
     }
 }

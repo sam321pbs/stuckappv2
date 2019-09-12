@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_add_a_photo_blue_400_24dp" />
+
+            <com.sammengistu.stuckapp.views.FormItemView
+                android:id="@+id/username_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter Username"
+                custom:formItemTitle="Username" />
+
+            <com.sammengistu.stuckapp.views.FormItemView
+                android:id="@+id/description_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter description"
+                custom:formItemTitle="Description About You" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="About You"
+                android:textSize="25sp" />
+
+            <com.sammengistu.stuckapp.views.FormItemView
+                android:id="@+id/name_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter Full Name"
+                custom:formItemTitle="Full Name" />
+
+            <com.sammengistu.stuckapp.views.FormItemView
+                android:id="@+id/occupation_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter Occupation"
+                custom:formItemTitle="Occupation" />
+
+            <com.sammengistu.stuckapp.views.FormItemView
+                android:id="@+id/education_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter Education"
+                custom:formItemTitle="Education" />
+
+            <com.sammengistu.stuckapp.views.FormItemView
+                android:id="@+id/age_group_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter age"
+                custom:formItemTitle="Age Group" />
+
+            <com.sammengistu.stuckapp.views.FormItemView
+                android:id="@+id/gender_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter gender"
+                custom:formItemTitle="Gender" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/create_profile_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Profile" />
+    </LinearLayout>
+</ScrollView>

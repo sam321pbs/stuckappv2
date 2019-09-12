@@ -19,7 +19,7 @@
         <attr name="verticalIconText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="FormItemTextView">
+    <declare-styleable name="FormItemView">
         <attr name="formItemTitle" format="string" />
         <attr name="formItemHint" format="string" />
     </declare-styleable>

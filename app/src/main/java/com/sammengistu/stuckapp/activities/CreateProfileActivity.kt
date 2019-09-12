@@ -7,24 +7,24 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckapp.ErrorNotifier.Companion.notifyError
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.views.FormItemTextView
+import com.sammengistu.stuckapp.views.FormItemView
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.UserModel
-import kotlinx.android.synthetic.main.activity_create_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.*
 
 class CreateProfileActivity : LoggedInActivity() {
 
-    lateinit var usernameField: FormItemTextView
-    lateinit var descriptionField: FormItemTextView
-    lateinit var nameField: FormItemTextView
-    lateinit var occupationField: FormItemTextView
-    lateinit var educationField: FormItemTextView
-    lateinit var ageGroupField: FormItemTextView
-    lateinit var genderField: FormItemTextView
+    lateinit var usernameField: FormItemView
+    lateinit var descriptionField: FormItemView
+    lateinit var nameField: FormItemView
+    lateinit var occupationField: FormItemView
+    lateinit var educationField: FormItemView
+    lateinit var ageGroupField: FormItemView
+    lateinit var genderField: FormItemView
     lateinit var createProfileButton: Button
 
-    private val formFieldsList = ArrayList<FormItemTextView>()
+    private val formFieldsList = ArrayList<FormItemView>()
 
     override fun getLayoutId(): Int {
         return R.layout.activity_create_profile
