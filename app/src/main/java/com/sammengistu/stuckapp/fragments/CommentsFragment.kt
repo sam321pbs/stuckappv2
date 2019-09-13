@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
+import com.sammengistu.stuckapp.ErrorNotifier
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
@@ -13,45 +14,44 @@ import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST
 import com.sammengistu.stuckapp.adapters.CommentsAdapter
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckfirebase.access.CommentAccess
+import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.data.CommentModel
+import com.sammengistu.stuckfirebase.data.CommentVoteModel
 import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.compose_area.*
 import kotlinx.android.synthetic.main.fragment_comments.*
 
 class CommentsFragment : BaseFragment() {
 
-    lateinit var mCommentET: EditText
-    lateinit var mSendButton: ImageButton
-    lateinit var mCommentsAdapter: CommentsAdapter
-    private var mPostId: String = ""
-    private var mChoicePos: Int = 0
-    private var mListComments = ArrayList<CommentModel>()
+    lateinit var commentET: EditText
+    lateinit var sendButton: ImageButton
+    lateinit var commentsAdapter: CommentsAdapter
+    private var postRef: String = ""
+    private var choicePos: Int = 0
+    private var listComments = ArrayList<CommentModel>()
+    private var commentVotesMap = HashMap<String, CommentVoteModel>()
 
-    override fun getFragmentTag(): String {
-        return TAG
-    }
+    override fun getFragmentTag(): String = TAG
 
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_comments
-    }
+    override fun getLayoutId(): Int =  R.layout.fragment_comments
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mCommentET = new_comment_edit_text
-        mSendButton = send_button
+        commentET = new_comment_edit_text
+        sendButton = send_button
 
-        mPostId = arguments?.getString(EXTRA_POST_ID) ?: ""
-        mChoicePos = arguments?.getInt(EXTRA_POST_CHOICE_POS) ?: 0
+        postRef = arguments?.getString(EXTRA_POST_ID) ?: ""
+        choicePos = arguments?.getInt(EXTRA_POST_CHOICE_POS) ?: 0
 
-        if (mPostId.isNullOrBlank()) {
+        if (postRef.isNullOrBlank()) {
             Log.d(TAG, "Empty id for comments")
         } else {
 
-            mCommentsAdapter = CommentsAdapter(ArrayList())
+            commentsAdapter = CommentsAdapter(context!!, ArrayList())
             RecyclerViewHelper.setupRecyclerView(
                 activity!!, recycler_view,
-                mCommentsAdapter  as RecyclerView.Adapter<RecyclerView.ViewHolder>
+                commentsAdapter  as RecyclerView.Adapter<RecyclerView.ViewHolder>
             )
 
             reloadAdapter()
@@ -60,17 +60,36 @@ class CommentsFragment : BaseFragment() {
     }
 
     private fun reloadAdapter() {
+        CommentsVoteAccess().getItemsWhereEqual("postRef", postRef, object :
+            FirebaseItemAccess.OnItemRetrieved<CommentVoteModel> {
+            override fun onSuccess(list: List<CommentVoteModel>) {
+                val map = HashMap<String, CommentVoteModel>()
+                for (commentVote in list) {
+                    map[commentVote.commentRef] = commentVote
+                }
+                commentVotesMap = map
+                getComments()
+            }
+
+            override fun onFailed() {
+                ErrorNotifier.notifyError(context!!, "Error getting comments")
+            }
+        })
+    }
+
+    private fun getComments() {
         CommentAccess().getItemsWhereEqual(
             "postRef",
-            mPostId,
+            postRef,
             object : FirebaseItemAccess.OnItemRetrieved<CommentModel> {
                 override fun onSuccess(list: List<CommentModel>) {
-                    mListComments = list as ArrayList<CommentModel>
-                    mCommentsAdapter.swapData(mListComments)
+                    listComments = list as ArrayList<CommentModel>
+                    commentsAdapter.swapData(listComments)
+                    commentsAdapter.updateCommentVoteMap(commentVotesMap)
                 }
 
                 override fun onFailed() {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    ErrorNotifier.notifyError(context!!, "Error getting comments")
                 }
             }
         )
@@ -85,18 +104,18 @@ class CommentsFragment : BaseFragment() {
     private fun createComment(user: UserModel?) {
         if (user != null) {
             val commentModel = CommentModel(
-                mPostId,
+                postRef,
                 user.userId,
                 user.username,
                 user.avatar,
-                mCommentET.text.toString(),
-                mChoicePos
+                commentET.text.toString(),
+                choicePos
             )
             CommentAccess().createItemInFB(commentModel)
             // Todo: check that view still exists
-            mListComments.add(commentModel)
-            mCommentsAdapter.swapData(mListComments)
-            mCommentET.setText("")
+            listComments.add(commentModel)
+            commentsAdapter.swapData(listComments)
+            commentET.setText("")
         }
     }
 
