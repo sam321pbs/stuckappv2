@@ -85,7 +85,7 @@ class VotableChoiceView(
             mVotesText.visibility = View.GONE
         } else {
             mVotesText.visibility = View.VISIBLE
-            if (choiceItem.first.toInt() == userVote.voteItem) {
+            if (choiceItem.first == userVote.voteItem) {
                 setBackgroundColor(resources.getColor(R.color.green))
                 if (isUpdate) {
                     setTotal(choiceItem.third + 1)

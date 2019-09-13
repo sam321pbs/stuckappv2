@@ -114,7 +114,7 @@ class PostsAdapter(
 
     private fun getUpdateParentContainer(
         container: LinearLayout,
-        func: (choicePos: Int) -> Unit
+        func: (choicePos: String) -> Unit
     ): VotableContainer.UpdateParentContainer {
         return object : VotableContainer.UpdateParentContainer {
             override fun updateContainer(userVote: UserVoteModel?) {

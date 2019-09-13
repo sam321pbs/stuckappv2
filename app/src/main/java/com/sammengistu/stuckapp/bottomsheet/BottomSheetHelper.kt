@@ -76,7 +76,6 @@ class BottomSheetHelper(
                     StarPostAccess(user.ref).createItemInFB(mPost!!,
                         object : FirebaseItemAccess.OnItemCreated<PostModel> {
                             override fun onSuccess(item: PostModel) {
-                                PostAccess().incrementStarTotal(item.ref)
                                 UserAccess().incrementTotalStars(item.ownerRef)
                             }
 

@@ -19,8 +19,8 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         return getEnvironmentCollectionRef(POSTS)
     }
 
-    fun incrementVote(ref: String, pos: Int) {
-        incrementField(ref, "votes.$pos")
+    fun incrementVote(ref: String, key: String) {
+        incrementField(ref, "votes.$key")
     }
 
     fun incrementStarTotal(ref: String) {

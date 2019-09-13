@@ -40,7 +40,7 @@ abstract class VotableContainer(
                         it.avatar,
                         post.ref,
                         post.ownerRef,
-                        choiceItem.first.toInt()
+                        choiceItem.first
                     )
                     UserVoteAccess().createItemInFB(userVote)
                     UserVotesCollection.addVoteToMap(userVote)

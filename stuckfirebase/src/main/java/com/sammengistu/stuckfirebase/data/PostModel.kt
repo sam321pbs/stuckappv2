@@ -56,23 +56,23 @@ data class PostModel(
 
     @Exclude
     fun addImage(loc: String) {
-        val imageKey = (images.size + 1).toString()
-        images.put(imageKey, loc)
+        val imageKey = convertToChoiceText(images.size + 1)
+        images[imageKey] = loc
     }
 
     @Exclude
     fun addChoice(choice: String) {
         if (choice.isNotEmpty()) {
-            val choiceKey = (choices.size + 1).toString()
-            choices.put(choiceKey, choice)
+            val choiceKey = convertToChoiceText(choices.size + 1)
+            choices[choiceKey] = choice
         }
     }
 
     @Exclude
     fun addEmptyVotes() {
         for (i in 1..MAX_NUMBER_OF_CHOICES) {
-            val votesKey = (votes.size + 1).toString()
-            votes.put(votesKey, 0)
+            val votesKey = convertToChoiceText(votes.size + 1)
+            votes[votesKey] = 0
         }
     }
 
@@ -102,4 +102,7 @@ data class PostModel(
         }
         return list
     }
+
+    @Exclude
+    fun convertToChoiceText(pos: Int) : String = "choice_$pos"
 }

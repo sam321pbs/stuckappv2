@@ -103,7 +103,7 @@ class VotableImageView(
             votesTextView.visibility = View.GONE
         } else {
             votesTextView.visibility = View.VISIBLE
-            if (choiceItem.first.toInt() == userVote.voteItem) {
+            if (choiceItem.first == userVote.voteItem) {
                 votesTextView.setBackgroundResource(R.drawable.green_circle)
                 if (isUpdate) {
                     setTotal(choiceItem.third + 1)
