@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
@@ -16,13 +17,11 @@ class NewImagePostFragment : BaseNewPostFragment() {
     var mBitmap1: Bitmap? = null
     var mBitmap2: Bitmap? = null
 
-    override fun getFragmentTag(): String {
-        return TAG
-    }
+    override fun getFragmentTag(): String = TAG
 
-    override fun getLayoutId(): Int {
-        return com.sammengistu.stuckapp.R.layout.fragment_new_image_post
-    }
+    override fun getLayoutId(): Int = R.layout.fragment_new_image_post
+
+    override fun getFragmentTitle(): String = TITLE
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,6 +60,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
     }
 
     companion object {
+        const val TITLE = "New Image Post"
         val TAG = NewImagePostFragment::class.java.simpleName
         val REQUEST_LOAD_IMG_1 = 0
         val REQUEST_LOAD_IMG_2 = 1

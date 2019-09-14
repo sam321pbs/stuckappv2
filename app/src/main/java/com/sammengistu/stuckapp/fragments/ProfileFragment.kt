@@ -40,13 +40,11 @@ class ProfileFragment : BaseFragment() {
     private val formFieldsList = ArrayList<FormItemView>()
     private var createMode = false
 
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_profile
-    }
+    override fun getFragmentTitle(): String = TITLE
 
-    override fun getFragmentTag(): String {
-        return TAG
-    }
+    override fun getLayoutId(): Int = R.layout.fragment_profile
+
+    override fun getFragmentTag(): String = TAG
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

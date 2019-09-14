@@ -16,13 +16,11 @@ class NewTextPostFragment : BaseNewPostFragment() {
     lateinit var mChoicesContainer: LinearLayout
     val MAX_NUMBER_OF_CHOICES = 4
 
-    override fun getFragmentTag(): String {
-        return TAG
-    }
+    override fun getFragmentTitle(): String = TITLE
 
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_new_text_post
-    }
+    override fun getFragmentTag(): String = TAG
+
+    override fun getLayoutId(): Int = R.layout.fragment_new_text_post
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,5 +61,6 @@ class NewTextPostFragment : BaseNewPostFragment() {
 
     companion object {
         val TAG = NewTextPostFragment::class.java.simpleName
+        const val TITLE = "Text Post"
     }
 }

@@ -6,19 +6,11 @@ import com.sammengistu.stuckapp.R
 import kotlinx.android.synthetic.main.fragment_new_post_type.*
 
 class NewPostTypeFragment : BaseFragment() {
+    override fun getFragmentTitle(): String = TITLE
 
-    companion object {
-        val TAG: String = NewPostTypeFragment::class.java.simpleName
-        const val TITLE = "New Post"
-    }
+    override fun getFragmentTag(): String = TAG
 
-    override fun getFragmentTag(): String {
-        return TAG
-    }
-
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_new_post_type
-    }
+    override fun getLayoutId(): Int = R.layout.fragment_new_post_type
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,5 +22,10 @@ class NewPostTypeFragment : BaseFragment() {
         text_post_choice_container.setOnClickListener {
             addFragment(NewTextPostFragment())
         }
+    }
+
+    companion object {
+        val TAG: String = NewPostTypeFragment::class.java.simpleName
+        const val TITLE = "Post Type"
     }
 }

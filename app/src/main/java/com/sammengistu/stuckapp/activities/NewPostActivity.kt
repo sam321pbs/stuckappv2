@@ -13,6 +13,6 @@ class NewPostActivity : LoggedInActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
-        addFragment(NewPostTypeFragment(), NewPostTypeFragment.TITLE)
+        addFragment(NewPostTypeFragment())
     }
 }

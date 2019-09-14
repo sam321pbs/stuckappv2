@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
-import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
+import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
@@ -21,13 +21,19 @@ import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
-class PostsListFragment : BasePostListsFragment() {
+abstract class PostsListFragment : BasePostListsFragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: PostsAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
     private var postsList = ArrayList<PostModel>()
+
+    private val listViewModel: PostListViewModel by viewModels {
+        InjectorUtils.providePostListViewModelFactory(requireContext())
+    }
+
+    abstract fun getType(): String
 
     @Subscribe
     fun onUserVotesLoaded(event: UserVotesLoadedEvent) {
@@ -47,14 +53,6 @@ class PostsListFragment : BasePostListsFragment() {
         if (refresh) {
             viewAdapter.swapData(postsList)
         }
-    }
-
-    private val listViewModel: PostListViewModel by viewModels {
-        InjectorUtils.providePostListViewModelFactory(requireContext())
-    }
-
-    override fun getFragmentTag(): String {
-        return TAG
     }
 
     override fun getLayoutId(): Int {
@@ -98,10 +96,18 @@ class PostsListFragment : BasePostListsFragment() {
     }
 
     private fun refreshAdapter(adapter: PostsAdapter) {
-        when {
-            getFavorites().isNotBlank() -> StarPostAccess(getUserId()).getItems(getOnPostRetrievedListener(adapter))
-            getPostCategory().isNotEmpty() -> PostAccess().getPostsInCategory(getPostCategory(), getOnPostRetrievedListener(adapter))
-            getOwner().isNotEmpty() -> PostAccess().getOwnerPosts(getUserId(), getOnPostRetrievedListener(adapter))
+        when (getType()) {
+            TYPE_FAVORITE -> StarPostAccess(getUserId()).getItems(
+                getOnPostRetrievedListener(adapter)
+            )
+            TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
+                getPostCategory(),
+                getOnPostRetrievedListener(adapter)
+            )
+            TYPE_USER -> PostAccess().getOwnerPosts(
+                getUserId(),
+                getOnPostRetrievedListener(adapter)
+            )
             else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
             //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
             //         adapter.swapData(posts)
@@ -124,25 +130,14 @@ class PostsListFragment : BasePostListsFragment() {
         }
     }
 
-    private fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
-
-    private fun getFavorites(): String = arguments?.getString(EXTRA_FAVORITES) ?: ""
-
-    private fun getOwner(): String = arguments?.getString(EXTRA_USER) ?: ""
+    fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
 
     companion object {
         val TAG: String = PostsListFragment::class.java.simpleName
-        const val EXTRA_CATEGORY = "category"
-        const val EXTRA_FAVORITES = "favorite"
-        const val EXTRA_USER = "owner"
-
-        fun newInstance(extraName: String, value: String): PostsListFragment {
-            val bundle = Bundle()
-            bundle.putString(extraName, value)
-
-            val fragment = PostsListFragment()
-            fragment.arguments = bundle
-            return fragment
-        }
+        const val TYPE_HOME = "home"
+        const val TYPE_FAVORITE = "favorite"
+        const val TYPE_CATEGORIES = "categories"
+        const val TYPE_USER = "user"
+        const val EXTRA_CATEGORY = "extra_category"
     }
 }

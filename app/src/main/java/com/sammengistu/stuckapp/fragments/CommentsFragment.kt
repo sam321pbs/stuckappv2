@@ -36,6 +36,8 @@ class CommentsFragment : BaseFragment() {
 
     override fun getLayoutId(): Int =  R.layout.fragment_comments
 
+    override fun getFragmentTitle(): String = TITLE
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         commentET = new_comment_edit_text

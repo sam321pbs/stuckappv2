@@ -18,7 +18,7 @@ class CommentsActivity : LoggedInActivity() {
         setSupportActionBar(toolbar)
         val postId = intent?.getStringExtra(EXTRA_POST_ID) ?: ""
         val choicePos = intent?.getIntExtra(EXTRA_POST_CHOICE_POS, 0) ?: 0
-        addFragment(CommentsFragment.newInstance(postId, choicePos), CommentsFragment.TITLE)
+        addFragment(CommentsFragment.newInstance(postId, choicePos))
     }
 
     companion object {

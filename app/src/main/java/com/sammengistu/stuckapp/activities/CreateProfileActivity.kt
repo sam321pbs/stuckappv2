@@ -12,6 +12,6 @@ class CreateProfileActivity : LoggedInActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addFragment(ProfileFragment.newInstance(true), ProfileFragment.TITLE)
+        addFragment(ProfileFragment.newInstance(true))
     }
 }
