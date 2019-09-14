@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.CommentsFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 class CommentsActivity : LoggedInActivity() {
 
@@ -14,9 +15,10 @@ class CommentsActivity : LoggedInActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(toolbar)
         val postId = intent?.getStringExtra(EXTRA_POST_ID) ?: ""
         val choicePos = intent?.getIntExtra(EXTRA_POST_CHOICE_POS, 0) ?: 0
-        addFragment(CommentsFragment.newInstance(postId, choicePos))
+        addFragment(CommentsFragment.newInstance(postId, choicePos), CommentsFragment.TITLE)
     }
 
     companion object {

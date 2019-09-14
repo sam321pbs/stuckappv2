@@ -33,16 +33,6 @@
             android:background="@android:color/darker_gray" />
 
     <TextView
-            android:id="@+id/menu_delete_post"
-            style="@style/bottomsheet_menu_item"
-            android:text="Delete" />
-
-    <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
-
-    <TextView
             android:id="@+id/menu_favorite"
             style="@style/bottomsheet_menu_item"
             android:text="Favorite" />
@@ -53,14 +43,24 @@
             android:background="@android:color/darker_gray" />
 
     <TextView
-            android:id="@+id/menu_view_comments"
+            android:id="@+id/menu_comments"
             style="@style/bottomsheet_menu_item"
-            android:text="View Comments" />
+            android:text="Comments" />
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/menu_delete_post"
+        style="@style/bottomsheet_menu_item"
+        android:text="Delete" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
     <TextView
             android:id="@+id/menu_report"

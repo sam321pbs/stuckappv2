@@ -41,6 +41,10 @@ abstract class BaseActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 1) super.onBackPressed() else finish()
+    }
+
     companion object {
         const val RC_SIGN_IN = 0
         val TAG = BaseActivity::class.java.simpleName

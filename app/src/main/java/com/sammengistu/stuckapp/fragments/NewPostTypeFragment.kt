@@ -9,6 +9,7 @@ class NewPostTypeFragment : BaseFragment() {
 
     companion object {
         val TAG: String = NewPostTypeFragment::class.java.simpleName
+        const val TITLE = "New Post"
     }
 
     override fun getFragmentTag(): String {

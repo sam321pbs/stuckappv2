@@ -81,7 +81,8 @@ class SplashScreenActivity : BaseActivity() {
 
     fun launchMainActivity() {
         val mainIntent = Intent(this, MainActivity::class.java)
-        mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(mainIntent)
     }
 

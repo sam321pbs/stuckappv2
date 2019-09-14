@@ -250,6 +250,7 @@ class ProfileFragment : BaseFragment() {
     companion object {
 
         val TAG = ProfileFragment::class.java.simpleName
+        const val TITLE = "Profile"
         const val REQUEST_LOAD_IMG_3 = 3
         const val EXTRA_CREATE_MODE = "extra_create_mode"
 

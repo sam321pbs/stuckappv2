@@ -53,7 +53,7 @@ class BottomSheetHelper(
             .setOnClickListener { deletePost() }
         bottomSheetLL.find<TextView>(R.id.menu_favorite)
             .setOnClickListener { starPost() }
-        bottomSheetLL.find<TextView>(R.id.menu_view_comments)
+        bottomSheetLL.find<TextView>(R.id.menu_comments)
             .setOnClickListener { showComments() }
         bottomSheetLL.find<TextView>(R.id.menu_report)
             .setOnClickListener { reportPost() }

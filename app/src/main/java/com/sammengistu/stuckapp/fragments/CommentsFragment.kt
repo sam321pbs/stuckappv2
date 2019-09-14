@@ -121,6 +121,7 @@ class CommentsFragment : BaseFragment() {
 
     companion object {
         val TAG = CommentsFragment::class.java.simpleName
+        const val TITLE = "Comments"
 
         fun newInstance(postId: String, choicePos: Int): CommentsFragment {
             val bundle = Bundle()
