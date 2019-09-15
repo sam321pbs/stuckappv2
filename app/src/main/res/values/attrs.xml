@@ -27,4 +27,9 @@
     <declare-styleable name="AvatarView">
         <attr name="avatarSrc" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="StatCardView">
+        <attr name="statTotal" format="string" />
+        <attr name="statTitle" format="string" />
+    </declare-styleable>
 </resources>

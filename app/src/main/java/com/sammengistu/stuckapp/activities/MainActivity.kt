@@ -85,7 +85,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_profile -> addFragment(ProfileFragment.newInstance(false))
-            R.id.action_stats -> Toast.makeText(this, "Clicked Stats", Toast.LENGTH_SHORT).show()
+            R.id.action_stats -> addFragment(StatsFragment())
             R.id.action_drafts -> Toast.makeText(this, "Clicked Drafts", Toast.LENGTH_SHORT).show()
             R.id.action_favorite -> Toast.makeText(
                 this,

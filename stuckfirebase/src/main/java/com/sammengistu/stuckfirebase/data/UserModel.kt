@@ -14,6 +14,5 @@ data class UserModel(
     var totalReceivedVotes: Int,
     var totalReceivedStars: Int
 ) : FirebaseItem() {
-
     constructor() : this(  "", "", "", "", "", "", "", "", "", 0,0,0)
 }
