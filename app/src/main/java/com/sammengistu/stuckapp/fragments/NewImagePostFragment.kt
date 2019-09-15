@@ -6,16 +6,23 @@ import android.os.Bundle
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
+import org.greenrobot.eventbus.Subscribe
 
 
 class NewImagePostFragment : BaseNewPostFragment() {
 
     var mBitmap1: Bitmap? = null
     var mBitmap2: Bitmap? = null
+
+    @Subscribe
+    fun onSaveDraft(event: SaveDraftEvent) {
+        saveAsDraft(PostType.LANDSCAPE)
+    }
 
     override fun getFragmentTag(): String = TAG
 

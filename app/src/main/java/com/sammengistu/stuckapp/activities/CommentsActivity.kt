@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.CommentsFragment
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar_layout.*
 
 class CommentsActivity : LoggedInActivity() {
 

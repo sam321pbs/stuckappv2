@@ -5,7 +5,7 @@ import androidx.room.*
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM posts ORDER BY createdAt")
+    @Query("SELECT * FROM posts ORDER BY postId")
     fun getAllPosts(): LiveData<List<DraftPost>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

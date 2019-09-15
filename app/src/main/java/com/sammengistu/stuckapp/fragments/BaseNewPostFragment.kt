@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
 import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
@@ -24,6 +25,8 @@ import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 abstract class BaseNewPostFragment : BaseFragment() {
 
@@ -71,6 +74,17 @@ abstract class BaseNewPostFragment : BaseFragment() {
                 avatar_view.loadImage(it.avatar)
                 username.text = it.username
             }
+        }
+
+        if (activity is NewPostActivity) {
+            (activity as NewPostActivity).showDraftIcon()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (activity is NewPostActivity) {
+            (activity as NewPostActivity).hideDraftIcon()
         }
     }
 
@@ -124,25 +138,26 @@ abstract class BaseNewPostFragment : BaseFragment() {
                     handleFailedToCreateItem("User was null")
                 }
             }
+        }
+    }
 
-            // Todo: handle drafts
-//            doAsync {
-//                uiThread {
-//
-//                }
-//
-//                 PostAccess.insertPost(activity!!.applicationContext, post)
-//                uiThread {
-//
-//                }
-//            }
+    protected fun saveAsDraft(type: PostType) {
+        val post = buildPost(null, type).toDraft()
+        doAsync {
+            uiThread {
+                progress_bar.visibility = View.VISIBLE
+            }
+            PostAccess.insertPost(activity!!.applicationContext, post)
+            uiThread {
+                handleItemCreated("Draft Saved!")
+            }
         }
     }
 
     private fun getOnItemCreatedCallback(): FirebaseItemAccess.OnItemCreated<PostModel> {
         return object : FirebaseItemAccess.OnItemCreated<PostModel> {
             override fun onSuccess(item: PostModel) {
-                handleItemCreated()
+                handleItemCreated("Post has been created")
             }
 
             override fun onFailed(e: java.lang.Exception) {
@@ -151,9 +166,9 @@ abstract class BaseNewPostFragment : BaseFragment() {
         }
     }
 
-    private fun handleItemCreated() {
+    private fun handleItemCreated(message: String) {
         progress_bar.visibility = View.GONE
-        Toast.makeText(activity!!, "Post has been created", Toast.LENGTH_SHORT)
+        Toast.makeText(activity!!, message, Toast.LENGTH_SHORT)
             .show()
         activity!!.finish()
     }
@@ -170,14 +185,14 @@ abstract class BaseNewPostFragment : BaseFragment() {
     }
 
     private fun buildPost(
-        user: UserModel,
+        user: UserModel? = null,
         type: PostType
     ): PostModel {
         return PostModel(
-            user.userId,
-            user.ref,
-            user.username,
-            user.avatar,
+            user?.userId ?: "",
+            user?.ref ?: "",
+            user?.username ?: "",
+            user?.avatar ?: "",
             question.text.toString(),
             mSelectedPrivacy,
             mSelectedCategory,

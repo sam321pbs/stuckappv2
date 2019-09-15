@@ -21,9 +21,9 @@ import org.jetbrains.anko.find
 
 
 class PostsAdapter(
-    private val mContext: Context,
-    private val userId: String,
-    private val mBottomSheetMenu: BottomSheetMenu
+    private val context: Context,
+    private val isDraft: Boolean,
+    private val bottomSheetMenu: BottomSheetMenu
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<PostModel>()
 
@@ -43,13 +43,13 @@ class PostsAdapter(
 
         holder.questionView.text = post.question
         holder.username.text = post.userName
-        holder.timeSince.text = DateUtils.convertDateToTimeElapsed(post.getDate())
+        holder.timeSince.text = if (isDraft) "" else DateUtils.convertDateToTimeElapsed(post.getDate())
 
         holder.commentsTotalView.setText(post.totalComments.toString())
         holder.voteTotalView.setText(post.getTotalVotes().toString())
         holder.starTotalView.setText(post.totalStars.toString())
         holder.categoriesView.setText(post.category)
-        holder.menuIcon.setOnClickListener { mBottomSheetMenu.showMenu(post) }
+        holder.menuIcon.setOnClickListener { bottomSheetMenu.showMenu(post) }
 
         val userVote = UserVotesCollection.getVoteForPost(post.ref)
         if (holder is PostTextViewHolder) {
@@ -90,7 +90,7 @@ class PostsAdapter(
         }
         for (tripleItem in post.getChoicesToVoteList()) {
             container.addView(
-                VotableChoiceView(mContext, post, tripleItem, userVote, updateParentContainer)
+                VotableChoiceView(context, post, tripleItem, userVote, updateParentContainer)
             )
         }
     }
@@ -107,7 +107,7 @@ class PostsAdapter(
         }
         for (tripleItem in post.getImagesToVoteList()) {
             container.addView(
-                VotableImageView(mContext, post, tripleItem, userVote, updateParentContainer)
+                VotableImageView(context, post, tripleItem, userVote, updateParentContainer)
             )
         }
     }

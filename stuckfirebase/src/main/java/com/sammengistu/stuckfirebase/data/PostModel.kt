@@ -1,6 +1,7 @@
 package com.sammengistu.stuckfirebase.data
 
 import com.google.firebase.firestore.Exclude
+import com.sammengistu.stuckapp.data.DraftPost
 
 @Exclude
 const val MAX_NUMBER_OF_CHOICES = 4
@@ -27,8 +28,8 @@ data class PostModel(
         }
     }
 
-    constructor():
-            this("", "","", "", "", "", "", "")
+    constructor() :
+            this("", "", "", "", "", "", "", "")
 
     constructor(
         ownerId: String,
@@ -53,6 +54,18 @@ data class PostModel(
         this.choices = choices
         this.votes = votes
     }
+
+    constructor(draftPost: DraftPost) :
+            this(
+                "",
+                "",
+                "",
+                "",
+                draftPost.question,
+                draftPost.privacy,
+                draftPost.category,
+                draftPost.type
+            )
 
     @Exclude
     fun addImage(loc: String) {
@@ -104,5 +117,22 @@ data class PostModel(
     }
 
     @Exclude
-    fun convertToChoiceText(pos: Int) : String = "choice_$pos"
+    fun convertToChoiceText(pos: Int): String = "choice_$pos"
+
+    @Exclude
+    fun toDraft(): DraftPost {
+        return DraftPost(
+            0,
+            question,
+            privacy,
+            category,
+            type,
+            images["choice_1"].orEmpty(),
+            images["choice_2"].orEmpty(),
+            choices["choice_1"].orEmpty(),
+            choices["choice_2"].orEmpty(),
+            choices["choice_3"].orEmpty(),
+            choices["choice_4"].orEmpty()
+        )
+    }
 }

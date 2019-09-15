@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
+import com.sammengistu.stuckapp.data.DraftPost
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -87,7 +89,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
 
     private fun setupRecyclerView() {
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = PostsAdapter(this.context!!, getUserId(), mBottomSheetMenu)
+        viewAdapter = PostsAdapter(this.context!!, getType() == TYPE_DRAFT, mBottomSheetMenu)
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
@@ -108,11 +110,21 @@ abstract class PostsListFragment : BasePostListsFragment() {
                 getUserId(),
                 getOnPostRetrievedListener(adapter)
             )
+            TYPE_DRAFT -> {
+                listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
+                    adapter.swapData(convertDraftToPost(draftList))
+                }
+            }
             else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
-            //        listViewModel.posts.observe(viewLifecycleOwner) { posts ->
-            //         adapter.swapData(posts)
-            //        }
         }
+    }
+
+    private fun convertDraftToPost(draftList: List<DraftPost>): List<PostModel> {
+        val list = ArrayList<PostModel>()
+        for (draft in draftList) {
+            list.add(PostModel(draft))
+        }
+        return list
     }
 
     private fun getOnPostRetrievedListener(adapter: PostsAdapter): FirebaseItemAccess.OnItemRetrieved<PostModel> {
@@ -138,6 +150,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         const val TYPE_FAVORITE = "favorite"
         const val TYPE_CATEGORIES = "categories"
         const val TYPE_USER = "user"
+        const val TYPE_DRAFT = "draft"
         const val EXTRA_CATEGORY = "extra_category"
     }
 }

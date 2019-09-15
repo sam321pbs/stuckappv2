@@ -4,8 +4,10 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -17,12 +19,15 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.constants.*
+import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckfirebase.data.UserModel
+import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
@@ -86,7 +91,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         when (item.itemId) {
             R.id.action_profile -> addFragment(ProfileFragment.newInstance(false))
             R.id.action_stats -> addFragment(StatsFragment())
-            R.id.action_drafts -> Toast.makeText(this, "Clicked Drafts", Toast.LENGTH_SHORT).show()
+            R.id.action_drafts -> addFragment(DraftListFragment())
             R.id.action_favorite -> Toast.makeText(
                 this,
                 "Clicked Favorites",
