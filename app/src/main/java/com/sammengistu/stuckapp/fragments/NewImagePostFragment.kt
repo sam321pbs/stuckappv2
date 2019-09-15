@@ -1,17 +1,25 @@
 package com.sammengistu.stuckapp.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
-import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.activities.NewPostActivity
+import com.sammengistu.stuckapp.activities.NewPostActivity.Companion.EXTRA_POST_ID
+import com.sammengistu.stuckapp.data.DraftPost
 import com.sammengistu.stuckapp.events.SaveDraftEvent
+import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.Subscribe
+import java.io.File
 
 
 class NewImagePostFragment : BaseNewPostFragment() {
@@ -21,12 +29,12 @@ class NewImagePostFragment : BaseNewPostFragment() {
 
     @Subscribe
     fun onSaveDraft(event: SaveDraftEvent) {
-        saveAsDraft(PostType.LANDSCAPE)
+        draftImagePost(PostType.LANDSCAPE, mBitmap1, mBitmap2)
     }
 
     override fun getFragmentTag(): String = TAG
 
-    override fun getLayoutId(): Int = R.layout.fragment_new_image_post
+    override fun getLayoutId(): Int = com.sammengistu.stuckapp.R.layout.fragment_new_image_post
 
     override fun getFragmentTitle(): String = TITLE
 
@@ -43,13 +51,36 @@ class NewImagePostFragment : BaseNewPostFragment() {
         submit_button.setOnClickListener {
             createImagePost(PostType.LANDSCAPE, mBitmap1, mBitmap2)
         }
+
+        if (arguments != null) {
+            val postId = arguments!!.getLong(EXTRA_POST_ID)
+
+//            doAsync {
+//                val draftPost = PostAccess.getPost(activity!!, postId)
+//                uiThread {
+//                    if (draftPost != null) {
+//                        updateImagesFromDraft(draftPost)
+//                    }
+//                }
+//            }
+            val liveDraftPost = InjectorUtils.getPostRepository(activity as Context).getPost(postId)
+
+            liveDraftPost.observe(viewLifecycleOwner) { draftList ->
+                if (draftList.isNotEmpty()) {
+                    draft = draftList[0]
+                    updateImagesFromDraft(draft!!)
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_LOAD_IMG_1 -> mBitmap1 = LoadImageFromGalleryHelper.addImageToView(activity, image_1, data)
-            REQUEST_LOAD_IMG_2 -> mBitmap2 = LoadImageFromGalleryHelper.addImageToView(activity, image_2, data)
+            REQUEST_LOAD_IMG_1 -> mBitmap1 =
+                LoadImageFromGalleryHelper.addImageToView(activity, image_1, data)
+            REQUEST_LOAD_IMG_2 -> mBitmap2 =
+                LoadImageFromGalleryHelper.addImageToView(activity, image_2, data)
         }
     }
 
@@ -66,10 +97,39 @@ class NewImagePostFragment : BaseNewPostFragment() {
         return true
     }
 
+    private fun updateImagesFromDraft(draftPost: DraftPost) {
+        if (draftPost.image1Loc.isNotBlank()) {
+            val file1 = File(draftPost.image1Loc)
+            mBitmap1 = BitmapFactory.decodeFile(file1.path)
+            Picasso.get()
+                .load(file1)
+                .fit()
+                .into(image_1)
+        }
+
+        if (draftPost.image2Loc.isNotBlank()) {
+            val file2 = File(draftPost.image2Loc)
+            mBitmap2 = BitmapFactory.decodeFile(file2.path)
+            Picasso.get()
+                .load(file2)
+                .fit()
+                .into(image_2)
+        }
+    }
+
     companion object {
         const val TITLE = "New Image Post"
         val TAG = NewImagePostFragment::class.java.simpleName
         val REQUEST_LOAD_IMG_1 = 0
         val REQUEST_LOAD_IMG_2 = 1
+
+        fun newInstance(postId: Long): NewImagePostFragment {
+            val bundle = Bundle()
+            bundle.putLong(NewPostActivity.EXTRA_POST_ID, postId)
+
+            val frag = NewImagePostFragment()
+            frag.arguments = bundle
+            return frag
+        }
     }
 }

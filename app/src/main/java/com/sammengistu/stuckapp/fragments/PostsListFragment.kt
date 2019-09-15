@@ -122,7 +122,9 @@ abstract class PostsListFragment : BasePostListsFragment() {
     private fun convertDraftToPost(draftList: List<DraftPost>): List<PostModel> {
         val list = ArrayList<PostModel>()
         for (draft in draftList) {
-            list.add(PostModel(draft))
+            val post = PostModel(draft)
+            post.draftId = draft.postId
+            list.add(post)
         }
         return list
     }

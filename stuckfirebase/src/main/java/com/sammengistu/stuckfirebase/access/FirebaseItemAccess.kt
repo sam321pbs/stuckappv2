@@ -81,6 +81,21 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
     }
 
+    fun deleteItemInFb(documentId: String, listener: OnItemDeleted) {
+        getCollectionRef()
+            .document(documentId)
+            .delete()
+            .addOnSuccessListener {
+                listener.onSuccess()
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                onItemDeleted()
+            }
+            .addOnFailureListener { e ->
+                listener.onFailed(e)
+                Log.w(TAG, "Error deleting document", e)
+            }
+    }
+
     fun getItems(listener: OnItemRetrieved<T>) {
         getCollectionRef()
             //Todo: add limit
@@ -202,6 +217,11 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
     }
 
     interface OnItemUpdated {
+        fun onSuccess()
+        fun onFailed(e: Exception)
+    }
+
+    interface OnItemDeleted {
         fun onSuccess()
         fun onFailed(e: Exception)
     }

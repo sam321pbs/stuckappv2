@@ -22,6 +22,9 @@ data class PostModel(
     var votes: HashMap<String, Int> = HashMap()
 ) : FirebaseItem() {
 
+    @Exclude
+    var draftId = -1L
+
     init {
         if (votes.isEmpty()) {
             addEmptyVotes()
@@ -65,7 +68,17 @@ data class PostModel(
                 draftPost.privacy,
                 draftPost.category,
                 draftPost.type
-            )
+            ) {
+        addChoice(draftPost.choice1)
+        addChoice(draftPost.choice2)
+        addChoice(draftPost.choice3)
+        addChoice(draftPost.choice4)
+
+        addImage(draftPost.image1Loc)
+        addImage(draftPost.image2Loc)
+
+        addEmptyVotes()
+    }
 
     @Exclude
     fun addImage(loc: String) {
@@ -122,7 +135,7 @@ data class PostModel(
     @Exclude
     fun toDraft(): DraftPost {
         return DraftPost(
-            0,
+            draftId,
             question,
             privacy,
             category,

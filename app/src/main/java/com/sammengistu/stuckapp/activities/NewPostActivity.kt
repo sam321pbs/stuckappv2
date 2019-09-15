@@ -5,13 +5,16 @@ import android.view.Menu
 import android.view.MenuItem
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.events.SaveDraftEvent
+import com.sammengistu.stuckapp.fragments.NewImagePostFragment
 import com.sammengistu.stuckapp.fragments.NewPostTypeFragment
+import com.sammengistu.stuckapp.fragments.NewTextPostFragment
+import com.sammengistu.stuckfirebase.constants.PostType
 import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.greenrobot.eventbus.EventBus
 
 class NewPostActivity : LoggedInActivity() {
 
-    private lateinit var draftIcon: MenuItem
+    private var draftIcon: MenuItem? = null
 
     override fun getLayoutId(): Int {
         return R.layout.activity_base
@@ -20,7 +23,18 @@ class NewPostActivity : LoggedInActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
-        addFragment(NewPostTypeFragment())
+
+        val postType = intent.getStringExtra(EXTRA_POST_TYPE)
+        val postId = intent.getLongExtra(EXTRA_POST_ID, -1L)
+        if (postType != null) {
+            if (postType == PostType.TEXT.toString()) {
+                addFragment(NewTextPostFragment.newInstance(postId))
+            } else {
+                addFragment(NewImagePostFragment.newInstance(postId))
+            }
+        } else {
+            addFragment(NewPostTypeFragment())
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -40,10 +54,15 @@ class NewPostActivity : LoggedInActivity() {
     }
 
     fun showDraftIcon() {
-        draftIcon.isVisible = true
+        draftIcon?.isVisible = true
     }
 
     fun hideDraftIcon() {
-        draftIcon.isVisible = false
+        draftIcon?.isVisible = false
+    }
+
+    companion object {
+        const val EXTRA_POST_TYPE = "extra_post_type"
+        const val EXTRA_POST_ID = "extra_post_id"
     }
 }

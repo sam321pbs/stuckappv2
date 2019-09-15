@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory
 import java.io.*
 
 
-class StorageUtils {
+class ImageStorageUtils {
     companion object {
         fun saveToInternalStorage(
             context: Context,

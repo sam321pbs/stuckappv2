@@ -30,7 +30,7 @@ abstract class VotableContainer(
     }
 
     override fun onDoubleTapped() {
-        if (userVote == null) {
+        if (post.ref.isNotBlank() && userVote == null) {
             UserHelper.getCurrentUser {
                 if (it != null) {
                     val userVote = UserVoteModel(

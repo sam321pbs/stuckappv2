@@ -1,15 +1,18 @@
 package com.sammengistu.stuckapp.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.view.children
+import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.MainActivity
+import com.sammengistu.stuckapp.activities.NewPostActivity
+import com.sammengistu.stuckapp.data.DraftPost
 import com.sammengistu.stuckapp.events.SaveDraftEvent
+import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
-import com.sammengistu.stuckfirebase.constants.PostType
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.Subscribe
@@ -22,7 +25,7 @@ class NewTextPostFragment : BaseNewPostFragment() {
 
     @Subscribe
     fun onSaveDraft(event: SaveDraftEvent) {
-        saveAsDraft(PostType.TEXT)
+        draftTextPost(mChoicesContainer)
     }
 
     override fun getFragmentTitle(): String = TITLE
@@ -40,6 +43,55 @@ class NewTextPostFragment : BaseNewPostFragment() {
 
         submit_button.setOnClickListener {
             createTextPost(mChoicesContainer)
+        }
+
+        if (arguments != null) {
+            val postId = arguments!!.getLong(NewPostActivity.EXTRA_POST_ID)
+
+//            doAsync {
+//                val draftPost = PostAccess.getPost(activity!!, postId)
+//                uiThread {
+//                    if (draftPost != null) {
+//                        updateViewFromDraftItem(draftPost)
+//                    }
+//                }
+//            }
+
+            val liveDraftPost = InjectorUtils.getPostRepository(activity as Context).getPost(postId)
+
+            liveDraftPost.observe(viewLifecycleOwner) { draftList ->
+                if (draftList.isNotEmpty()) {
+                    draft = draftList[0]
+                    updateViewFromDraftItem(draft!!)
+                }
+            }
+        }
+    }
+
+    private fun updateViewFromDraftItem(draftPost: DraftPost) {
+        updateViewFromDraft(draftPost)
+        if (draftPost.choice1.isNotBlank()) {
+            addChoiceView(draftPost.choice1)
+        }
+        if (draftPost.choice2.isNotBlank()) {
+            addChoiceView(draftPost.choice2)
+        }
+        if (draftPost.choice3.isNotBlank()) {
+            addChoiceView(draftPost.choice3)
+        }
+        if (draftPost.choice4.isNotBlank()) {
+            addChoiceView(draftPost.choice4)
+        }
+    }
+
+    private fun addChoiceView(text: String) {
+        if (mChoicesContainer.childCount < 4) {
+            val newChild = ChoiceCardView(this@NewTextPostFragment.activity!!.applicationContext)
+            newChild.setChoiceText(text)
+            mChoicesContainer.addView(newChild)
+            if (mChoicesContainer.childCount >= MAX_NUMBER_OF_CHOICES) {
+                add_choice_fab.visibility = View.GONE
+            }
         }
     }
 
@@ -75,5 +127,14 @@ class NewTextPostFragment : BaseNewPostFragment() {
     companion object {
         val TAG = NewTextPostFragment::class.java.simpleName
         const val TITLE = "Text Post"
+
+        fun newInstance(postId: Long): NewTextPostFragment {
+            val bundle = Bundle()
+            bundle.putLong(NewPostActivity.EXTRA_POST_ID, postId)
+
+            val frag = NewTextPostFragment()
+            frag.arguments = bundle
+            return frag
+        }
     }
 }

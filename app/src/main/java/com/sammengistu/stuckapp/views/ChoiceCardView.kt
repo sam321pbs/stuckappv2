@@ -81,6 +81,10 @@ class ChoiceCardView(context: Context, attrs: AttributeSet?) :
         return choiceEditText.text.toString()
     }
 
+    fun setChoiceText(text: String) {
+        return choiceEditText.setText(text)
+    }
+
     private fun buildEditTextView() {
         val params = LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,

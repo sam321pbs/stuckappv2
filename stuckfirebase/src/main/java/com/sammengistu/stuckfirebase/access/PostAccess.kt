@@ -75,8 +75,17 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
             PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).insertPost(post)
         }
 
+        fun getPost(context: Context, postId: Long) : DraftPost? {
+            return PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).getPost(postId).value?.get(0)
+        }
+
+        // todo this does not work
         fun deletePost(context: Context, post: DraftPost) {
             PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).deletePost(post)
+        }
+
+        fun deletePost(context: Context, postId: Long) {
+            PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).deletePost(postId)
         }
     }
 }

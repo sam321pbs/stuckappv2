@@ -1,6 +1,7 @@
 package com.sammengistu.stuckapp.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.*
@@ -56,6 +58,15 @@ class PostsAdapter(
             buildTextChoices(holder, post, userVote)
         } else if (holder is PostImageViewHolder) {
             buildImageChoices(holder, post, userVote)
+        }
+
+        if (isDraft) {
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context, NewPostActivity::class.java)
+                intent.putExtra(NewPostActivity.EXTRA_POST_TYPE, post.type)
+                intent.putExtra(NewPostActivity.EXTRA_POST_ID, post.draftId)
+                context.startActivity(intent)
+            }
         }
     }
 

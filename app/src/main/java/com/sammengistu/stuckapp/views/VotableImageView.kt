@@ -15,6 +15,7 @@ import com.sammengistu.stuckapp.helpers.ViewHelper
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 import com.squareup.picasso.Picasso
+import java.io.File
 
 class VotableImageView(
     context: Context,
@@ -31,7 +32,11 @@ class VotableImageView(
     init {
         buildView()
         buildVotesText()
-        loadImage(choiceItem.second)
+        if (post.ref.isBlank()) {
+            loadImageFromFile(choiceItem.second)
+        } else {
+            loadImage(choiceItem.second)
+        }
     }
 
     override fun onItemVotedOn(userVote: UserVoteModel?) {
@@ -47,6 +52,19 @@ class VotableImageView(
         post {
             Picasso.get()
                 .load(imageLoc)
+                .fit()
+//                .centerCrop()
+                .into(imageView)
+        }
+    }
+
+
+
+    private fun loadImageFromFile(imageLoc: String) {
+        post {
+            val file = File(imageLoc)
+            Picasso.get()
+                .load(file)
                 .fit()
 //                .centerCrop()
                 .into(imageView)

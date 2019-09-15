@@ -7,14 +7,17 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
+import com.sammengistu.stuckapp.ErrorNotifier
 import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
+import com.sammengistu.stuckapp.data.DraftPost
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
 import com.sammengistu.stuckapp.events.PrivacySelectedEvent
+import com.sammengistu.stuckapp.utils.ImageStorageUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
@@ -27,12 +30,14 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.*
 
 abstract class BaseNewPostFragment : BaseFragment() {
 
     val IMAGE_1 = "image_1"
     val IMAGE_2 = "image_2"
     val CHOICES_VIEW = "choices_view"
+    var draft: DraftPost? = null
 
     var mSelectedCategory: String = Categories.GENERAL.toString()
     var mSelectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
@@ -75,7 +80,10 @@ abstract class BaseNewPostFragment : BaseFragment() {
                 username.text = it.username
             }
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         if (activity is NewPostActivity) {
             (activity as NewPostActivity).showDraftIcon()
         }
@@ -88,6 +96,16 @@ abstract class BaseNewPostFragment : BaseFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
     fun createImagePost(type: PostType, bitmap1: Bitmap?, bitmap2: Bitmap?) {
         val data = mapOf(Pair(IMAGE_1, bitmap1), Pair(IMAGE_2, bitmap2))
         createPost(type, data)
@@ -96,6 +114,24 @@ abstract class BaseNewPostFragment : BaseFragment() {
     fun createTextPost(view: LinearLayout) {
         val data = mapOf(Pair(CHOICES_VIEW, view))
         createPost(PostType.TEXT, data)
+    }
+
+    fun draftImagePost(type: PostType, bitmap1: Bitmap?, bitmap2: Bitmap?) {
+        val data = mapOf(Pair(IMAGE_1, bitmap1), Pair(IMAGE_2, bitmap2))
+        saveAsDraft(type, data)
+    }
+
+    fun draftTextPost(view: LinearLayout) {
+        val data = mapOf(Pair(CHOICES_VIEW, view))
+        saveAsDraft(PostType.TEXT, data)
+    }
+
+    protected fun updateViewFromDraft(draft: DraftPost) {
+        question.setText(draft.question)
+        mSelectedCategory = draft.category
+        mSelectedPrivacy = draft.privacy
+        category_choice.setText(mSelectedCategory)
+        privacy_choice.setText(mSelectedPrivacy)
     }
 
     private fun createPost(type: PostType, data: Map<String, Any?>) {
@@ -119,13 +155,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
                                 getOnItemCreatedCallback()
                             )
                         } else if (data.containsKey(CHOICES_VIEW)) {
-                            val data1 = data[CHOICES_VIEW]
-                            val choiceContainer = if (data1 is LinearLayout) data1 else null
-                            for (choiceView in choiceContainer!!.children) {
-                                if (choiceView is ChoiceCardView) {
-                                    post.addChoice(choiceView.getChoiceText())
-                                }
-                            }
+                            addChoicesToPost(data, post)
                             PostAccess().createItemInFB(
                                 post,
                                 getOnItemCreatedCallback()
@@ -141,15 +171,60 @@ abstract class BaseNewPostFragment : BaseFragment() {
         }
     }
 
-    protected fun saveAsDraft(type: PostType) {
-        val post = buildPost(null, type).toDraft()
+    private fun saveAsDraft(type: PostType, data: Map<String, Any?>) {
+        val post = buildPost(null, type)
+
+        if (data.containsKey(CHOICES_VIEW)) {
+            addChoicesToPost(data, post)
+        }
+
         doAsync {
             uiThread {
                 progress_bar.visibility = View.VISIBLE
             }
-            PostAccess.insertPost(activity!!.applicationContext, post)
+            saveImagesToLocalStorage(data, post)
+            PostAccess.insertPost(activity!!.applicationContext, post.toDraft())
             uiThread {
                 handleItemCreated("Draft Saved!")
+            }
+        }
+    }
+
+    private fun saveImagesToLocalStorage(
+        data: Map<String, Any?>,
+        post: PostModel
+    ) {
+        if (data.containsKey(IMAGE_1) && data.containsKey(IMAGE_2)) {
+            val data1 = data[IMAGE_1]
+            val data2 = data[IMAGE_2]
+            val bitmap1 = if (data1 is Bitmap) data1 else null
+            val bitmap2 = if (data2 is Bitmap) data2 else null
+
+            val image1Loc = ImageStorageUtils.saveToInternalStorage(
+                activity!!,
+                bitmap1!!,
+                "${UUID.randomUUID()}"
+            )
+            val image2Loc = ImageStorageUtils.saveToInternalStorage(
+                activity!!,
+                bitmap2!!,
+                "${UUID.randomUUID()}"
+            )
+
+            post.addImage(image1Loc)
+            post.addImage(image2Loc)
+        }
+    }
+
+    private fun addChoicesToPost(
+        data: Map<String, Any?>,
+        post: PostModel
+    ) {
+        val data1 = data[CHOICES_VIEW]
+        val choiceContainer = if (data1 is LinearLayout) data1 else null
+        for (choiceView in choiceContainer!!.children) {
+            if (choiceView is ChoiceCardView) {
+                post.addChoice(choiceView.getChoiceText())
             }
         }
     }
@@ -167,6 +242,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
     }
 
     private fun handleItemCreated(message: String) {
+        deleteDraft()
         progress_bar.visibility = View.GONE
         Toast.makeText(activity!!, message, Toast.LENGTH_SHORT)
             .show()
@@ -200,14 +276,16 @@ abstract class BaseNewPostFragment : BaseFragment() {
         )
     }
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
+    private fun deleteDraft() {
+        if (draft != null) {
+            doAsync {
+                try {
+                    PostAccess.deletePost(context!!, draft!!.postId)
+                } catch (e: Exception) {
+                    ErrorNotifier.notifyError(context!!, TAG, "Error deleting post", e)
+                }
+            }
+        }
     }
 
     companion object {
