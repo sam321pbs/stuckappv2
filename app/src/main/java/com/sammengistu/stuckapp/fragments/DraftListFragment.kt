@@ -1,6 +1,9 @@
 package com.sammengistu.stuckapp.fragments
 
 class DraftListFragment : PostsListFragment() {
+
+    override fun getEmptyMessage() = "No Drafts"
+
     override fun getType(): String = TYPE_DRAFT
 
     override fun getFragmentTag(): String = TAG

@@ -1,6 +1,7 @@
 package com.sammengistu.stuckapp.fragments
 
 class UserPostsListFragment : PostsListFragment() {
+    override fun getEmptyMessage() = "You don't have any posts.\nCreate a post to see it here."
 
     override fun getType(): String = TYPE_USER
 

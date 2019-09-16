@@ -54,6 +54,7 @@ class VerticalIconToTextView(context: Context, attrs: AttributeSet?) : LinearLay
         iconView.layoutParams = params
         textView.layoutParams = params
 
+        textView.gravity = Gravity.CENTER
         addView(iconView)
         addView(textView)
     }

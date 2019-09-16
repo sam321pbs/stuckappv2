@@ -1,6 +1,9 @@
 package com.sammengistu.stuckapp.fragments
 
 class HomeListFragment : PostsListFragment() {
+
+    override fun getEmptyMessage() = "No Posts"
+
     override fun getType(): String = TYPE_HOME
 
     override fun getFragmentTag(): String = TAG

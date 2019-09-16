@@ -37,6 +37,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
     }
 
     abstract fun getType(): String
+    abstract fun getEmptyMessage(): String
 
     @Subscribe
     fun onUserVotesLoaded(event: UserVotesLoadedEvent) {
@@ -79,6 +80,8 @@ abstract class PostsListFragment : BasePostListsFragment() {
     override fun onDataUpdated() {
         viewAdapter.notifyDataSetChanged()
     }
+
+    fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
 
     private fun setupSwipeToRefresh() {
         swipeToRefreshLayout = swipe_to_refresh
@@ -143,6 +146,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
                 postsList = list as ArrayList<PostModel>
                 adapter.swapData(postsList)
                 swipeToRefreshLayout.isRefreshing = false
+                showEmptyMessage(postsList.isEmpty())
             }
 
             override fun onFailed() {
@@ -151,7 +155,15 @@ abstract class PostsListFragment : BasePostListsFragment() {
         }
     }
 
-    fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
+    private fun showEmptyMessage(isEmpty: Boolean) {
+        val emptyMessageView = empty_list_message
+        if (isEmpty) {
+            emptyMessageView.visibility = View.VISIBLE
+            emptyMessageView.setText(getEmptyMessage())
+        } else {
+            emptyMessageView.visibility = View.GONE
+        }
+    }
 
     companion object {
         val TAG: String = PostsListFragment::class.java.simpleName
