@@ -4,10 +4,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -19,13 +17,11 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.constants.*
-import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckfirebase.data.UserModel
-import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.greenrobot.eventbus.EventBus
@@ -50,14 +46,12 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
-        addFragment(HomeListFragment())
         FirebaseApp.initializeApp(this)
-        setupFab()
         navigationBar = stuck_navigation_bar
         navigationBar.onItemClicked = getOnNavItemClicked()
         setupDrawer()
-
         UserVotesCollection.loadUserVotes(getFirebaseUserId())
+        addFragment(HomeListFragment())
     }
 
     override fun onStart() {
@@ -158,13 +152,5 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 }
             }
         }
-    }
-
-    private fun setupFab() {
-        fab.setOnClickListener { view ->
-            val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
-            startActivity(intentNewPost)
-        }
-        fab.visibility = GONE
     }
 }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.data.DraftPost
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
@@ -98,24 +99,30 @@ abstract class PostsListFragment : BasePostListsFragment() {
     }
 
     private fun refreshAdapter(adapter: PostsAdapter) {
-        when (getType()) {
-            TYPE_FAVORITE -> StarPostAccess(getUserId()).getItems(
-                getOnPostRetrievedListener(adapter)
-            )
-            TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
-                getPostCategory(),
-                getOnPostRetrievedListener(adapter)
-            )
-            TYPE_USER -> PostAccess().getOwnerPosts(
-                getUserId(),
-                getOnPostRetrievedListener(adapter)
-            )
-            TYPE_DRAFT -> {
-                listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
-                    adapter.swapData(convertDraftToPost(draftList))
+        swipeToRefreshLayout.isRefreshing = true
+        UserHelper.getCurrentUser { user ->
+            if (user != null) {
+                when (getType()) {
+                    TYPE_FAVORITE -> StarPostAccess(user.ref).getItems(
+                        getOnPostRetrievedListener(adapter)
+                    )
+                    TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
+                        getPostCategory(),
+                        getOnPostRetrievedListener(adapter)
+                    )
+                    TYPE_USER -> PostAccess().getOwnerPosts(
+                        user.userId,
+                        getOnPostRetrievedListener(adapter)
+                    )
+                    TYPE_DRAFT -> {
+                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
+                            adapter.swapData(convertDraftToPost(draftList))
+                            swipeToRefreshLayout.isRefreshing = false
+                        }
+                    }
+                    else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
                 }
             }
-            else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
         }
     }
 

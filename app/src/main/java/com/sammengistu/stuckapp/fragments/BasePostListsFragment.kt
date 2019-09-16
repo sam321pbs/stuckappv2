@@ -2,6 +2,7 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
+import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
@@ -16,7 +17,12 @@ abstract class BasePostListsFragment : BaseFragment(), BottomSheetMenu, NotifyAd
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBottomSheetMenu = this
-        mBottomSheetHelper = BottomSheetHelper(activity!!, getUserId(), bottom_sheet, this)
+
+        UserHelper.getCurrentUser { user ->
+            if (user != null) {
+                mBottomSheetHelper = BottomSheetHelper(activity!!, user.userId, bottom_sheet, this)
+            }
+        }
     }
 
     override fun showMenu(post: PostModel) {
