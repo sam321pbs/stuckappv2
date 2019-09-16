@@ -91,11 +91,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 "Clicked Favorites",
                 Toast.LENGTH_SHORT
             ).show()
-            R.id.action_settings -> Toast.makeText(
-                this,
-                "Clicked Settings",
-                Toast.LENGTH_SHORT
-            ).show()
+            R.id.action_settings -> addFragment(SettingsFragment())
         }
         drawer.closeDrawers()
         return true

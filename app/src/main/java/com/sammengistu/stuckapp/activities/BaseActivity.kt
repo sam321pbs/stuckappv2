@@ -50,7 +50,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun launchSplashScreenActivity() {
-        val intent = Intent(this, BaseActivity::class.java)
+        val intent = Intent(this, SplashScreenActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
     }

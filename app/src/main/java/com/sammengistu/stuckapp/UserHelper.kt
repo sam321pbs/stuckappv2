@@ -1,6 +1,10 @@
 package com.sammengistu.stuckapp
 
+import android.content.Context
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.sammengistu.stuckapp.fragments.SettingsFragment
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemRetrieved
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.UserModel
@@ -41,6 +45,40 @@ class UserHelper(userId: String) {
                     })
             } else {
                 callback(currentUser!!)
+            }
+        }
+
+        fun logUserOut() {
+            currentUser = null
+            FirebaseAuth.getInstance().signOut()
+        }
+
+        fun deleteUserAccount(context: Context) {
+            getCurrentUser { user ->
+                if (user != null) {
+                    UserAccess().deleteItemInFb(
+                        user.ref,
+                        object : FirebaseItemAccess.OnItemDeleted {
+                            override fun onSuccess() {
+                                // Todo: delete all posts, votes, avatar
+                                val fbUser = FirebaseAuth.getInstance().currentUser
+                                fbUser?.delete()
+                                    ?.addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(
+                                                context,
+                                                "Account deleted", Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                            }
+
+                            override fun onFailed(e: Exception) {
+                                ErrorNotifier.notifyError(context, "Error deleting account",
+                                    SettingsFragment.TAG, e)
+                            }
+                        })
+                }
             }
         }
     }
