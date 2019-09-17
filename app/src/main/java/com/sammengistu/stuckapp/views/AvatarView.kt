@@ -15,11 +15,11 @@ class AvatarView(context: Context, attrs: AttributeSet?) : CircleImageView(conte
             0, 0
         ).apply {
             try {
-                val src = getResourceId(
-                    R.styleable.AvatarView_avatarSrc,
-                    R.mipmap.peter_griffan_head_shot
-                )
-                loadImage(src)
+//                val src = getResourceId(
+//                    R.styleable.AvatarView_avatarSrc,
+//                    R.mipmap.peter_griffan_head_shot
+//                )
+//                loadImage(src)
             } finally {
                 recycle()
             }

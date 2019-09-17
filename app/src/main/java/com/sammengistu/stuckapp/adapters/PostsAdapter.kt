@@ -2,6 +2,7 @@ package com.sammengistu.stuckapp.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
+import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserStarredCollection
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
+import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.*
 import com.sammengistu.stuckfirebase.constants.PostType
@@ -42,12 +45,18 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
 
-        holder.avatarView.loadImage(post.avatar)
+        if (PrivacyOptions.ANONYMOUS.toString() == post.privacy && !isDraft){
+            val avatar = AssetImageUtils.getAvatar(post.avatar)
+            Log.d(TAG, "Avatar is null ${avatar == null}")
+            holder.avatarView.setImageBitmap(avatar)
+            holder.username.text = "Anonymous"
+        } else {
+            holder.avatarView.loadImage(post.avatar)
+            holder.username.text = post.userName
+        }
 
         holder.questionView.text = post.question
-        holder.username.text = post.userName
         holder.timeSince.text = if (isDraft) "" else DateUtils.convertDateToTimeElapsed(post.getDate())
-
         holder.commentsTotalView.setText(post.totalComments.toString())
         holder.voteTotalView.setText(post.getTotalVotes().toString())
         holder.starTotalView.setText(post.totalStars.toString())
@@ -150,12 +159,6 @@ class PostsAdapter(
         }
     }
 
-    companion object {
-        const val LANDSCAPE_VIEW_TYPE = 0
-        const val PORTRAIT_VIEW_TYPE = 1
-        const val TEXT_VIEW_TYPE = 2
-    }
-
     class PostTextViewHolder(parentView: View) : PostViewHolder(parentView)
 
     class PostImageViewHolder(parentView: View) : PostViewHolder(parentView)
@@ -177,5 +180,12 @@ class PostsAdapter(
             parentView.find(R.id.starsTotal)
         val menuIcon: ImageView = parentView.find(R.id.menu_icon)
         val starIcon: ImageView = parentView.find(R.id.user_star_icon)
+    }
+
+    companion object {
+        val TAG = PostsAdapter::class.java.simpleName
+        const val LANDSCAPE_VIEW_TYPE = 0
+        const val PORTRAIT_VIEW_TYPE = 1
+        const val TEXT_VIEW_TYPE = 2
     }
 }

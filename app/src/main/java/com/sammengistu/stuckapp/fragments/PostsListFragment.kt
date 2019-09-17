@@ -8,10 +8,12 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
@@ -52,6 +54,11 @@ abstract class PostsListFragment : BasePostListsFragment() {
     }
 
     @Subscribe
+    fun onAssetsLoaded(event: AssetsLoadedEvent) {
+        refreshAdapter(viewAdapter)
+    }
+
+    @Subscribe
     fun onIncreaseCommentCount(event: IncreaseCommentCountEvent) {
         var refresh = false
         for (post in postsList) {
@@ -75,9 +82,11 @@ abstract class PostsListFragment : BasePostListsFragment() {
         setupRecyclerView()
         setupSwipeToRefresh()
         showEmptyMessage(true)
-        refreshAdapter(viewAdapter)
         hideMenu()
         EventBus.getDefault().register(this)
+        if (AssetImageUtils.isLoaded) {
+            refreshAdapter(viewAdapter)
+        }
     }
 
     override fun onDestroyView() {

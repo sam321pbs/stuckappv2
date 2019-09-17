@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
+import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.ErrorNotifier
 import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.activities.NewPostActivity
@@ -41,6 +42,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
 
     var mSelectedCategory: String = Categories.GENERAL.toString()
     var mSelectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
+    var avatarKey: String? = ""
 
     abstract fun fieldsValidated(): Boolean
 
@@ -54,6 +56,19 @@ abstract class BaseNewPostFragment : BaseFragment() {
     fun onPrivacySelected(event: PrivacySelectedEvent) {
         mSelectedPrivacy = event.choice
         privacy_choice.setText(mSelectedPrivacy)
+        if (mSelectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
+            avatarKey = AssetImageUtils.getRandomAvatarKey()
+            var avaBit = AssetImageUtils.getAvatar(avatarKey ?: "")
+            if (avaBit != null) {
+                avatar_view.setImageBitmap(avaBit)
+            }
+        } else {
+            UserHelper.getCurrentUser { user ->
+                if (user != null) {
+                    avatar_view.loadImage(user.avatar)
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,10 +89,10 @@ abstract class BaseNewPostFragment : BaseFragment() {
 
         username.text = "username"
 
-        UserHelper.getCurrentUser {
-            if (it != null) {
-                avatar_view.loadImage(it.avatar)
-                username.text = it.username
+        UserHelper.getCurrentUser { user ->
+            if (user != null) {
+                avatar_view.loadImage(user.avatar)
+                username.text = user.username
             }
         }
     }
@@ -264,11 +279,15 @@ abstract class BaseNewPostFragment : BaseFragment() {
         user: UserModel? = null,
         type: PostType
     ): PostModel {
+        var avatar = user?.avatar ?: ""
+        if (mSelectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
+            avatar = avatarKey ?: ""
+        }
         return PostModel(
             user?.userId ?: "",
             user?.ref ?: "",
             user?.username ?: "",
-            user?.avatar ?: "",
+            avatar,
             question.text.toString(),
             mSelectedPrivacy,
             mSelectedCategory,

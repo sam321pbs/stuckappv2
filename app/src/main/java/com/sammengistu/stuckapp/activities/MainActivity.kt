@@ -36,14 +36,13 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         UserHelper.getCurrentUser{setupNavHeader(it)}
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_main
-    }
+    override fun getLayoutId() = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
         FirebaseApp.initializeApp(this)
+        AssetImageUtils.initListOfImages(this)
         navigationBar = stuck_navigation_bar
         navigationBar.onItemClicked = getOnNavItemClicked()
         setupDrawer()
