@@ -38,7 +38,7 @@ abstract class BaseActivity : AppCompatActivity() {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         val commitId = fragmentTransaction
-            .replace(R.id.fragment_container, fragment, fragment.getFragmentTag())
+            .add(R.id.fragment_container, fragment, fragment.getFragmentTag())
             .addToBackStack(fragment.getFragmentTag())
             .commit()
 
