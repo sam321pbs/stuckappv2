@@ -41,7 +41,6 @@ class UserHelper(userId: String) {
                         override fun onFailed() {
                             callback(null)
                         }
-
                     })
             } else {
                 callback(currentUser!!)

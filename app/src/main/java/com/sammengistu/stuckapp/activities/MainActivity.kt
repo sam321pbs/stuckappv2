@@ -12,10 +12,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
-import com.sammengistu.stuckapp.OnItemClickListener
-import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
-import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckapp.*
 import com.sammengistu.stuckapp.constants.*
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
@@ -50,7 +47,12 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         navigationBar = stuck_navigation_bar
         navigationBar.onItemClicked = getOnNavItemClicked()
         setupDrawer()
-        UserVotesCollection.loadUserVotes(getFirebaseUserId())
+        UserHelper.getCurrentUser { user ->
+            if (user != null) {
+                UserStarredCollection.loadUserStars(user.ref)
+                UserVotesCollection.loadUserVotes(user.userId)
+            }
+        }
         addFragment(HomeListFragment())
     }
 

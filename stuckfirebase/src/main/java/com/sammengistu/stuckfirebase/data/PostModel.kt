@@ -6,7 +6,7 @@ import com.sammengistu.stuckapp.data.DraftPost
 @Exclude
 const val MAX_NUMBER_OF_CHOICES = 4
 
-data class PostModel(
+open class PostModel(
     val ownerId: String,
     val ownerRef: String,
     val userName: String,

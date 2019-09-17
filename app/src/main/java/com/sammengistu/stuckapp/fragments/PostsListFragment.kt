@@ -12,12 +12,14 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.data.StarPost
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
@@ -45,6 +47,11 @@ abstract class PostsListFragment : BasePostListsFragment() {
     }
 
     @Subscribe
+    fun onUserStarsLoaded(event: UserStarsLoadedEvent) {
+        onDataUpdated()
+    }
+
+    @Subscribe
     fun onIncreaseCommentCount(event: IncreaseCommentCountEvent) {
         var refresh = false
         for (post in postsList) {
@@ -67,6 +74,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupSwipeToRefresh()
+        showEmptyMessage(true)
         refreshAdapter(viewAdapter)
         hideMenu()
         EventBus.getDefault().register(this)
@@ -107,7 +115,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
             if (user != null) {
                 when (getType()) {
                     TYPE_FAVORITE -> StarPostAccess(user.ref).getItems(
-                        getOnPostRetrievedListener(adapter)
+                        getOnStarPostRetrievedListener(adapter)
                     )
                     TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
                         getPostCategory(),
@@ -143,10 +151,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         return object :
             FirebaseItemAccess.OnItemRetrieved<PostModel> {
             override fun onSuccess(list: List<PostModel>) {
-                postsList = list as ArrayList<PostModel>
-                adapter.swapData(postsList)
-                swipeToRefreshLayout.isRefreshing = false
-                showEmptyMessage(postsList.isEmpty())
+                updateAdapter(list, adapter)
             }
 
             override fun onFailed() {
@@ -155,13 +160,39 @@ abstract class PostsListFragment : BasePostListsFragment() {
         }
     }
 
+    private fun getOnStarPostRetrievedListener(adapter: PostsAdapter):
+            FirebaseItemAccess.OnItemRetrieved<StarPost> {
+        return object :
+            FirebaseItemAccess.OnItemRetrieved<StarPost> {
+            override fun onSuccess(list: List<StarPost>) {
+                updateAdapter(list, adapter)
+            }
+
+            override fun onFailed() {
+                Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun updateAdapter(
+        list: List<PostModel>,
+        adapter: PostsAdapter
+    ) {
+        postsList = list as ArrayList<PostModel>
+        adapter.swapData(postsList)
+        swipeToRefreshLayout.isRefreshing = false
+        showEmptyMessage(postsList.isEmpty())
+    }
+
     private fun showEmptyMessage(isEmpty: Boolean) {
         val emptyMessageView = empty_list_message
-        if (isEmpty) {
-            emptyMessageView.visibility = View.VISIBLE
-            emptyMessageView.setText(getEmptyMessage())
-        } else {
-            emptyMessageView.visibility = View.GONE
+        if (emptyMessageView != null) {
+            if (isEmpty) {
+                emptyMessageView.visibility = View.VISIBLE
+                emptyMessageView.setText(getEmptyMessage())
+            } else {
+                emptyMessageView.visibility = View.GONE
+            }
         }
     }
 

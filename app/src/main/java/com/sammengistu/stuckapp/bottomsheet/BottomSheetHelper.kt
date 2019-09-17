@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.ErrorNotifier
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckapp.UserStarredCollection
 import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -18,6 +19,8 @@ import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.data.StarPost
+import com.sammengistu.stuckfirebase.data.UserModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
@@ -34,7 +37,7 @@ class BottomSheetHelper(
 
     private var mBottomSheetBehavior: BottomSheetBehavior<LinearLayout> =
         BottomSheetBehavior.from(bottomSheetLL)
-    private var mPost: PostModel? = null
+    private var post: PostModel? = null
 
     init {
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -43,7 +46,7 @@ class BottomSheetHelper(
     }
 
     override fun showMenu(post: PostModel) {
-        mPost = post
+        this.post = post
         updateBottomSheet()
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
@@ -53,7 +56,8 @@ class BottomSheetHelper(
     }
 
     private fun updateBottomSheet() {
-        if (mPost != null && mPost!!.ref.isBlank()) {
+        if (post != null && post!!.ref.isBlank()) {
+            // Handle Draft Post
             bottomSheetLL.find<LinearLayout>(R.id.bottom_favorite_container)
                 .visibility = View.GONE
             bottomSheetLL.find<LinearLayout>(R.id.bottom_comments_container)
@@ -63,6 +67,7 @@ class BottomSheetHelper(
             bottomSheetLL.find<TextView>(R.id.bottom_sheet_title)
                 .text = "Draft Options"
         } else {
+            // Regular post
             bottomSheetLL.find<LinearLayout>(R.id.bottom_favorite_container)
                 .visibility = View.VISIBLE
             bottomSheetLL.find<LinearLayout>(R.id.bottom_comments_container)
@@ -71,9 +76,20 @@ class BottomSheetHelper(
                 .visibility = View.VISIBLE
             bottomSheetLL.find<TextView>(R.id.bottom_sheet_title)
                 .text = "Post Options"
+
+            if (post != null) {
+                val userStar = UserStarredCollection.getStarPost(post!!)
+                if (userStar == null) {
+                    bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Favorite"
+                } else {
+                    bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Remove from Favorites"
+                }
+            }
+
+            // Todo: hide delete if it is not users post
         }
 
-        if (mPost != null && (mPost!!.ownerId == userId || mPost!!.ref.isBlank())) {
+        if (post != null && (post!!.ownerId == userId || post!!.ref.isBlank())) {
             bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
                 .visibility = View.VISIBLE
         } else {
@@ -102,25 +118,19 @@ class BottomSheetHelper(
 
     private fun showComments() {
         hideMenu()
-        CommentsActivity.startActivity(context, mPost!!.ref, 0)
+        CommentsActivity.startActivity(context, post!!.ref, 0)
     }
 
     private fun starPost() {
-        if (mPost != null) {
+        if (post != null) {
             UserHelper.getCurrentUser { user ->
                 if (user != null) {
-                    StarPostAccess(user.ref).createItemInFB(mPost!!,
-                        object : FirebaseItemAccess.OnItemCreated<PostModel> {
-                            override fun onSuccess(item: PostModel) {
-                                UserAccess().incrementTotalStars(item.ownerRef)
-                            }
-
-                            override fun onFailed(e: Exception) {
-                                ErrorNotifier.notifyError(context, TAG, "Error liking post", e)
-                            }
-                        })
-                    mPost!!.totalStars = mPost!!.totalStars + 1
-                    notifyAdapter.onDataUpdated()
+                    val userStar = UserStarredCollection.getStarPost(post!!)
+                    if (userStar == null) {
+                        addPostToFavorites(user)
+                    } else {
+                        removePostFromFavorites(user, userStar.ref)
+                    }
                     hideMenu()
                 } else {
                     ErrorNotifier.notifyError(context, TAG, "Error liking post")
@@ -129,25 +139,67 @@ class BottomSheetHelper(
         }
     }
 
-    private fun unstarPost() {
-        TODO("Implement this")
+    private fun addPostToFavorites(user: UserModel) {
+        StarPostAccess(user.ref).createItemInFB(StarPost(post!!),
+            object : FirebaseItemAccess.OnItemCreated<StarPost> {
+                override fun onSuccess(item: StarPost) {
+                    if (post != null) {
+                        UserAccess().incrementTotalStars(item.ownerRef)
+                        UserStarredCollection.addStarPostToMap(item)
+                        post!!.totalStars = post!!.totalStars + 1
+                        notifyAdapter.onDataUpdated()
+                        Toast.makeText(context, "Added to favorites!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailed(e: Exception) {
+                    ErrorNotifier.notifyError(context, TAG, "Error adding to favorites", e)
+                }
+            })
+    }
+
+    private fun removePostFromFavorites(
+        user: UserModel,
+        starRef: String
+    ) {
+        if (starRef.isBlank()) {
+            return
+        }
+        StarPostAccess(user.ref).deleteItemInFb(starRef,
+            object : FirebaseItemAccess.OnItemDeleted {
+                override fun onSuccess() {
+                    if (post != null) {
+                        UserAccess().decrementTotalStars(post!!.ownerRef)
+                        UserStarredCollection.removeStarPostFromMap(post!!)
+                        post!!.totalStars = post!!.totalStars - 1
+                        notifyAdapter.onDataUpdated()
+                        Toast.makeText(context, "Removed from favorites!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+
+                override fun onFailed(e: Exception) {
+                    ErrorNotifier.notifyError(context, TAG, "Error removing from favorites", e)
+                }
+            })
     }
 
     private fun deletePost() {
-        // Todo: Change to handle server post vs db post/ also check that it is users posts before deleting
+        // check that it is users posts before deleting
         val userId = UserHelper.getFirebaseUserId()
-        if (mPost != null && (mPost!!.ownerId == userId || mPost!!.ref.isBlank())) {
+        if (post != null && (post!!.ownerId == userId || post!!.ref.isBlank())) {
             val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
             builder
                 .setMessage("Are you sure you want to delete this post?")
                 .setTitle("Delete Post")
                 .setPositiveButton("Delete") { _, _ ->
-                    if (mPost!!.ref.isNotBlank()) {
-                        PostAccess().deleteItemInFb(mPost!!.ref,
+                    if (post!!.ref.isNotBlank()) {
+                        PostAccess().deleteItemInFb(post!!.ref,
                             object : FirebaseItemAccess.OnItemDeleted {
                                 override fun onSuccess() {
                                     //Todo: hide post that was deleted
-                                    Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT)
+                                        .show()
                                 }
 
                                 override fun onFailed(e: Exception) {
@@ -156,7 +208,7 @@ class BottomSheetHelper(
 
                             })
                     } else {
-                        deleteDraft(mPost!!)
+                        deleteDraft(post!!)
                     }
                     hideMenu()
                 }

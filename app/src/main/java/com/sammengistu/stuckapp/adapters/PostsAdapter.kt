@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.UserStarredCollection
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
@@ -58,6 +59,13 @@ class PostsAdapter(
             buildTextChoices(holder, post, userVote)
         } else if (holder is PostImageViewHolder) {
             buildImageChoices(holder, post, userVote)
+        }
+
+        val userStar = UserStarredCollection.getStarPost(post)
+        if (userStar == null) {
+            holder.starIcon.visibility = View.GONE
+        } else {
+            holder.starIcon.visibility = View.VISIBLE
         }
 
         if (isDraft) {
@@ -168,5 +176,6 @@ class PostsAdapter(
         val starTotalView: HorizontalIconToTextView =
             parentView.find(R.id.starsTotal)
         val menuIcon: ImageView = parentView.find(R.id.menu_icon)
+        val starIcon: ImageView = parentView.find(R.id.user_star_icon)
     }
 }
