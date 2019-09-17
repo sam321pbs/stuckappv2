@@ -163,7 +163,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
                 updateAdapter(list, adapter)
             }
 
-            override fun onFailed() {
+            override fun onFailed(e: Exception) {
                 Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
             }
         }
@@ -177,7 +177,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
                 updateAdapter(list, adapter)
             }
 
-            override fun onFailed() {
+            override fun onFailed(e: Exception) {
                 Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
             }
         }

@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckapp.activities.BaseActivity
+import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
@@ -47,6 +49,14 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
 
         holder.votedOn.text = comment.usersChoice.toString()
 
+        addOnClickListener(holder, comment)
+        updateVoteUi(holder, comment)
+    }
+
+    private fun addOnClickListener(
+        holder: CommentsViewHolder,
+        comment: CommentModel
+    ) {
         holder.upVote.setOnClickListener {
             updateCommentVote(comment, CommentsVoteAccess.UP_VOTE)
             updateVoteUi(holder, comment)
@@ -57,10 +67,17 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
             updateVoteUi(holder, comment)
         }
 
-        updateVoteUi(holder, comment)
+        holder.avatar.setOnClickListener { showProfile(context, comment.ownerId) }
+        holder.username.setOnClickListener { showProfile(context, comment.ownerId) }
     }
 
     override fun getItemCount() = commentsList.size
+
+    private fun showProfile(context: Context, ownerId: String) {
+        if (context is BaseActivity && ownerId.isNotBlank()) {
+            context.addFragment(ProfileViewFragment.newInstance(ownerId))
+        }
+    }
 
     private fun updateVoteUi(holder: CommentsViewHolder, comment: CommentModel) {
         val vote = commentVotesMap[comment.ref]

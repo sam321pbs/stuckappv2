@@ -38,7 +38,7 @@ class UserHelper(userId: String) {
                             }
                         }
 
-                        override fun onFailed() {
+                        override fun onFailed(e: Exception) {
                             callback(null)
                         }
                     })

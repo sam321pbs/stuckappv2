@@ -46,7 +46,7 @@ class CommentsFragment : BaseFragment() {
         postRef = arguments?.getString(EXTRA_POST_ID) ?: ""
         choicePos = arguments?.getInt(EXTRA_POST_CHOICE_POS) ?: 0
 
-        if (postRef.isNullOrBlank()) {
+        if (postRef.isBlank()) {
             Log.d(TAG, "Empty id for comments")
         } else {
 
@@ -73,8 +73,8 @@ class CommentsFragment : BaseFragment() {
                 getComments()
             }
 
-            override fun onFailed() {
-                ErrorNotifier.notifyError(context!!, "Error getting comments")
+            override fun onFailed(e: Exception) {
+                ErrorNotifier.notifyError(context!!, "Error getting comments", TAG, e)
             }
         })
     }
@@ -90,8 +90,8 @@ class CommentsFragment : BaseFragment() {
                     commentsAdapter.updateCommentVoteMap(commentVotesMap)
                 }
 
-                override fun onFailed() {
-                    ErrorNotifier.notifyError(context!!, "Error getting comments")
+                override fun onFailed(e: Exception) {
+                    ErrorNotifier.notifyError(context!!, "Error getting comments", TAG, e)
                 }
             }
         )

@@ -21,7 +21,7 @@ class UserStarredCollection {
                         EventBus.getDefault().post(UserStarsLoadedEvent())
                     }
 
-                    override fun onFailed() {
+                    override fun onFailed(e: Exception) {
                         TODO("Failed to get user votes")
                     }
                 })

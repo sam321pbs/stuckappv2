@@ -20,7 +20,7 @@ class UserVotesCollection {
                         EventBus.getDefault().post(UserVotesLoadedEvent())
                     }
 
-                    override fun onFailed() {
+                    override fun onFailed(e: Exception) {
                         TODO("Failed to get user votes")
                     }
 
