@@ -19,9 +19,13 @@
         <attr name="verticalIconText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="FormItemView">
+    <declare-styleable name="InputFormItemView">
         <attr name="formItemTitle" format="string" />
         <attr name="formItemHint" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="DisplayFormItemView">
+        <attr name="displayTitle" format="string" />
     </declare-styleable>
 
     <declare-styleable name="AvatarView">

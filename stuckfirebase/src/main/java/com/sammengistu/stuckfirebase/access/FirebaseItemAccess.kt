@@ -104,7 +104,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
                 Log.e(TAG, "Failed to get posts", it)
-                listener.onFailed()
+                listener.onFailed(it)
             }
     }
 
@@ -117,7 +117,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
                 Log.e(TAG, "Failed to get items", it)
-                listener.onFailed()
+                listener.onFailed(it)
             }
     }
 
@@ -131,7 +131,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
                 Log.e(TAG, "Failed to get items", it)
-                listener.onFailed()
+                listener.onFailed(it)
             }
     }
 
@@ -208,7 +208,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
 
     interface OnItemRetrieved<T : FirebaseItem> {
         fun onSuccess(list: List<T>)
-        fun onFailed()
+        fun onFailed(e: Exception)
     }
 
     interface OnItemCreated<T : FirebaseItem> {

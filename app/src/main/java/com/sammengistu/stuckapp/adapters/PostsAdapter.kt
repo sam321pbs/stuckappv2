@@ -15,9 +15,11 @@ import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.UserStarredCollection
 import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.constants.PrivacyOptions
+import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.*
 import com.sammengistu.stuckfirebase.constants.PostType
@@ -50,9 +52,13 @@ class PostsAdapter(
             Log.d(TAG, "Avatar is null ${avatar == null}")
             holder.avatarView.setImageBitmap(avatar)
             holder.username.text = "Anonymous"
+            holder.avatarView.setOnClickListener(null)
+            holder.username.setOnClickListener(null)
         } else {
             holder.avatarView.loadImage(post.avatar)
             holder.username.text = post.userName
+            holder.avatarView.setOnClickListener{ showProfile(context, post) }
+            holder.username.setOnClickListener { showProfile(context, post) }
         }
 
         holder.questionView.text = post.question
@@ -84,6 +90,15 @@ class PostsAdapter(
                 intent.putExtra(NewPostActivity.EXTRA_POST_ID, post.draftId)
                 context.startActivity(intent)
             }
+        }
+    }
+
+    private fun showProfile(
+        context: Context,
+        post: PostModel
+    ) {
+        if (context is BaseActivity) {
+            context.addFragment(ProfileViewFragment.newInstance(post.ownerId))
         }
     }
 

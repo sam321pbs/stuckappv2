@@ -17,7 +17,7 @@ import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper.Companion.loadImageFromGallery
 import com.sammengistu.stuckapp.views.AvatarView
-import com.sammengistu.stuckapp.views.FormItemView
+import com.sammengistu.stuckapp.views.InputFormItemView
 import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
@@ -28,16 +28,16 @@ import org.greenrobot.eventbus.EventBus
 class ProfileFragment : BaseFragment() {
 
     lateinit var avatarView: AvatarView
-    lateinit var usernameField: FormItemView
-    lateinit var bioField: FormItemView
-    lateinit var nameField: FormItemView
-    lateinit var occupationField: FormItemView
-    lateinit var educationField: FormItemView
-    lateinit var ageGroupField: FormItemView
-    lateinit var genderField: FormItemView
+    lateinit var usernameField: InputFormItemView
+    lateinit var bioField: InputFormItemView
+    lateinit var nameField: InputFormItemView
+    lateinit var occupationField: InputFormItemView
+    lateinit var educationField: InputFormItemView
+    lateinit var ageGroupField: InputFormItemView
+    lateinit var genderField: InputFormItemView
     lateinit var createProfileButton: Button
     var avatarImage: Bitmap? = null
-    private val formFieldsList = ArrayList<FormItemView>()
+    private val formFieldsList = ArrayList<InputFormItemView>()
     private var createMode = false
 
     override fun getFragmentTitle(): String = TITLE
