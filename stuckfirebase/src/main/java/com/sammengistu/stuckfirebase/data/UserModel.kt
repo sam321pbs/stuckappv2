@@ -15,4 +15,30 @@ data class UserModel(
     var totalReceivedStars: Int
 ) : FirebaseItem() {
     constructor() : this(  "", "", "", "", "", "", "", "", "", 0,0,0)
+
+    fun convertUserToMap(): Map<String, Any> {
+        return mapOf(
+            Pair("username", username),
+            Pair("avatar", avatar),
+            Pair("name", name),
+            Pair("occupation", occupation),
+            Pair("education", education),
+            Pair("bio", bio),
+            Pair("ageGroup", ageGroup),
+            Pair("gender", gender)
+        )
+    }
+    
+
+    fun isEqualTo(updateUser: UserModel): Boolean {
+        return username == updateUser.username &&
+                avatar == updateUser.avatar &&
+                name == updateUser.name &&
+                education == updateUser.education &&
+                occupation == updateUser.occupation &&
+                bio == updateUser.bio &&
+                ageGroup == updateUser.ageGroup &&
+                gender == updateUser.gender
+
+    }
 }

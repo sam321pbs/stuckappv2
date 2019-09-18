@@ -107,49 +107,82 @@ class ProfileFragment : BaseFragment() {
 
     private fun handleProfileUpdate() {
         UserHelper.getCurrentUser { user ->
-            val userModel = UserModel(
-                user!!.userId,
-                // Todo: validate that username doesn't exists
-                usernameField.getText(),
-                user.avatar,
-                nameField.getText(),
-                occupationField.getText(),
-                educationField.getText(),
-                bioField.getText(),
-                ageGroupField.getText(),
-                genderField.getText(),
-                0, 0, 0
-            )
-
-            if (avatarImage != null) {
-                FbStorageHelper.uploadAvatar(avatarImage!!,
-                    object : FbStorageHelper.UploadCompletionCallback {
-                        override fun onSuccess(url: String) {
-                            user.avatar = url
-                            updateProfile(user, userModel)
-                        }
-
-                        override fun onFailed(exception: Exception) {
-                            ErrorNotifier.notifyError(activity!!, TAG, "Unable to update avatar", exception)
-                        }
-                    })
-            } else {
-                updateProfile(user, userModel)
+            if (user != null) {
+                val updateUser = buildUserModel(user.userId, user.avatar)
+                if (!user.isEqualTo(updateUser) || avatarImage != null) {
+                    checkUsernameBeforeUpdating(updateUser) {
+                        updateUserAccount(user, updateUser)
+                    }
+                } else {
+                    Toast.makeText(activity, "Please update a field", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
-    private fun updateProfile(
+    private fun updateUserAccount(
         user: UserModel,
-        userModel: UserModel
+        updateUser: UserModel
+    ) {
+        if (avatarImage != null) {
+            FbStorageHelper.uploadAvatar(avatarImage!!,
+                object : FbStorageHelper.UploadCompletionCallback {
+                    override fun onSuccess(url: String) {
+                        user.avatar = url
+                        sendUpdates(user, updateUser)
+                    }
+
+                    override fun onFailed(exception: Exception) {
+                        ErrorNotifier.notifyError(
+                            activity!!,
+                            TAG,
+                            "Unable to update avatar",
+                            exception
+                        )
+                    }
+                })
+        } else {
+            sendUpdates(user, updateUser)
+        }
+    }
+
+    private fun checkUsernameBeforeUpdating(
+        updateUser: UserModel,
+        postUserNameAction: () -> Unit
+    ) {
+        UserAccess().getItemsWhereEqual("username", updateUser.username,
+            object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
+                override fun onSuccess(list: List<UserModel>) {
+                    if (list.isNotEmpty()) {
+                        val fetchedUser = list[0]
+                        if (fetchedUser.userId != updateUser.userId) {
+                            Toast.makeText(activity, "Username is taken", Toast.LENGTH_SHORT).show()
+                        } else {
+                            postUserNameAction.invoke()
+                        }
+                    } else {
+                        postUserNameAction.invoke()
+                    }
+                }
+
+                override fun onFailed(e: Exception) {
+                    ErrorNotifier.notifyError(activity, "Error Occurred", TAG, e)
+                }
+            })
+    }
+
+    private fun sendUpdates(
+        user: UserModel,
+        updatedUser: UserModel
     ) {
         UserAccess().updateItemInFB(
             user.ref,
-            convertUserToMap(userModel),
+            updatedUser.convertUserToMap(),
             object : FirebaseItemAccess.OnItemUpdated {
                 override fun onSuccess() {
                     if (activity != null) {
-                        UserHelper.currentUser = user
+                        updatedUser.ref = user.ref
+                        UserHelper.currentUser = updatedUser
                         EventBus.getDefault().post(UserUpdatedEvent())
                         Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT)
                             .show()
@@ -170,53 +203,46 @@ class ProfileFragment : BaseFragment() {
             })
     }
 
-    private fun convertUserToMap(user: UserModel): Map<String, Any> {
-        return mapOf(
-            Pair("username", user.username),
-            Pair("avatar", user.avatar),
-            Pair("name", user.name),
-            Pair("occupation", user.occupation),
-            Pair("education", user.education),
-            Pair("bio", user.bio),
-            Pair("ageGroup", user.ageGroup),
-            Pair("gender", user.gender)
-        )
-    }
-
     private fun createProfile() {
         if (allFieldsValid()) {
             val firebaseUser = FirebaseAuth.getInstance().currentUser
-            val userModel = UserModel(
-                firebaseUser!!.uid,
-                // Todo: validate that username doesn't exists
-                usernameField.getText(),
-                "",
-                nameField.getText(),
-                occupationField.getText(),
-                educationField.getText(),
-                bioField.getText(),
-                ageGroupField.getText(),
-                genderField.getText(),
-                0, 0, 0
-            )
+            if (firebaseUser != null) {
+                val userModel = buildUserModel(firebaseUser.uid, "")
+                checkUsernameBeforeUpdating(userModel) {
+                    UserAccess().createUser(avatarImage!!, userModel,
+                        object : FirebaseItemAccess.OnItemCreated<UserModel> {
+                            override fun onSuccess(item: UserModel) {
+                                UserHelper.currentUser = item
+                                launchMainActivity()
+                            }
 
-            UserAccess().createUser(avatarImage!!, userModel,
-                object : FirebaseItemAccess.OnItemCreated<UserModel> {
-                    override fun onSuccess(item: UserModel) {
-                        UserHelper.currentUser = item
-                        launchMainActivity()
-                    }
-
-                    override fun onFailed(e: Exception) {
-                        ErrorNotifier.notifyError(
-                            context!!,
-                            BaseActivity.TAG,
-                            "Failed to create profile",
-                            e
-                        )
-                    }
-                })
+                            override fun onFailed(e: Exception) {
+                                ErrorNotifier.notifyError(
+                                    context!!,
+                                    BaseActivity.TAG,
+                                    "Failed to create profile",
+                                    e
+                                )
+                            }
+                        })
+                }
+            }
         }
+    }
+
+    private fun buildUserModel(userId: String, avatar: String): UserModel {
+        return UserModel(
+            userId,
+            usernameField.getText(),
+            avatar,
+            nameField.getText(),
+            occupationField.getText(),
+            educationField.getText(),
+            bioField.getText(),
+            ageGroupField.getText(),
+            genderField.getText(),
+            0, 0, 0
+        )
     }
 
     private fun initViews() {

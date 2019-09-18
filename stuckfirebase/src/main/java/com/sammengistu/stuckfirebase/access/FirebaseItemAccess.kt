@@ -14,11 +14,6 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
     abstract fun getCollectionRef(): CollectionReference
     abstract fun getModelClass(): Class<T>
 
-//    interface OnItemRetrieved<T: FirebaseItem> {
-//        fun onSuccess(list: List<T>)
-//        fun onFailed()
-//    }
-
     protected open fun onItemCreated(item: T) {
         // Override me
     }
