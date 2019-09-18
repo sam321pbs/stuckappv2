@@ -7,6 +7,7 @@ import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.data.UserModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 
 abstract class VotableContainer(
@@ -30,14 +31,13 @@ abstract class VotableContainer(
     }
 
     override fun onDoubleTapped() {
-        if (post.ref.isNotBlank() && userVote == null) {
-            UserHelper.getCurrentUser {
-                if (it != null) {
+        UserHelper.getCurrentUser { user ->
+            if (allowUserToVote(user)) {
                     val userVote = UserVoteModel(
-                        it.userId,
-                        it.ref,
-                        it.username,
-                        it.avatar,
+                        user!!.userId,
+                        user.ref,
+                        user.username,
+                        user.avatar,
                         post.ref,
                         post.ownerRef,
                         choiceItem.first
@@ -46,8 +46,10 @@ abstract class VotableContainer(
                     UserVotesCollection.addVoteToMap(userVote)
                     onItemVotedOn(userVote)
                     updateParentContainer.updateContainer(userVote)
-                }
             }
         }
     }
+
+    private fun allowUserToVote(user: UserModel?) =
+        post.ref.isNotBlank() && userVote == null && user != null && post.ownerId != user.userId
 }
