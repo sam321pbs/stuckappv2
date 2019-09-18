@@ -1,6 +1,6 @@
 package com.sammengistu.stuckfirebase.data
 
-class StarPost(
+class StarPostModel(
     ownerId: String,
     ownerRef: String,
     userName: String,

@@ -8,9 +8,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.sammengistu.stuckapp.ErrorNotifier
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.MainActivity
 import com.sammengistu.stuckapp.events.UserUpdatedEvent

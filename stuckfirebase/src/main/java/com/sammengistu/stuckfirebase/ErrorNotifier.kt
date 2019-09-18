@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp
+package com.sammengistu.stuckfirebase
 
 import android.content.Context
 import android.util.Log

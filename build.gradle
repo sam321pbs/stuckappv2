@@ -31,13 +31,14 @@ buildscript {
         picassoVersion = '2.71828'
         googleServicesVersion = '4.3.1'
         firebaseAnalyticsVersion = '17.2.0'
-        firebaseFirestoreVersion = '21.0.0'
-        firebaseStorageVersion = '19.0.0'
+        firebaseFirestoreVersion = '21.1.1'
+        firebaseStorageVersion = '19.0.1'
         firebaseCloudVersion = '19.0.1'
         firebaseUiAuthVersion = '4.3.1'
         firebasAuthVersion = '19.0.0'
         facebookAndroidVersion = '5.5.1'
         twitterCoreVersion = '3.3.0@aar'
+        firebaseMessagingVersion = '20.0.0'
 
         playServicesAuthVersion = '17.0.0'
 

@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.google.firebase.firestore.CollectionReference
 import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.data.PostRepository
 import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.constants.POSTS
@@ -71,16 +71,16 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
     }
 
     companion object {
-        fun insertPost(context: Context, post: DraftPost) {
+        fun insertPost(context: Context, post: DraftPostModel) {
             PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).insertPost(post)
         }
 
-        fun getPost(context: Context, postId: Long) : DraftPost? {
+        fun getPost(context: Context, postId: Long) : DraftPostModel? {
             return PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).getPost(postId).value?.get(0)
         }
 
         // todo this does not work
-        fun deletePost(context: Context, post: DraftPost) {
+        fun deletePost(context: Context, post: DraftPostModel) {
             PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).deletePost(post)
         }
 

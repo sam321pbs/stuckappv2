@@ -1,20 +1,14 @@
-package com.sammengistu.stuckapp
+package com.sammengistu.stuckfirebase
 
 import android.content.Context
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.sammengistu.stuckapp.fragments.SettingsFragment
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemRetrieved
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.UserModel
 
-class UserHelper(userId: String) {
-
-    interface OnUserLoadedCallback {
-        fun onUserLoaded(user: UserModel?)
-    }
-
+class UserHelper {
     companion object {
         var currentUser: UserModel? = null
 
@@ -23,6 +17,10 @@ class UserHelper(userId: String) {
         fun getFirebaseUserId() = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
         fun getCurrentUser(callback: (m: UserModel?) -> Unit) {
+            if (getFirebaseUser() == null) {
+                callback.invoke(null)
+                return
+            }
             if (currentUser == null) {
                 UserAccess().getItemsWhereEqual(
                     "userId",
@@ -73,8 +71,10 @@ class UserHelper(userId: String) {
                             }
 
                             override fun onFailed(e: Exception) {
-                                ErrorNotifier.notifyError(context, "Error deleting account",
-                                    SettingsFragment.TAG, e)
+                                ErrorNotifier.notifyError(
+                                    context, "Error deleting account",
+                                    TAG, e
+                                )
                             }
                         })
                 }

@@ -1,7 +1,7 @@
 package com.sammengistu.stuckfirebase.data
 
 import com.google.firebase.firestore.Exclude
-import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.data.DraftPostModel
 
 @Exclude
 const val MAX_NUMBER_OF_CHOICES = 4
@@ -58,7 +58,7 @@ open class PostModel(
         this.votes = votes
     }
 
-    constructor(draftPost: DraftPost) :
+    constructor(draftPost: DraftPostModel) :
             this(
                 "",
                 "",
@@ -133,8 +133,8 @@ open class PostModel(
     fun convertToChoiceText(pos: Int): String = "choice_$pos"
 
     @Exclude
-    fun toDraft(): DraftPost {
-        return DraftPost(
+    fun toDraft(): DraftPostModel {
+        return DraftPostModel(
             draftId,
             question,
             privacy,

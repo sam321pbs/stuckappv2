@@ -2,7 +2,7 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu

@@ -6,9 +6,9 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
-import com.sammengistu.stuckapp.ErrorNotifier
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
 import com.sammengistu.stuckapp.adapters.CommentsAdapter

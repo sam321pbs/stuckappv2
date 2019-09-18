@@ -10,18 +10,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
 import com.sammengistu.stuckapp.adapters.PostsAdapter
-import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.data.PostModel
-import com.sammengistu.stuckfirebase.data.StarPost
+import com.sammengistu.stuckfirebase.data.StarPostModel
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
@@ -146,7 +146,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         }
     }
 
-    private fun convertDraftToPost(draftList: List<DraftPost>): List<PostModel> {
+    private fun convertDraftToPost(draftList: List<DraftPostModel>): List<PostModel> {
         val list = ArrayList<PostModel>()
         for (draft in draftList) {
             val post = PostModel(draft)
@@ -170,10 +170,10 @@ abstract class PostsListFragment : BasePostListsFragment() {
     }
 
     private fun getOnStarPostRetrievedListener(adapter: PostsAdapter):
-            FirebaseItemAccess.OnItemRetrieved<StarPost> {
+            FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
         return object :
-            FirebaseItemAccess.OnItemRetrieved<StarPost> {
-            override fun onSuccess(list: List<StarPost>) {
+            FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
+            override fun onSuccess(list: List<StarPostModel>) {
                 updateAdapter(list, adapter)
             }
 

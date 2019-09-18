@@ -10,7 +10,7 @@ import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity.Companion.EXTRA_POST_ID
-import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
@@ -97,7 +97,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
         return true
     }
 
-    private fun updateImagesFromDraft(draftPost: DraftPost) {
+    private fun updateImagesFromDraft(draftPost: DraftPostModel) {
         if (draftPost.image1Loc.isNotBlank()) {
             val file1 = File(draftPost.image1Loc)
             mBitmap1 = BitmapFactory.decodeFile(file1.path)

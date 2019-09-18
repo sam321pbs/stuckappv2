@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils

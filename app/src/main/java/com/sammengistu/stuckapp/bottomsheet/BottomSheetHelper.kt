@@ -8,10 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.sammengistu.stuckapp.ErrorNotifier
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
-import com.sammengistu.stuckapp.UserStarredCollection
+import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -19,7 +19,7 @@ import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.PostModel
-import com.sammengistu.stuckfirebase.data.StarPost
+import com.sammengistu.stuckfirebase.data.StarPostModel
 import com.sammengistu.stuckfirebase.data.UserModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
@@ -140,9 +140,9 @@ class BottomSheetHelper(
     }
 
     private fun addPostToFavorites(user: UserModel) {
-        StarPostAccess(user.ref).createItemInFB(StarPost(post!!),
-            object : FirebaseItemAccess.OnItemCreated<StarPost> {
-                override fun onSuccess(item: StarPost) {
+        StarPostAccess(user.ref).createItemInFB(StarPostModel(post!!),
+            object : FirebaseItemAccess.OnItemCreated<StarPostModel> {
+                override fun onSuccess(item: StarPostModel) {
                     if (post != null) {
                         UserAccess().incrementTotalStars(item.ownerRef)
                         UserStarredCollection.addStarPostToMap(item)

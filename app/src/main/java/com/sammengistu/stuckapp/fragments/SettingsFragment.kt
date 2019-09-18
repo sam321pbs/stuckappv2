@@ -6,7 +6,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : BaseFragment() {

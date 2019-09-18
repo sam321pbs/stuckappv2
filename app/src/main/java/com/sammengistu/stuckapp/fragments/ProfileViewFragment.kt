@@ -2,7 +2,7 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
-import com.sammengistu.stuckapp.ErrorNotifier
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.DisplayFormItemView

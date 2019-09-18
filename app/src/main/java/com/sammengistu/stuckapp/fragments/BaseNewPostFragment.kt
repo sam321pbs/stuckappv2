@@ -8,12 +8,12 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
 import com.sammengistu.stuckapp.AssetImageUtils
-import com.sammengistu.stuckapp.ErrorNotifier
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.ErrorNotifier
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
-import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
@@ -38,7 +38,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
     val IMAGE_1 = "image_1"
     val IMAGE_2 = "image_2"
     val CHOICES_VIEW = "choices_view"
-    var draft: DraftPost? = null
+    var draft: DraftPostModel? = null
 
     var mSelectedCategory: String = Categories.GENERAL.toString()
     var mSelectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
@@ -141,7 +141,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
         saveAsDraft(PostType.TEXT, data)
     }
 
-    protected fun updateViewFromDraft(draft: DraftPost) {
+    protected fun updateViewFromDraft(draft: DraftPostModel) {
         question.setText(draft.question)
         mSelectedCategory = draft.category
         mSelectedPrivacy = draft.privacy

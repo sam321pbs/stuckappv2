@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp
+package com.sammengistu.stuckapp.collections
 
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -15,7 +15,9 @@ class UserVotesCollection {
             UserVoteAccess().getItemsWhereEqual("ownerId", userId,
                 object : FirebaseItemAccess.OnItemRetrieved<UserVoteModel> {
                     override fun onSuccess(list: List<UserVoteModel>) {
-                        convertVotesToMap(list)
+                        convertVotesToMap(
+                            list
+                        )
                         isInitialized = true
                         EventBus.getDefault().post(UserVotesLoadedEvent())
                     }
@@ -27,7 +29,8 @@ class UserVotesCollection {
                 })
         }
 
-        fun isInitialized(): Boolean = isInitialized
+        fun isInitialized(): Boolean =
+            isInitialized
 
         fun addVoteToMap(vote: UserVoteModel) {
             voteMap[vote.postRef] = vote

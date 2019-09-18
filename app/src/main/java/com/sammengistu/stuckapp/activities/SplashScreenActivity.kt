@@ -2,27 +2,42 @@ package com.sammengistu.stuckapp.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
-import com.sammengistu.stuckapp.ErrorNotifier.Companion.notifyError
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.ErrorNotifier.Companion.notifyError
+import com.sammengistu.stuckfirebase.UserHelper
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 
 class SplashScreenActivity : BaseActivity() {
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_splash_screen
+    override fun getLayoutId() = R.layout.activity_splash_screen
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        try_again_container.visibility = View.GONE
+        try_again_button.setOnClickListener {
+            launchNextActivity()
+        }
+
+        launchNextActivity()
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        launchNextActivity()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
+        try_again_container.visibility = View.GONE
+        progress_bar.visibility = View.VISIBLE
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
 
@@ -36,6 +51,8 @@ class SplashScreenActivity : BaseActivity() {
                 // ...
                 notifyError(this, "Error signing in")
                 Log.d(TAG, "Error signing in: ${response!!.error!!.errorCode}")
+                try_again_container.visibility = View.VISIBLE
+                progress_bar.visibility = View.GONE
             }
         }
     }

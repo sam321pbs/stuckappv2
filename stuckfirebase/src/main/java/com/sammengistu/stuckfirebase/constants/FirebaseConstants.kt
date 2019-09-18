@@ -17,6 +17,7 @@ const val COMMENT_VOTES = "comments_votes"
 const val COMMENTS = "comments"
 const val POST_COMMENTS = "post_comments"
 const val STARRED_POSTS = "starred_posts"
+const val DEVICE_TOKENS = "device_tokens"
 const val VOTES = "votes"
 
 // Document naming

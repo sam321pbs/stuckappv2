@@ -12,12 +12,18 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
-import com.sammengistu.stuckapp.*
+import com.sammengistu.stuckapp.AssetImageUtils
+import com.sammengistu.stuckapp.OnItemClickListener
+import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.collections.UserStarredCollection
+import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.*
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
+import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_layout.*
@@ -50,6 +56,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
             if (user != null) {
                 UserStarredCollection.loadUserStars(user.ref)
                 UserVotesCollection.loadUserVotes(user.userId)
+                DeviceTokenAccess(user.ref).checkTokenExists(this)
             }
         }
         addFragment(HomeListFragment())

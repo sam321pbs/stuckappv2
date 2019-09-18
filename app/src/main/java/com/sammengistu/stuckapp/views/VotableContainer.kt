@@ -3,8 +3,8 @@ package com.sammengistu.stuckapp.views
 import android.content.Context
 import android.view.MotionEvent
 import android.widget.RelativeLayout
-import com.sammengistu.stuckapp.UserHelper
-import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserModel

@@ -40,4 +40,7 @@ dependencies {
     implementation "com.google.firebase:firebase-storage:$rootProject.firebaseStorageVersion"
     implementation "com.google.firebase:firebase-functions:$rootProject.firebaseCloudVersion"
     implementation "org.greenrobot:eventbus:$rootProject.eventBusVersion"
+    implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
+    implementation "com.firebaseui:firebase-ui-auth:$rootProject.firebaseUiAuthVersion"
+    implementation "com.google.firebase:firebase-auth:$rootProject.firebasAuthVersion"
 }

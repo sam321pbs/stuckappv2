@@ -8,7 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sammengistu.stuckfirebase.constants.DATABASE_NAME
 
-@Database(entities = [DraftPost::class], version = 3, exportSchema = false)
+@Database(entities = [DraftPostModel::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postsDao(): PostDao
 

@@ -3,7 +3,7 @@ package com.sammengistu.stuckapp.fragments
 import android.os.Bundle
 import android.view.View
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.views.StatCardView
 import kotlinx.android.synthetic.main.fragment_stats.*
 

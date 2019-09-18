@@ -9,7 +9,7 @@ import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.NewPostActivity
-import com.sammengistu.stuckapp.data.DraftPost
+import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
@@ -68,7 +68,7 @@ class NewTextPostFragment : BaseNewPostFragment() {
         }
     }
 
-    private fun updateViewFromDraftItem(draftPost: DraftPost) {
+    private fun updateViewFromDraftItem(draftPost: DraftPostModel) {
         updateViewFromDraft(draftPost)
         if (draftPost.choice1.isNotBlank()) {
             addChoiceView(draftPost.choice1)

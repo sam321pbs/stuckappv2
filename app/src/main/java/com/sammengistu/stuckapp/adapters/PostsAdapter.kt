@@ -13,11 +13,11 @@ import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserStarredCollection
-import com.sammengistu.stuckapp.UserVotesCollection
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
+import com.sammengistu.stuckapp.collections.UserStarredCollection
+import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils

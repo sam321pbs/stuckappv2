@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.sammengistu.stuckfirebase.constants.PostType
 
 @Entity(tableName = "posts")
-data class DraftPost(
+data class DraftPostModel(
     @PrimaryKey(autoGenerate = true) val postId: Long,
     val question: String,
     val privacy: String,

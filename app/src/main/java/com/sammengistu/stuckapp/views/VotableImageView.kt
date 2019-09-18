@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.UserVotesCollection
+import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.helpers.ViewHelper
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
