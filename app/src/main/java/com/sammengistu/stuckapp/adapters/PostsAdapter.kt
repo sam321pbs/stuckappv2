@@ -38,9 +38,9 @@ class PostsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         return when (viewType) {
             LANDSCAPE_VIEW_TYPE, PORTRAIT_VIEW_TYPE ->
-                PostImageViewHolder(createView(parent, R.layout.item_post_image))
+                PostImageViewHolder(createView(parent, R.layout.item_post))
             else ->
-                PostTextViewHolder(createView(parent, R.layout.item_post_text_card))
+                PostTextViewHolder(createView(parent, R.layout.item_post))
         }
     }
 

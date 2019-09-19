@@ -3,7 +3,6 @@ package com.sammengistu.stuckapp.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +16,7 @@ import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
@@ -120,7 +120,8 @@ abstract class PostsListFragment : BasePostListsFragment() {
         val scrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && postsList.isNotEmpty()) {
+                if (!recyclerView.canScrollVertically(1) && postsList.isNotEmpty()
+                    && postsList.size > 30) {
                     loadMoreItems(viewAdapter)
                 }
             }
@@ -208,7 +209,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
             }
 
             override fun onFailed(e: Exception) {
-                Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
+                ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts", e)
             }
         }
     }
@@ -222,7 +223,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
             }
 
             override fun onFailed(e: Exception) {
-                Toast.makeText(activity!!, "Failed to get posts", Toast.LENGTH_SHORT).show()
+                ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts", e)
             }
         }
     }

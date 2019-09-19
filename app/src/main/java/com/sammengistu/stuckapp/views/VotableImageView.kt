@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.helpers.ViewHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 import com.squareup.picasso.Picasso
@@ -58,8 +59,6 @@ class VotableImageView(
         }
     }
 
-
-
     private fun loadImageFromFile(imageLoc: String) {
         post {
             val file = File(imageLoc)
@@ -70,6 +69,9 @@ class VotableImageView(
                 .into(imageView)
         }
     }
+
+    private fun isUsersPost() =
+        UserHelper.currentUser != null && UserHelper.currentUser!!.ref == post.ownerRef
 
     private fun buildView() {
         val params = getParams()
@@ -93,7 +95,6 @@ class VotableImageView(
             votesTextView.visibility = View.GONE
         } else {
             votesTextView.visibility = View.VISIBLE
-            // Todo: show vote and color if vote matches
         }
 
         addView(progressBar)
@@ -117,7 +118,9 @@ class VotableImageView(
     }
 
     private fun handleVotedItem(userVote: UserVoteModel?, isUpdate: Boolean = false) {
-        if (userVote == null) {
+        if (isUsersPost()) {
+            votesTextView.visibility = View.VISIBLE
+        } else if (userVote == null) {
             votesTextView.visibility = View.GONE
         } else {
             votesTextView.visibility = View.VISIBLE

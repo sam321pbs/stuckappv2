@@ -3,11 +3,10 @@ package com.sammengistu.stuckapp.views
 import android.content.Context
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 import org.jetbrains.anko.centerVertically
@@ -26,7 +25,6 @@ class VotableChoiceView(
 
     init {
         buildViews()
-        applyStyleManually(context)
     }
 
     override fun onItemVotedOn(userVote: UserVoteModel?) {
@@ -81,7 +79,9 @@ class VotableChoiceView(
     }
 
     private fun handleVotedItem(userVote: UserVoteModel?, isUpdate: Boolean = false) {
-        if (userVote == null) {
+        if (isUsersPost()) {
+            mVotesText.visibility = View.VISIBLE
+        } else if (userVote == null) {
             mVotesText.visibility = View.GONE
         } else {
             mVotesText.visibility = View.VISIBLE
@@ -94,6 +94,9 @@ class VotableChoiceView(
         }
     }
 
+    private fun isUsersPost() =
+        UserHelper.currentUser != null && UserHelper.currentUser!!.ref == post.ownerRef
+
     private fun buildChoiceText() {
         val choiceTextParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         choiceTextParams.centerVertically()
@@ -105,45 +108,6 @@ class VotableChoiceView(
         mChoiceText.textSize = 21f
         setChoiceText(choiceItem.second)
         addView(mChoiceText)
-    }
-
-    private fun applyStyleManually(context: Context) {
-        val attrs =
-            intArrayOf(
-                android.R.attr.layout_width, android.R.attr.layout_height,
-                android.R.attr.layout_margin, android.R.attr.padding
-            )
-        val attrChoices =
-            context.theme.obtainStyledAttributes(
-                R.style.votable_choice_style,
-                attrs
-            )
-
-        val params = LinearLayout.LayoutParams(
-            attrChoices.getLayoutDimension(
-                attrChoices.getIndex(0),
-                ViewGroup.LayoutParams.MATCH_PARENT
-            ),
-            attrChoices.getLayoutDimension(
-                attrChoices.getIndex(1),
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        )
-
-        val marginAndPadding = attrChoices.getDimension(attrChoices.getIndex(2), 10f)
-
-        layoutParams = params
-
-        params.topMargin = marginAndPadding.toInt()
-        params.marginStart = marginAndPadding.toInt()
-        params.marginEnd = marginAndPadding.toInt()
-        params.bottomMargin = marginAndPadding.toInt()
-        setPadding(
-            marginAndPadding.toInt(),
-            marginAndPadding.toInt(),
-            marginAndPadding.toInt(),
-            marginAndPadding.toInt()
-        )
     }
 
     companion object {
