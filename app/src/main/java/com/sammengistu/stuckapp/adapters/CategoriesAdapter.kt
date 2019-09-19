@@ -3,10 +3,12 @@ package com.sammengistu.stuckapp.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.views.HorizontalIconToTextView
+import com.sammengistu.stuckapp.utils.StringUtils
 import org.jetbrains.anko.find
 
 
@@ -25,13 +27,14 @@ class CategoriesAdapter(private val itemClickListener: OnItemClickListener<Strin
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        holder.iconToTextView.setText(dataset[position])
-        holder.iconToTextView.setOnClickListener { itemClickListener.onItemClicked(dataset[position]) }
+        holder.text.text = StringUtils.capitilizeFirstLetter(dataset[position])
+        holder.itemView.setOnClickListener { itemClickListener.onItemClicked(dataset[position]) }
     }
 
     override fun getItemCount() = dataset.size
 
     open class CategoryViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {
-        val iconToTextView: HorizontalIconToTextView = parentView.find(R.id.category_icon_text)
+        val icon: ImageView = parentView.find(R.id.icon)
+        val text: TextView = parentView.find(R.id.category_text)
     }
 }

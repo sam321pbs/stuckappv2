@@ -2,7 +2,7 @@ package com.sammengistu.stuckapp.constants
 
 enum class Categories {
     GENERAL,
-    OPINION,
+    ADVICE,
     BUSINESS,
     SPORTS,
     TECHNOLOGY,
@@ -19,14 +19,10 @@ enum class Categories {
     TEXT_ONLY,
     IMAGE_ONLY;
 
-    override fun toString(): String {
-        return super.toString().toLowerCase()
-    }
+    override fun toString() = super.toString().toLowerCase()
 
     companion object {
-        fun asList(): List<String> {
-            return values().map { it.toString() }
-        }
+        fun asList(): List<String> = values().map { it.toString() }
 
         fun asListRemoveSortCategories(): List<String> {
             return values().filter {

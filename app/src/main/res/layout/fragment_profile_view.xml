@@ -15,13 +15,23 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.sammengistu.stuckapp.views.AvatarView
-                android:id="@+id/avatar_view"
+            <FrameLayout
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
+                android:layout_marginTop="10dp">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+
+                <com.sammengistu.stuckapp.views.AvatarView
+                    android:id="@+id/avatar_view"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
+            </FrameLayout>
 
             <com.sammengistu.stuckapp.views.DisplayFormItemView
                 android:id="@+id/username_field"
@@ -47,14 +57,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="About You"
+                android:text="About"
                 android:textSize="25sp" />
 
             <com.sammengistu.stuckapp.views.DisplayFormItemView
                 android:id="@+id/name_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                custom:displayTitle="Full Name" />
+                custom:displayTitle="Name" />
 
             <com.sammengistu.stuckapp.views.DisplayFormItemView
                 android:id="@+id/occupation_field"

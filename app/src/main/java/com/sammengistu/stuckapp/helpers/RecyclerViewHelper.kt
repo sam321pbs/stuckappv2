@@ -1,8 +1,11 @@
 package com.sammengistu.stuckapp.helpers
 
 import android.content.Context
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
+
 
 class RecyclerViewHelper {
     companion object {
@@ -16,6 +19,11 @@ class RecyclerViewHelper {
                 layoutManager = manager
                 adapter = viewAdapter
             }
+            val dividerItemDecoration = DividerItemDecoration(
+                recyclerView.context,
+                manager.orientation
+            )
+            recyclerView.addItemDecoration(dividerItemDecoration)
         }
     }
 }

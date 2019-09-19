@@ -2,7 +2,6 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
@@ -15,18 +14,11 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
 
     override fun getFragmentTitle(): String = TITLE
 
-    override fun getFragmentTag(): String {
-        return TAG
-    }
+    override fun getFragmentTag() = TAG
 
-    override fun onItemClicked(item: String) {
-        Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
-        addFragment(CategoriesListFragment.newInstance(item))
-    }
+    override fun onItemClicked(item: String) = addFragment(CategoriesListFragment.newInstance(item))
 
-    override fun getLayoutId(): Int {
-        return R.layout.basic_list_view
-    }
+    override fun getLayoutId() = R.layout.basic_list_view
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
