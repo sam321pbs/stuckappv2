@@ -1,6 +1,7 @@
 package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -35,6 +36,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
     private var postsList = ArrayList<PostModel>()
+    private var lastCreatedAt: Any? = 0L
 
     private val listViewModel: PostListViewModel by viewModels {
         InjectorUtils.providePostListViewModelFactory(requireContext())
@@ -73,9 +75,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         }
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_post_list
-    }
+    override fun getLayoutId() = R.layout.fragment_post_list
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -116,6 +116,46 @@ abstract class PostsListFragment : BasePostListsFragment() {
             layoutManager = viewManager
             adapter = viewAdapter
         }
+
+        val scrollListener = object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && postsList.isNotEmpty()) {
+                    loadMoreItems(viewAdapter)
+                }
+            }
+        }
+        recyclerView.addOnScrollListener(scrollListener)
+    }
+
+    private fun loadMoreItems(adapter: PostsAdapter) {
+        Log.d(TAG, "Loading more items")
+        swipeToRefreshLayout.isRefreshing = true
+        UserHelper.getCurrentUser { user ->
+            if (user != null) {
+                when (getType()) {
+                    TYPE_FAVORITE -> StarPostAccess().getUsersStarredPostsBefore(
+                        user.ref, lastCreatedAt,
+                        getOnStarPostRetrievedListener(adapter, addItems = true)
+                    )
+                    TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
+                        getPostCategory(),
+                        lastCreatedAt,
+                        getOnPostRetrievedListener(adapter, addItems = true)
+                    )
+                    TYPE_USER -> PostAccess().getOwnerPosts(
+                        user.userId,
+                        lastCreatedAt,
+                        getOnPostRetrievedListener(adapter, addItems = true)
+                    )
+                    TYPE_DRAFT -> swipeToRefreshLayout.isRefreshing = false
+                    else -> PostAccess().getRecentPosts(
+                        lastCreatedAt,
+                        getOnPostRetrievedListener(adapter, addItems = true)
+                    )
+                }
+            }
+        }
     }
 
     private fun refreshAdapter(adapter: PostsAdapter) {
@@ -123,7 +163,8 @@ abstract class PostsListFragment : BasePostListsFragment() {
         UserHelper.getCurrentUser { user ->
             if (user != null) {
                 when (getType()) {
-                    TYPE_FAVORITE -> StarPostAccess(user.ref).getItems(
+                    TYPE_FAVORITE -> StarPostAccess().getUsersStarredPosts(
+                        user.ref,
                         getOnStarPostRetrievedListener(adapter)
                     )
                     TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
@@ -156,11 +197,14 @@ abstract class PostsListFragment : BasePostListsFragment() {
         return list
     }
 
-    private fun getOnPostRetrievedListener(adapter: PostsAdapter): FirebaseItemAccess.OnItemRetrieved<PostModel> {
+    private fun getOnPostRetrievedListener(
+        adapter: PostsAdapter,
+        addItems: Boolean = false
+    ): FirebaseItemAccess.OnItemRetrieved<PostModel> {
         return object :
             FirebaseItemAccess.OnItemRetrieved<PostModel> {
             override fun onSuccess(list: List<PostModel>) {
-                updateAdapter(list, adapter)
+                updateAdapter(list, adapter, addItems)
             }
 
             override fun onFailed(e: Exception) {
@@ -169,12 +213,12 @@ abstract class PostsListFragment : BasePostListsFragment() {
         }
     }
 
-    private fun getOnStarPostRetrievedListener(adapter: PostsAdapter):
+    private fun getOnStarPostRetrievedListener(adapter: PostsAdapter, addItems: Boolean = false):
             FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
         return object :
             FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
             override fun onSuccess(list: List<StarPostModel>) {
-                updateAdapter(list, adapter)
+                updateAdapter(list, adapter, addItems)
             }
 
             override fun onFailed(e: Exception) {
@@ -185,9 +229,17 @@ abstract class PostsListFragment : BasePostListsFragment() {
 
     private fun updateAdapter(
         list: List<PostModel>,
-        adapter: PostsAdapter
+        adapter: PostsAdapter,
+        addItems: Boolean
     ) {
-        postsList = list as ArrayList<PostModel>
+        if (list.isNotEmpty()) {
+            lastCreatedAt = list[list.size - 1].createdAt ?: 0L
+        }
+        if (addItems) {
+            postsList.addAll(list)
+        } else {
+            postsList = list as ArrayList<PostModel>
+        }
         adapter.swapData(postsList)
         swipeToRefreshLayout.isRefreshing = false
         showEmptyMessage(postsList.isEmpty())

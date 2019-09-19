@@ -93,7 +93,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
 
     fun getItems(listener: OnItemRetrieved<T>) {
         getCollectionRef()
-            //Todo: add limit
+            .limit(QUERY_LIMIT)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener(getSuccessListener(listener))
@@ -105,7 +105,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
 
     fun getItemsWhereEqual(field: String, value: Any, listener: OnItemRetrieved<T>) {
         getCollectionRef()
-            //Todo: add limit
+            .limit(QUERY_LIMIT)
             .whereEqualTo(field, value)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
@@ -118,7 +118,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
 
     fun getItemsWhereEqual(field: String, value: Any, limit: Long, listener: OnItemRetrieved<T>) {
         getCollectionRef()
-            //Todo: add limit
+            .limit(QUERY_LIMIT)
             .whereEqualTo(field, value)
             .limit(limit)
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -128,6 +128,37 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
                 Log.e(TAG, "Failed to get items", it)
                 listener.onFailed(it)
             }
+    }
+
+    fun getItemsBefore(beforeTime: Any?, listener: OnItemRetrieved<T>) {
+        if (beforeTime != null) {
+            getCollectionRef()
+                .limit(QUERY_LIMIT)
+                .whereLessThan("createdAt", beforeTime)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(getSuccessListener(listener))
+                .addOnFailureListener {
+                    Log.e(TAG, "Failed to get items", it)
+                    listener.onFailed(it)
+                }
+        }
+    }
+
+    fun getItemsWhereEqualAndBefore(field: String, value: Any, beforeTime: Any?, listener: OnItemRetrieved<T>) {
+        if (beforeTime != null) {
+            getCollectionRef()
+                .limit(QUERY_LIMIT)
+                .whereEqualTo(field, value)
+                .whereLessThan("createdAt", beforeTime)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(getSuccessListener(listener))
+                .addOnFailureListener {
+                    Log.e(TAG, "Failed to get items", it)
+                    listener.onFailed(it)
+                }
+        }
     }
 
     fun incrementField(documentRef: String, fieldToIncrement: String) {
@@ -154,6 +185,25 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
+    protected fun getEnvironmentCollectionRef(collection: String): CollectionReference {
+        val db = FirebaseFirestore.getInstance()
+        return db.collection(FirebaseConstants.ENVIRONMENT_COLLECTION)
+            .document(FirebaseConstants.ENVIRONMENT_COLLECTION)
+            .collection(collection)
+    }
+
+    protected fun getUserCollectionRef(userRef: String, collection: String): CollectionReference {
+        return getEnvironmentCollectionRef(USERS)
+            .document(userRef)
+            .collection(collection)
+    }
+
+    protected fun getPostCollectionRef(postRef: String, collection: String): CollectionReference {
+        return getEnvironmentCollectionRef(POSTS)
+            .document(postRef)
+            .collection(collection)
+    }
+
     private fun getSuccessListener(listener: OnItemRetrieved<T>): OnSuccessListener<QuerySnapshot> {
         val weakRef = WeakReference(listener)
         return OnSuccessListener { document ->
@@ -178,29 +228,6 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         }
     }
 
-    companion object {
-        val TAG = this::class.java.simpleName
-
-        fun getEnvironmentCollectionRef(collection: String): CollectionReference {
-            val db = FirebaseFirestore.getInstance()
-            return db.collection(FirebaseConstants.ENVIRONMENT_COLLECTION)
-                .document(FirebaseConstants.ENVIRONMENT_COLLECTION)
-                .collection(collection)
-        }
-
-        fun getUserCollectionRef(userRef: String, collection: String): CollectionReference {
-            return getEnvironmentCollectionRef(USERS)
-                .document(userRef)
-                .collection(collection)
-        }
-
-        fun getPostCollectionRef(postRef: String, collection: String): CollectionReference {
-            return getEnvironmentCollectionRef(POSTS)
-                .document(postRef)
-                .collection(collection)
-        }
-    }
-
     interface OnItemRetrieved<T : FirebaseItem> {
         fun onSuccess(list: List<T>)
         fun onFailed(e: Exception)
@@ -219,5 +246,10 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
     interface OnItemDeleted {
         fun onSuccess()
         fun onFailed(e: Exception)
+    }
+
+    companion object {
+        val TAG = this::class.java.simpleName
+        const val QUERY_LIMIT = 50L
     }
 }

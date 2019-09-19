@@ -129,7 +129,7 @@ class BottomSheetHelper(
                     if (userStar == null) {
                         addPostToFavorites(user)
                     } else {
-                        removePostFromFavorites(user, userStar.ref)
+                        removePostFromFavorites(userStar.ref)
                     }
                     hideMenu()
                 } else {
@@ -140,7 +140,8 @@ class BottomSheetHelper(
     }
 
     private fun addPostToFavorites(user: UserModel) {
-        StarPostAccess(user.ref).createItemInFB(StarPostModel(post!!),
+        val starPost = StarPostModel(user.ref, user.userId, post!!)
+        StarPostAccess().createItemInFB(starPost,
             object : FirebaseItemAccess.OnItemCreated<StarPostModel> {
                 override fun onSuccess(item: StarPostModel) {
                     if (post != null) {
@@ -158,14 +159,11 @@ class BottomSheetHelper(
             })
     }
 
-    private fun removePostFromFavorites(
-        user: UserModel,
-        starRef: String
-    ) {
+    private fun removePostFromFavorites(starRef: String) {
         if (starRef.isBlank()) {
             return
         }
-        StarPostAccess(user.ref).deleteItemInFb(starRef,
+        StarPostAccess().deleteItemInFb(starRef,
             object : FirebaseItemAccess.OnItemDeleted {
                 override fun onSuccess() {
                     if (post != null) {

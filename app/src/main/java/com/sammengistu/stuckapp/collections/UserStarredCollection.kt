@@ -13,7 +13,7 @@ class UserStarredCollection {
         private val starMap = HashMap<String, StarPostModel>()
 
         fun loadUserStars(userRef: String) {
-            StarPostAccess(userRef).getItems(
+            StarPostAccess().getUsersStarredPosts(userRef,
                 object : FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
                     override fun onSuccess(list: List<StarPostModel>) {
                         convertStarredPostsToMap(
@@ -31,9 +31,7 @@ class UserStarredCollection {
 
         fun addNewList(list: List<StarPostModel>) {
             starMap.clear()
-            convertStarredPostsToMap(
-                list
-            )
+            convertStarredPostsToMap(list)
             EventBus.getDefault().post(UserStarsLoadedEvent())
         }
 

@@ -14,7 +14,9 @@ class StarPostModel(
     images: HashMap<String, String> = HashMap(),
     choices: HashMap<String, String> = HashMap(),
     votes: HashMap<String, Int> = HashMap(),
-    val postRef: String
+    val postRef: String,
+    val starPostOwnerRef: String,
+    val starPostOwnerId: String
 ) : PostModel(
     ownerId,
     ownerRef,
@@ -30,7 +32,7 @@ class StarPostModel(
     choices,
     votes
 ) {
-    constructor(post: PostModel) :
+    constructor(starPostOwnerRef: String, starPostOwnerId: String, post: PostModel) :
             this(
                 post.ownerId,
                 post.ownerRef,
@@ -45,7 +47,9 @@ class StarPostModel(
                 post.images,
                 post.choices,
                 post.votes,
-                post.ref
+                post.ref,
+                starPostOwnerRef,
+                starPostOwnerId
             )
 
     constructor() :
@@ -63,6 +67,8 @@ class StarPostModel(
                 HashMap<String, String>(),
                 HashMap<String, String>(),
                 HashMap<String, Int>(),
+                "",
+                "",
                 ""
             )
 

@@ -2,7 +2,6 @@ package com.sammengistu.stuckfirebase.access
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.google.firebase.firestore.CollectionReference
 import com.sammengistu.stuckapp.data.AppDatabase
 import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.data.PostRepository
@@ -15,9 +14,7 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         return PostModel::class.java
     }
 
-    override fun getCollectionRef(): CollectionReference {
-        return getEnvironmentCollectionRef(POSTS)
-    }
+    override fun getCollectionRef() = getEnvironmentCollectionRef(POSTS)
 
     fun incrementVote(ref: String, key: String) {
         incrementField(ref, "votes.$key")
@@ -31,12 +28,24 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         getItems(listener)
     }
 
+    fun getRecentPosts(before: Any?, listener: OnItemRetrieved<PostModel>) {
+        getItemsBefore(before, listener)
+    }
+
     fun getPostsInCategory(filterCategory: String, listener: OnItemRetrieved<PostModel>) {
         getItemsWhereEqual("category", filterCategory, listener)
     }
 
+    fun getPostsInCategory(filterCategory: String, before: Any?, listener: OnItemRetrieved<PostModel>) {
+        getItemsWhereEqualAndBefore("category", filterCategory, before, listener)
+    }
+
     fun getOwnerPosts(ownerId: String, listener: OnItemRetrieved<PostModel>) {
         getItemsWhereEqual("ownerId", ownerId, listener)
+    }
+
+    fun getOwnerPosts(ownerId: String, before: Any?, listener: OnItemRetrieved<PostModel>) {
+        getItemsWhereEqualAndBefore("ownerId", ownerId, before, listener)
     }
 
     fun createImagePost(post: PostModel, bitmap1: Bitmap, bitmap2: Bitmap, listener: OnItemCreated<PostModel>) {
