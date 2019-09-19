@@ -3,8 +3,8 @@ package com.sammengistu.stuckapp.views
 import android.content.Context
 import android.view.MotionEvent
 import android.widget.RelativeLayout
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.collections.UserVotesCollection
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserModel
@@ -40,6 +40,7 @@ abstract class VotableContainer(
                         user.avatar,
                         post.ref,
                         post.ownerRef,
+                        post.ownerId,
                         choiceItem.first
                     )
                     UserVoteAccess().createItemInFB(userVote)

@@ -14,12 +14,14 @@ const val POSTS = "posts"
 const val USERS = "users"
 const val USER_VOTES = "user_votes"
 const val COMMENT_VOTES = "comments_votes"
-const val COMMENTS = "comments"
 const val POST_COMMENTS = "post_comments"
 const val STARRED_POSTS = "starred_posts"
 const val DEVICE_TOKENS = "device_tokens"
-const val VOTES = "votes"
 
-// Document naming
-const val USER_STATS = "user_stats"
-const val APP_STATS = "app_stats"
+
+// FCM data keys
+const val KEY_TITLE = "title"
+const val KEY_BODY = "body"
+const val KEY_TARGET_REF = "targetRef"
+const val KEY_POST_ID = "postId"
+const val KEY_TAG = "tag"

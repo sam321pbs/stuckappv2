@@ -8,12 +8,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
+import com.sammengistu.stuckapp.collections.UserStarredCollection
+import com.sammengistu.stuckfirebase.ErrorNotifier
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
@@ -118,7 +118,7 @@ class BottomSheetHelper(
 
     private fun showComments() {
         hideMenu()
-        CommentsActivity.startActivity(context, post!!.ref, 0)
+        CommentsActivity.startActivity(context, post!!.ref, post!!.ownerId, post!!.ownerRef, 0)
     }
 
     private fun starPost() {

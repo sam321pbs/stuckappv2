@@ -6,13 +6,15 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
-import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
+import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_OWNER_ID
+import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_OWNER_REF
 import com.sammengistu.stuckapp.adapters.CommentsAdapter
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
+import com.sammengistu.stuckfirebase.ErrorNotifier
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.CommentAccess
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -34,7 +36,7 @@ class CommentsFragment : BaseFragment() {
 
     override fun getFragmentTag(): String = TAG
 
-    override fun getLayoutId(): Int =  R.layout.fragment_comments
+    override fun getLayoutId(): Int = R.layout.fragment_comments
 
     override fun getFragmentTitle(): String = TITLE
 
@@ -53,7 +55,7 @@ class CommentsFragment : BaseFragment() {
             commentsAdapter = CommentsAdapter(context!!, ArrayList())
             RecyclerViewHelper.setupRecyclerView(
                 activity!!, recycler_view,
-                commentsAdapter  as RecyclerView.Adapter<RecyclerView.ViewHolder>
+                commentsAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>
             )
 
             reloadAdapter()
@@ -99,15 +101,20 @@ class CommentsFragment : BaseFragment() {
 
     private fun setupComposeArea() {
         send_button.setOnClickListener {
-           UserHelper.getCurrentUser { createComment(it) }
+            UserHelper.getCurrentUser { createComment(it) }
         }
     }
 
     private fun createComment(user: UserModel?) {
+        val postOwnerId = arguments?.getString(EXTRA_POST_OWNER_ID) ?: ""
+        val postOwnerRef = arguments?.getString(EXTRA_POST_OWNER_REF) ?: ""
         if (user != null) {
             val commentModel = CommentModel(
                 postRef,
+                postOwnerRef,
+                postOwnerId,
                 user.userId,
+                user.ref,
                 user.username,
                 user.avatar,
                 commentET.text.toString(),
@@ -125,9 +132,16 @@ class CommentsFragment : BaseFragment() {
         val TAG = CommentsFragment::class.java.simpleName
         const val TITLE = "Comments"
 
-        fun newInstance(postId: String, choicePos: Int): CommentsFragment {
+        fun newInstance(
+            postId: String,
+            postOwnerId: String,
+            postOwnerRef: String,
+            choicePos: Int
+        ): CommentsFragment {
             val bundle = Bundle()
             bundle.putString(EXTRA_POST_ID, postId)
+            bundle.putString(EXTRA_POST_OWNER_ID, postOwnerId)
+            bundle.putString(EXTRA_POST_OWNER_REF, postOwnerRef)
             bundle.putInt(EXTRA_POST_CHOICE_POS, choicePos)
 
             val fragment = CommentsFragment()
