@@ -29,7 +29,6 @@ class FbMessagingService : FirebaseMessagingService() {
         UserHelper.getCurrentUser { user ->
             if (user != null && user.ref == targetRef && NotificationFactory.instance != null) {
                 Log.d(TAG, "Notifying user")
-                // Todo: notify user
                 NotificationFactory.instance!!.createNotification(this, message.data)
             }
 //            NotificationFactory.instance!!.createNotification(this, message.data)
