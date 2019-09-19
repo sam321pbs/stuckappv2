@@ -32,7 +32,7 @@ class FbMessagingService : FirebaseMessagingService() {
                 // Todo: notify user
                 NotificationFactory.instance!!.createNotification(this, message.data)
             }
-            NotificationFactory.instance!!.createNotification(this, message.data)
+//            NotificationFactory.instance!!.createNotification(this, message.data)
         }
     }
 
