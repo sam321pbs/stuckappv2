@@ -8,21 +8,34 @@
     <RelativeLayout
         android:id="@+id/user_detail_and_options"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="40dp">
 
-        <com.sammengistu.stuckapp.views.AvatarView
-            android:id="@+id/avatar_view"
-            app:civ_border_color="@android:color/transparent"
-            app:civ_border_width="2dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="15dp"/>
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/avatar_container"
+            android:layout_marginEnd="11dp">
+
+            <ProgressBar
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"/>
+
+            <com.sammengistu.stuckapp.views.AvatarView
+                android:id="@+id/avatar_view"
+                app:civ_border_color="@android:color/transparent"
+                app:civ_border_width="2dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"/>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/username_time_since_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/avatar_view"
+            android:layout_toEndOf="@+id/avatar_container"
             android:orientation="vertical">
 
             <TextView

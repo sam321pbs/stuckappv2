@@ -5,93 +5,120 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.sammengistu.stuckapp.views.AvatarView
-                android:id="@+id/avatar_view"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+
+                    <com.sammengistu.stuckapp.views.AvatarView
+                        android:id="@+id/avatar_view"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
+                </FrameLayout>
+
+                <com.sammengistu.stuckapp.views.InputFormItemView
+                    android:id="@+id/username_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    custom:formItemHint="Enter Username"
+                    custom:formItemTitle="Username" />
+
+                <com.sammengistu.stuckapp.views.InputFormItemView
+                    android:id="@+id/description_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    custom:formItemHint="Enter description"
+                    custom:formItemTitle="Description About You" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
 
-            <com.sammengistu.stuckapp.views.InputFormItemView
-                android:id="@+id/username_field"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="About You"
+                    android:textSize="25sp" />
+
+                <com.sammengistu.stuckapp.views.InputFormItemView
+                    android:id="@+id/name_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    custom:formItemHint="Enter Full Name"
+                    custom:formItemTitle="Full Name" />
+
+                <com.sammengistu.stuckapp.views.InputFormItemView
+                    android:id="@+id/occupation_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    custom:formItemHint="Enter Occupation"
+                    custom:formItemTitle="Occupation" />
+
+                <com.sammengistu.stuckapp.views.InputFormItemView
+                    android:id="@+id/education_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    custom:formItemHint="Enter Education"
+                    custom:formItemTitle="Education" />
+
+                <com.sammengistu.stuckapp.views.InputFormItemView
+                    android:id="@+id/age_group_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    custom:formItemHint="Enter age"
+                    custom:formItemTitle="Age Group" />
+
+                <com.sammengistu.stuckapp.views.InputFormItemView
+                    android:id="@+id/gender_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    custom:formItemHint="Enter gender"
+                    custom:formItemTitle="Gender" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/create_profile_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                custom:formItemHint="Enter Username"
-                custom:formItemTitle="Username" />
-
-            <com.sammengistu.stuckapp.views.InputFormItemView
-                android:id="@+id/description_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:formItemHint="Enter description"
-                custom:formItemTitle="Description About You" />
+                android:text="Create Profile" />
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:id="@+id/progress_bar_container">
 
-            <TextView
+            <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="About You"
-                android:textSize="25sp" />
-
-            <com.sammengistu.stuckapp.views.InputFormItemView
-                android:id="@+id/name_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:formItemHint="Enter Full Name"
-                custom:formItemTitle="Full Name" />
-
-            <com.sammengistu.stuckapp.views.InputFormItemView
-                android:id="@+id/occupation_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:formItemHint="Enter Occupation"
-                custom:formItemTitle="Occupation" />
-
-            <com.sammengistu.stuckapp.views.InputFormItemView
-                android:id="@+id/education_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:formItemHint="Enter Education"
-                custom:formItemTitle="Education" />
-
-            <com.sammengistu.stuckapp.views.InputFormItemView
-                android:id="@+id/age_group_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:formItemHint="Enter age"
-                custom:formItemTitle="Age Group" />
-
-            <com.sammengistu.stuckapp.views.InputFormItemView
-                android:id="@+id/gender_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:formItemHint="Enter gender"
-                custom:formItemTitle="Gender" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/create_profile_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create Profile" />
-    </LinearLayout>
+                android:layout_gravity="center"/>
+        </FrameLayout>
+    </FrameLayout>
 </ScrollView>

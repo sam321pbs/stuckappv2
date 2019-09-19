@@ -6,11 +6,10 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.MainActivity
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
@@ -18,7 +17,9 @@ import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper.Companion.loadImageFromGallery
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.InputFormItemView
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.FbStorageHelper
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.UserModel
@@ -36,6 +37,7 @@ class ProfileFragment : BaseFragment() {
     lateinit var ageGroupField: InputFormItemView
     lateinit var genderField: InputFormItemView
     lateinit var createProfileButton: Button
+    lateinit var progressBar: FrameLayout
     var avatarImage: Bitmap? = null
     private val formFieldsList = ArrayList<InputFormItemView>()
     private var createMode = false
@@ -108,12 +110,14 @@ class ProfileFragment : BaseFragment() {
     private fun handleProfileUpdate() {
         UserHelper.getCurrentUser { user ->
             if (user != null) {
+                progressBar.visibility = View.VISIBLE
                 val updateUser = buildUserModel(user.userId, user.avatar)
                 if (!user.isEqualTo(updateUser) || avatarImage != null) {
                     checkUsernameBeforeUpdating(updateUser) {
                         updateUserAccount(user, updateUser)
                     }
                 } else {
+                    progressBar.visibility = View.GONE
                     Toast.makeText(activity, "Please update a field", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -133,6 +137,7 @@ class ProfileFragment : BaseFragment() {
                     }
 
                     override fun onFailed(exception: Exception) {
+                        progressBar.visibility = View.GONE
                         ErrorNotifier.notifyError(
                             activity!!,
                             TAG,
@@ -157,6 +162,7 @@ class ProfileFragment : BaseFragment() {
                         val fetchedUser = list[0]
                         if (fetchedUser.userId != updateUser.userId) {
                             Toast.makeText(activity, "Username is taken", Toast.LENGTH_SHORT).show()
+                            progressBar.visibility = View.GONE
                         } else {
                             postUserNameAction.invoke()
                         }
@@ -166,6 +172,7 @@ class ProfileFragment : BaseFragment() {
                 }
 
                 override fun onFailed(e: Exception) {
+                    progressBar.visibility = View.GONE
                     ErrorNotifier.notifyError(activity, "Error Occurred", TAG, e)
                 }
             })
@@ -181,6 +188,7 @@ class ProfileFragment : BaseFragment() {
             object : FirebaseItemAccess.OnItemUpdated {
                 override fun onSuccess() {
                     if (activity != null) {
+                        progressBar.visibility = View.GONE
                         updatedUser.ref = user.ref
                         UserHelper.currentUser = updatedUser
                         EventBus.getDefault().post(UserUpdatedEvent())
@@ -192,6 +200,7 @@ class ProfileFragment : BaseFragment() {
 
                 override fun onFailed(e: Exception) {
                     if (activity != null) {
+                        progressBar.visibility = View.GONE
                         ErrorNotifier.notifyError(
                             activity as Context,
                             TAG,
@@ -205,6 +214,7 @@ class ProfileFragment : BaseFragment() {
 
     private fun createProfile() {
         if (allFieldsValid()) {
+            progressBar.visibility = View.VISIBLE
             val firebaseUser = FirebaseAuth.getInstance().currentUser
             if (firebaseUser != null) {
                 val userModel = buildUserModel(firebaseUser.uid, "")
@@ -212,11 +222,13 @@ class ProfileFragment : BaseFragment() {
                     UserAccess().createUser(avatarImage!!, userModel,
                         object : FirebaseItemAccess.OnItemCreated<UserModel> {
                             override fun onSuccess(item: UserModel) {
+                                progressBar.visibility = View.GONE
                                 UserHelper.currentUser = item
                                 launchMainActivity()
                             }
 
                             override fun onFailed(e: Exception) {
+                                progressBar.visibility = View.GONE
                                 ErrorNotifier.notifyError(
                                     context!!,
                                     BaseActivity.TAG,
@@ -255,6 +267,7 @@ class ProfileFragment : BaseFragment() {
         ageGroupField = age_group_field
         genderField = gender_field
         createProfileButton = create_profile_button
+        progressBar = progress_bar_container
 
         formFieldsList.add(usernameField)
         formFieldsList.add(bioField)
