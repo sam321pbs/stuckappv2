@@ -64,6 +64,23 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bottom_hide_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/menu_hide"
+            style="@style/bottomsheet_menu_item"
+            android:text="Hide" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/bottom_delete_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -11,7 +11,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
+import com.sammengistu.stuckapp.collections.HiddenPostsCollection
 import com.sammengistu.stuckapp.collections.UserStarredCollection
+import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -21,6 +23,7 @@ import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.StarPostModel
 import com.sammengistu.stuckfirebase.data.UserModel
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
@@ -64,6 +67,8 @@ class BottomSheetHelper(
                 .visibility = View.GONE
             bottomSheetLL.find<LinearLayout>(R.id.bottom_report_container)
                 .visibility = View.GONE
+            bottomSheetLL.find<LinearLayout>(R.id.bottom_hide_container)
+                .visibility = View.GONE
             bottomSheetLL.find<TextView>(R.id.bottom_sheet_title)
                 .text = "Draft Options"
         } else {
@@ -74,8 +79,18 @@ class BottomSheetHelper(
                 .visibility = View.VISIBLE
             bottomSheetLL.find<LinearLayout>(R.id.bottom_report_container)
                 .visibility = View.VISIBLE
+            bottomSheetLL.find<LinearLayout>(R.id.bottom_hide_container)
+                .visibility = View.VISIBLE
             bottomSheetLL.find<TextView>(R.id.bottom_sheet_title)
                 .text = "Post Options"
+
+            if (post != null) {
+                if (HiddenPostsCollection.containesRef(post!!.ref)) {
+                    bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Show"
+                } else {
+                    bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Hide"
+                }
+            }
 
             if (post != null) {
                 val userStar = UserStarredCollection.getStarPost(post!!)
@@ -85,10 +100,9 @@ class BottomSheetHelper(
                     bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Remove from Favorites"
                 }
             }
-
-            // Todo: hide delete if it is not users post
         }
 
+        // Handle delete option
         if (post != null && (post!!.ownerId == userId || post!!.ref.isBlank())) {
             bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
                 .visibility = View.VISIBLE
@@ -109,6 +123,20 @@ class BottomSheetHelper(
             .setOnClickListener { showComments() }
         bottomSheetLL.find<TextView>(R.id.menu_report)
             .setOnClickListener { reportPost() }
+        bottomSheetLL.find<TextView>(R.id.menu_hide)
+            .setOnClickListener { hidePost() }
+    }
+
+    private fun hidePost() {
+        if (post != null) {
+            if (HiddenPostsCollection.containesRef(post!!.ref)) {
+                HiddenPostsCollection.removeRef(post!!.ref)
+            } else {
+                HiddenPostsCollection.addRef(post!!.ref)
+            }
+            EventBus.getDefault().post(DataChangedEvent())
+        }
+        hideMenu()
     }
 
     private fun reportPost() {

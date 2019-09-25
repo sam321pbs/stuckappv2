@@ -13,6 +13,7 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.events.AssetsLoadedEvent
+import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckapp.utils.InjectorUtils
@@ -52,6 +53,11 @@ abstract class PostsListFragment : BasePostListsFragment() {
 
     @Subscribe
     fun onUserStarsLoaded(event: UserStarsLoadedEvent) {
+        onDataUpdated()
+    }
+
+    @Subscribe
+    fun onDataChanged(event: DataChangedEvent) {
         onDataUpdated()
     }
 

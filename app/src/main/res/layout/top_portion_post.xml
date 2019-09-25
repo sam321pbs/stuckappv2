@@ -53,9 +53,20 @@
                 android:text="2 hours ago" />
         </LinearLayout>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/unhide_button"
+            android:text="Show"
+            android:layout_toStartOf="@+id/side_post_icons"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:layout_marginEnd="18dp"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/side_post_icons"
             android:layout_alignParentEnd="true">
 
             <ImageView

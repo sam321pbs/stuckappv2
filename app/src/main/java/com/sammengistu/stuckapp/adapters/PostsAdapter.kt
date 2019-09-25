@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -16,6 +17,7 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
+import com.sammengistu.stuckapp.collections.HiddenPostsCollection
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
@@ -47,7 +49,7 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
 
-        if (PrivacyOptions.ANONYMOUS.toString() == post.privacy && !isDraft){
+        if (PrivacyOptions.ANONYMOUS.toString() == post.privacy && !isDraft) {
             val avatar = AssetImageUtils.getAvatar(post.avatar)
             Log.d(TAG, "Avatar is null ${avatar == null}")
             holder.avatarView.setImageBitmap(avatar)
@@ -57,12 +59,13 @@ class PostsAdapter(
         } else {
             holder.avatarView.loadImage(post.avatar)
             holder.username.text = post.userName
-            holder.avatarView.setOnClickListener{ showProfile(context, post) }
+            holder.avatarView.setOnClickListener { showProfile(context, post) }
             holder.username.setOnClickListener { showProfile(context, post) }
         }
 
         holder.questionView.text = post.question
-        holder.timeSince.text = if (isDraft) "" else DateUtils.convertDateToTimeElapsed(post.getDate())
+        holder.timeSince.text =
+            if (isDraft) "" else DateUtils.convertDateToTimeElapsed(post.getDate())
         holder.commentsTotalView.setText(post.totalComments.toString())
         holder.voteTotalView.setText(post.getTotalVotes().toString())
         holder.starTotalView.setText(post.totalStars.toString())
@@ -76,13 +79,27 @@ class PostsAdapter(
             buildImageChoices(holder, post, userVote)
         }
 
+        updateStarIcon(post, holder)
+        handleDraftPost(holder, post)
+        handleHiddenPosts(post, holder)
+    }
+
+    private fun updateStarIcon(
+        post: PostModel,
+        holder: PostViewHolder
+    ) {
         val userStar = UserStarredCollection.getStarPost(post)
         if (userStar == null) {
             holder.starIcon.visibility = View.GONE
         } else {
             holder.starIcon.visibility = View.VISIBLE
         }
+    }
 
+    private fun handleDraftPost(
+        holder: PostViewHolder,
+        post: PostModel
+    ) {
         if (isDraft) {
             holder.itemView.setOnClickListener {
                 val intent = Intent(context, NewPostActivity::class.java)
@@ -90,6 +107,30 @@ class PostsAdapter(
                 intent.putExtra(NewPostActivity.EXTRA_POST_ID, post.draftId)
                 context.startActivity(intent)
             }
+        } else {
+            holder.itemView.setOnClickListener(null)
+        }
+    }
+
+    private fun handleHiddenPosts(
+        post: PostModel,
+        holder: PostViewHolder
+    ) {
+        if (HiddenPostsCollection.containesRef(post.ref)) {
+            holder.questionView.visibility = View.GONE
+            holder.choiceContainer.visibility = View.GONE
+            holder.postInfo.visibility = View.GONE
+            holder.unhideButton.visibility = View.VISIBLE
+            holder.unhideButton.setOnClickListener {
+                HiddenPostsCollection.removeRef(post.ref)
+                notifyDataSetChanged()
+            }
+        } else {
+            holder.questionView.visibility = View.VISIBLE
+            holder.choiceContainer.visibility = View.VISIBLE
+            holder.postInfo.visibility = View.VISIBLE
+            holder.unhideButton.visibility = View.GONE
+            holder.unhideButton.setOnClickListener(null)
         }
     }
 
@@ -176,20 +217,17 @@ class PostsAdapter(
     class PostImageViewHolder(parentView: View) : PostViewHolder(parentView)
 
     open class PostViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {
-        val choiceContainer: LinearLayout =
-            parentView.find(R.id.choice_container)
+        val choiceContainer: LinearLayout = parentView.find(R.id.choice_container)
         val questionView: TextView = parentView.find(R.id.question)
         val avatarView: AvatarView = parentView.find(R.id.avatar_view)
         val username: TextView = parentView.find(R.id.username)
         val timeSince: TextView = parentView.find(R.id.time_since)
-        val categoriesView: HorizontalIconToTextView =
-            parentView.find(R.id.category)
-        val commentsTotalView: HorizontalIconToTextView =
-            parentView.find(R.id.commentsTotal)
-        val voteTotalView: HorizontalIconToTextView =
-            parentView.find(R.id.votesTotal)
-        val starTotalView: HorizontalIconToTextView =
-            parentView.find(R.id.starsTotal)
+        val categoriesView: HorizontalIconToTextView = parentView.find(R.id.category)
+        val commentsTotalView: HorizontalIconToTextView = parentView.find(R.id.commentsTotal)
+        val voteTotalView: HorizontalIconToTextView = parentView.find(R.id.votesTotal)
+        val starTotalView: HorizontalIconToTextView = parentView.find(R.id.starsTotal)
+        val postInfo: LinearLayout = parentView.find(R.id.post_info)
+        val unhideButton: Button = parentView.find(R.id.unhide_button)
         val menuIcon: ImageView = parentView.find(R.id.menu_icon)
         val starIcon: ImageView = parentView.find(R.id.user_star_icon)
     }
