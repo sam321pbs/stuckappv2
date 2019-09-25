@@ -8,13 +8,13 @@ data class UserModel(
     var occupation: String,
     var education: String,
     var bio: String,
-    var ageGroup: String,
-    var gender: String,
+    var ageGroup: Int,
+    var gender: Int,
     var totalMadeVotes: Int,
     var totalReceivedVotes: Int,
     var totalReceivedStars: Int
 ) : FirebaseItem() {
-    constructor() : this(  "", "", "", "", "", "", "", "", "", 0,0,0)
+    constructor() : this(  "", "", "", "", "", "", "", -1, -1, 0,0,0)
 
     fun convertUserToMap(): Map<String, Any> {
         return mapOf(

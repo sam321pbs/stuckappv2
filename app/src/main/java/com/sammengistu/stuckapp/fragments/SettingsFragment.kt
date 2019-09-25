@@ -3,7 +3,6 @@ package com.sammengistu.stuckapp.fragments
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckfirebase.UserHelper
@@ -26,26 +25,20 @@ class SettingsFragment : BaseFragment() {
         notificationItem = notifications_setting
         deleteAccountItem = delete_account
         logoutItem = logout
+        notificationItem.setOnClickListener { addFragment(NotificationSettings()) }
+        deleteAccountItem.setOnClickListener { showDeleteAccountAlertDialog() }
+        logoutItem.setOnClickListener { UserHelper.logUserOut() }
+    }
 
-        notificationItem.setOnClickListener {
-            TODO("Do something")
-            Toast.makeText(activity, "Notification clicked", Toast.LENGTH_SHORT).show()
-        }
-
-        deleteAccountItem.setOnClickListener {
-            AlertDialog.Builder(activity!!)
-                .setTitle("Delete Account")
-                .setMessage("Are you sure you want to delete your account?")
-                .setNegativeButton("Delete") { _, _ ->
-                  UserHelper.deleteUserAccount(activity!!)
-                }
-                .setPositiveButton("Cancel", null)
-                .show()
-        }
-
-        logoutItem.setOnClickListener {
-            UserHelper.logUserOut()
-        }
+    private fun showDeleteAccountAlertDialog() {
+        AlertDialog.Builder(activity!!)
+            .setTitle("Delete Account")
+            .setMessage("Are you sure you want to delete your account?")
+            .setNegativeButton("Delete") { _, _ ->
+                UserHelper.deleteUserAccount(activity!!)
+            }
+            .setPositiveButton("Cancel", null)
+            .show()
     }
 
     companion object {

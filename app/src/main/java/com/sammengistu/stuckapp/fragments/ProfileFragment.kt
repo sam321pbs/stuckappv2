@@ -5,13 +5,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.Toast
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.MainActivity
+import com.sammengistu.stuckapp.constants.Gender.Companion.FEMALE
+import com.sammengistu.stuckapp.constants.Gender.Companion.IGNORE
+import com.sammengistu.stuckapp.constants.Gender.Companion.MALE
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper.Companion.loadImageFromGallery
@@ -34,13 +35,19 @@ class ProfileFragment : BaseFragment() {
     lateinit var nameField: InputFormItemView
     lateinit var occupationField: InputFormItemView
     lateinit var educationField: InputFormItemView
-    lateinit var ageGroupField: InputFormItemView
-    lateinit var genderField: InputFormItemView
+    lateinit var ageGroupSpinner: Spinner
+    lateinit var genderSpinner: Spinner
     lateinit var createProfileButton: Button
     lateinit var progressBar: FrameLayout
-    var avatarImage: Bitmap? = null
+
+    private var avatarImage: Bitmap? = null
+    private var selectedAgeGroup: Int? = IGNORE
+    private var selectedGender: Int? = IGNORE
     private val formFieldsList = ArrayList<InputFormItemView>()
     private var createMode = false
+    private lateinit var arrayAgeGroup : Array<CharSequence>
+    private lateinit var arrayGender : Array<CharSequence>
+
 
     override fun getFragmentTitle(): String = TITLE
 
@@ -51,6 +58,8 @@ class ProfileFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         createMode = arguments?.getBoolean(EXTRA_CREATE_MODE) ?: false
+        arrayAgeGroup = activity!!.resources.getTextArray(R.array.age_group_array)
+        arrayGender = activity!!.resources.getTextArray(R.array.gender_array)
         initViews()
         if (!createMode) {
             populateFields()
@@ -100,8 +109,8 @@ class ProfileFragment : BaseFragment() {
                 nameField.setText(user.name)
                 occupationField.setText(user.occupation)
                 educationField.setText(user.education)
-                ageGroupField.setText(user.ageGroup)
-                genderField.setText(user.gender)
+                ageGroupSpinner.setSelection(convertAgeGroupToPos(user.ageGroup))
+                genderSpinner.setSelection(convertGenderToPos(user.gender))
                 createProfileButton.text = "Update Profile"
             }
         }
@@ -251,8 +260,8 @@ class ProfileFragment : BaseFragment() {
             occupationField.getText(),
             educationField.getText(),
             bioField.getText(),
-            ageGroupField.getText(),
-            genderField.getText(),
+            selectedAgeGroup!!,
+            selectedGender!!,
             0, 0, 0
         )
     }
@@ -264,18 +273,105 @@ class ProfileFragment : BaseFragment() {
         nameField = name_field
         occupationField = occupation_field
         educationField = education_field
-        ageGroupField = age_group_field
-        genderField = gender_field
+        ageGroupSpinner = age_group_spinner
+        genderSpinner = gender_spinner
         createProfileButton = create_profile_button
         progressBar = progress_bar_container
+
+        setupSpinners()
 
         formFieldsList.add(usernameField)
         formFieldsList.add(bioField)
         formFieldsList.add(nameField)
         formFieldsList.add(occupationField)
         formFieldsList.add(educationField)
-        formFieldsList.add(ageGroupField)
-        formFieldsList.add(genderField)
+    }
+
+    private fun setupSpinners() {
+        ArrayAdapter.createFromResource(
+            activity!!,
+            R.array.age_group_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            ageGroupSpinner.adapter = adapter
+        }
+
+        ArrayAdapter.createFromResource(
+            activity!!,
+            R.array.gender_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            genderSpinner.adapter = adapter
+        }
+
+        ageGroupSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) { selectedAgeGroup = IGNORE }
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    selectedAgeGroup = convertPosToAgeGroup(position)
+                }
+
+            }
+
+        genderSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) { selectedGender = IGNORE }
+
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    selectedGender = convertPosToGender(position)
+                }
+            }
+
+        if (createMode) {
+            ageGroupSpinner.setSelection(0)
+            ageGroupSpinner.setSelection(0)
+        }
+    }
+
+    private fun convertPosToAgeGroup(position: Int): Int {
+        return when (position) {
+            1 -> IGNORE
+            2 -> 180
+            3 -> 1825
+            4 -> 2630
+            5 -> 3140
+            6 -> 4150
+            7 -> 5160
+            8 ->  6100
+            else -> IGNORE
+        }
+    }
+
+    private fun convertAgeGroupToPos(ageRange: Int): Int {
+        return when (ageRange) {
+            180 -> 2
+            1825 -> 3
+            2630 -> 4
+            3140 -> 5
+            4150 -> 6
+            5160 -> 7
+            6100 -> 8
+            else -> 1
+        }
+    }
+
+    private fun convertPosToGender(position: Int): Int {
+        return when(position) {
+            2 -> MALE
+            3 -> FEMALE
+            else -> IGNORE
+        }
+    }
+
+    private fun convertGenderToPos(gender: Int): Int {
+        return when(gender) {
+            MALE -> 2
+            FEMALE -> 3
+            else -> 1
+        }
     }
 
     private fun launchMainActivity() {

@@ -77,18 +77,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 custom:displayTitle="Education" />
-
-            <com.sammengistu.stuckapp.views.DisplayFormItemView
-                android:id="@+id/age_group_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:displayTitle="Age Group" />
-
-            <com.sammengistu.stuckapp.views.DisplayFormItemView
-                android:id="@+id/gender_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:displayTitle="Gender" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

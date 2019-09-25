@@ -6,4 +6,23 @@
     <string name="text">Text</string>
     <string name="navigation_drawer_close">Close</string>
     <string name="navigation_drawer_open">Open</string>
+
+    <string-array name="gender_array">
+        <item>Select One</item>
+        <item>Ignore</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="age_group_array">
+        <item>Select One</item>
+        <item>Ignore</item>
+        <item>&gt;18</item>
+        <item>18–25</item>
+        <item>26–30</item>
+        <item>31–40</item>
+        <item>41–50</item>
+        <item>51–60</item>
+        <item>61+</item>
+    </string-array>
 </resources>

@@ -87,19 +87,41 @@
                     custom:formItemHint="Enter Education"
                     custom:formItemTitle="Education" />
 
-                <com.sammengistu.stuckapp.views.InputFormItemView
-                    android:id="@+id/age_group_field"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    custom:formItemHint="Enter age"
-                    custom:formItemTitle="Age Group" />
+                    android:layout_margin="7dp"
+                    android:orientation="vertical">
 
-                <com.sammengistu.stuckapp.views.InputFormItemView
-                    android:id="@+id/gender_field"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Age Group"/>
+
+                    <Spinner
+                        android:id="@+id/age_group_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    custom:formItemHint="Enter gender"
-                    custom:formItemTitle="Gender" />
+                    android:layout_margin="7dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Gender"/>
+
+                    <Spinner
+                        android:id="@+id/gender_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </LinearLayout>
 
             <Button

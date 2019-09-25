@@ -2,10 +2,10 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
-import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.DisplayFormItemView
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.UserModel
@@ -19,8 +19,6 @@ class ProfileViewFragment : BaseFragment() {
     lateinit var nameField: DisplayFormItemView
     lateinit var occupationField: DisplayFormItemView
     lateinit var educationField: DisplayFormItemView
-    lateinit var ageGroupField: DisplayFormItemView
-    lateinit var genderField: DisplayFormItemView
     
     override fun getLayoutId() = R.layout.fragment_profile_view
 
@@ -41,8 +39,6 @@ class ProfileViewFragment : BaseFragment() {
         nameField = name_field
         occupationField = occupation_field
         educationField = education_field
-        ageGroupField = age_group_field
-        genderField = gender_field
     }
 
     private fun populateFields() {
@@ -61,8 +57,6 @@ class ProfileViewFragment : BaseFragment() {
                             nameField.setText(user.name)
                             occupationField.setText(user.occupation)
                             educationField.setText(user.education)
-                            ageGroupField.setText(user.ageGroup)
-                            genderField.setText(user.gender)
                         }
                     }
 
