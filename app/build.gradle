@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -57,6 +58,9 @@ dependencies {
     implementation "com.google.firebase:firebase-storage:$rootProject.firebaseStorageVersion"
     implementation "com.firebaseui:firebase-ui-auth:$rootProject.firebaseUiAuthVersion"
     implementation "com.google.firebase:firebase-auth:$rootProject.firebasAuthVersion"
+
+    // crashlytics
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     // Required only if Facebook login support is required
     // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
