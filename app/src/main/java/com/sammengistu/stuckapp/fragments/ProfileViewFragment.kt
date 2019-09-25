@@ -57,6 +57,9 @@ class ProfileViewFragment : BaseFragment() {
                             nameField.setText(user.name)
                             occupationField.setText(user.occupation)
                             educationField.setText(user.education)
+                        } else {
+                            activity!!.supportFragmentManager.popBackStack()
+                            ErrorNotifier.notifyError(activity, "Error loading user")
                         }
                     }
 
