@@ -30,7 +30,6 @@ import org.jetbrains.anko.uiThread
 
 class BottomSheetHelper(
     private val context: Context,
-    private val userId: String,
     private val bottomSheetLL: LinearLayout,
     private val notifyAdapter: NotifyAdapter
 ) :
@@ -102,13 +101,17 @@ class BottomSheetHelper(
             }
         }
 
-        // Handle delete option
-        if (post != null && (post!!.ownerId == userId || post!!.ref.isBlank())) {
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
-                .visibility = View.VISIBLE
-        } else {
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
-                .visibility = View.GONE
+        UserHelper.getCurrentUser { user ->
+            if (user != null) {
+                // Handle delete option
+                if (post != null && (post!!.ownerId == user.userId || post!!.ref.isBlank())) {
+                    bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
+                        .visibility = View.VISIBLE
+                } else {
+                    bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
+                        .visibility = View.GONE
+                }
+            }
         }
     }
 

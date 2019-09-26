@@ -8,5 +8,7 @@
     <color name="white">#fff</color>
     <color name="green">#31FC00</color>
 
-    <color name="light_gray">#F8CACACA</color>
+    <color name="light_gray">#E2E2E2</color>
+
+    <color name="light_teal">#F8E8FAF1</color>
 </resources>

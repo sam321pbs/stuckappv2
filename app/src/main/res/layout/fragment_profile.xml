@@ -19,23 +19,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <FrameLayout
+                <com.sammengistu.stuckapp.views.AvatarView
+                    android:id="@+id/avatar_view"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
+                    android:layout_margin="10dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="10dp">
-
-                    <ProgressBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"/>
-
-                    <com.sammengistu.stuckapp.views.AvatarView
-                        android:id="@+id/avatar_view"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
-                </FrameLayout>
+                    custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
 
                 <com.sammengistu.stuckapp.views.InputFormItemView
                     android:id="@+id/username_field"

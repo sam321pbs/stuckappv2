@@ -22,27 +22,31 @@ class UserHelper {
                 return
             }
             if (currentUser == null) {
-                UserAccess().getItemsWhereEqual(
-                    "userId",
-                    getFirebaseUserId(),
-                    1L,
-                    object : OnItemRetrieved<UserModel> {
-                        override fun onSuccess(list: List<UserModel>) {
-                            if (list.isNotEmpty()) {
-                                currentUser = list[0]
-                                callback(list[0])
-                            } else {
-                                callback(null)
-                            }
-                        }
+                reloadUser(callback)
+            } else {
+                callback.invoke(currentUser)
+            }
+        }
 
-                        override fun onFailed(e: Exception) {
+        fun reloadUser(callback: (m: UserModel?) -> Unit) {
+            UserAccess().getItemsWhereEqual(
+                "userId",
+                getFirebaseUserId(),
+                1L,
+                object : OnItemRetrieved<UserModel> {
+                    override fun onSuccess(list: List<UserModel>) {
+                        if (list.isNotEmpty()) {
+                            currentUser = list[0]
+                            callback(list[0])
+                        } else {
                             callback(null)
                         }
-                    })
-            } else {
-                callback(currentUser!!)
-            }
+                    }
+
+                    override fun onFailed(e: Exception) {
+                        callback(null)
+                    }
+                })
         }
 
         fun logUserOut() {

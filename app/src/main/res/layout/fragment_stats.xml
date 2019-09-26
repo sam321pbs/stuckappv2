@@ -18,7 +18,7 @@
             android:layout_margin="15dp"
             android:layout_weight="1"
             custom:statTitle="Votes Collected"
-            custom:statTotal="50" />
+            custom:statTotal="0" />
 
         <com.sammengistu.stuckapp.views.StatCardView
             android:id="@+id/votes_made"
@@ -27,7 +27,7 @@
             android:layout_margin="15dp"
             android:layout_weight="1"
             custom:statTitle="Votes Made"
-            custom:statTotal="50" />
+            custom:statTotal="0" />
 
     </LinearLayout>
 
@@ -43,16 +43,16 @@
             android:layout_margin="15dp"
             android:layout_weight="1"
             custom:statTitle="Stars Collected"
-            custom:statTotal="50" />
+            custom:statTotal="0" />
 
         <com.sammengistu.stuckapp.views.StatCardView
-            android:id="@+id/most_popular_post"
+            android:id="@+id/total_points_view"
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_margin="15dp"
             android:layout_weight="1"
-            custom:statTitle="Most Popular"
-            custom:statTotal="50" />
+            custom:statTitle="Points"
+            custom:statTotal="0" />
 
     </LinearLayout>
 </LinearLayout>

@@ -32,8 +32,10 @@ class AvatarView(context: Context, attrs: AttributeSet?) : CircleImageView(conte
                 Picasso.get()
                     .load(url)
                     .fit()
+                    .placeholder(R.drawable.ic_person_grey_500_36dp)
 //                .centerCrop()
                     .into(this)
+
             }
         }
     }
@@ -42,6 +44,7 @@ class AvatarView(context: Context, attrs: AttributeSet?) : CircleImageView(conte
         post {
             Picasso.get()
                 .load(resourceId)
+                .placeholder(R.drawable.ic_person_grey_500_36dp)
                 .fit()
 //                .centerCrop()
                 .into(this)

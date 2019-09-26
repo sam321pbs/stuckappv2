@@ -22,6 +22,8 @@ class DisplayFormItemView(context: Context, attrs: AttributeSet) : LinearLayout(
             try {
                 val itemTitle = getString(R.styleable.DisplayFormItemView_displayTitle) ?: ""
                 titleView.text = itemTitle
+                titleView.textSize = 13f
+                detailTextView.textSize = 20f
             } finally {
                 recycle()
             }

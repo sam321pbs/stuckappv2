@@ -3,8 +3,8 @@ package com.sammengistu.stuckapp.fragments
 import android.os.Bundle
 import android.view.View
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.views.StatCardView
+import com.sammengistu.stuckfirebase.UserHelper
 import kotlinx.android.synthetic.main.fragment_stats.*
 
 class StatsFragment: BaseFragment() {
@@ -12,7 +12,7 @@ class StatsFragment: BaseFragment() {
     lateinit var votesCollectedCard: StatCardView
     lateinit var votesMadeCard: StatCardView
     lateinit var starsCollectedCard: StatCardView
-    lateinit var mostPopularCard: StatCardView
+    lateinit var totalPointsCard: StatCardView
 
     override fun getLayoutId(): Int = R.layout.fragment_stats
 
@@ -23,11 +23,12 @@ class StatsFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        UserHelper.getCurrentUser { user ->
+        UserHelper.reloadUser { user ->
             if (user != null) {
                 votesCollectedCard.setStat(user.totalReceivedVotes)
                 votesMadeCard.setStat(user.totalMadeVotes)
                 starsCollectedCard.setStat(user.totalReceivedStars)
+                totalPointsCard.setStat(user.totalReceivedVotes + user.totalMadeVotes + user.totalReceivedStars)
             }
         }
     }
@@ -36,7 +37,7 @@ class StatsFragment: BaseFragment() {
         votesCollectedCard = votes_collected
         votesMadeCard = votes_made
         starsCollectedCard = collected_stars
-        mostPopularCard = most_popular_post
+        totalPointsCard = total_points_view
     }
 
     companion object {
