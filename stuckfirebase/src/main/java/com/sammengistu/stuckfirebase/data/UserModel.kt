@@ -13,7 +13,7 @@ data class UserModel(
     var totalMadeVotes: Int,
     var totalReceivedVotes: Int,
     var totalReceivedStars: Int
-) : FirebaseItem() {
+) : FirebaseItem(userId, "") {
     constructor() : this(  "", "", "", "", "", "", "", -1, -1, 0,0,0)
 
     fun convertUserToMap(): Map<String, Any> {

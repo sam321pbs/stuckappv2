@@ -10,9 +10,7 @@ import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.data.PostModel
 
 class PostAccess: FirebaseItemAccess<PostModel>() {
-    override fun getModelClass(): Class<PostModel> {
-        return PostModel::class.java
-    }
+    override fun getModelClass() = PostModel::class.java
 
     override fun getCollectionRef() = getEnvironmentCollectionRef(POSTS)
 

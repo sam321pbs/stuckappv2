@@ -11,7 +11,7 @@ data class CommentModel(
     val message: String,
     val usersChoice: Int,
     var upVotes: Int = 0
-) : FirebaseItem() {
+) : FirebaseItem(ownerId, ownerRef) {
     constructor() :
             this("", "", "","", "", "", "", "", 0)
 

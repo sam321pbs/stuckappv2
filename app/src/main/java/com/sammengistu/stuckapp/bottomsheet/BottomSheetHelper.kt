@@ -2,31 +2,28 @@ package com.sammengistu.stuckapp.bottomsheet
 
 import android.content.Context
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.collections.HiddenPostsCollection
 import com.sammengistu.stuckapp.collections.UserStarredCollection
+import com.sammengistu.stuckapp.constants.ReportReasons
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.access.PostAccess
-import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.access.UserAccess
+import com.sammengistu.stuckfirebase.access.*
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.data.ReportModel
 import com.sammengistu.stuckfirebase.data.StarPostModel
 import com.sammengistu.stuckfirebase.data.UserModel
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
+
+
 
 class BottomSheetHelper(
     private val context: Context,
@@ -60,43 +57,43 @@ class BottomSheetHelper(
     private fun updateBottomSheet() {
         if (post != null && post!!.ref.isBlank()) {
             // Handle Draft Post
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_favorite_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_favorite_container)
                 .visibility = View.GONE
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_comments_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_comments_container)
                 .visibility = View.GONE
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_report_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_report_container)
                 .visibility = View.GONE
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_hide_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_hide_container)
                 .visibility = View.GONE
-            bottomSheetLL.find<TextView>(R.id.bottom_sheet_title)
+            bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.bottom_sheet_title)
                 .text = "Draft Options"
         } else {
             // Regular post
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_favorite_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_favorite_container)
                 .visibility = View.VISIBLE
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_comments_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_comments_container)
                 .visibility = View.VISIBLE
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_report_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_report_container)
                 .visibility = View.VISIBLE
-            bottomSheetLL.find<LinearLayout>(R.id.bottom_hide_container)
+            bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_hide_container)
                 .visibility = View.VISIBLE
-            bottomSheetLL.find<TextView>(R.id.bottom_sheet_title)
+            bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.bottom_sheet_title)
                 .text = "Post Options"
 
             if (post != null) {
                 if (HiddenPostsCollection.containesRef(post!!.ref)) {
-                    bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Show"
+                    bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_hide).text = "Show"
                 } else {
-                    bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Hide"
+                    bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_hide).text = "Hide"
                 }
             }
 
             if (post != null) {
                 val userStar = UserStarredCollection.getStarPost(post!!)
                 if (userStar == null) {
-                    bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Favorite"
+                    bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_favorite).text = "Favorite"
                 } else {
-                    bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Remove from Favorites"
+                    bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_favorite).text = "Remove from Favorites"
                 }
             }
         }
@@ -105,10 +102,10 @@ class BottomSheetHelper(
             if (user != null) {
                 // Handle delete option
                 if (post != null && (post!!.ownerId == user.userId || post!!.ref.isBlank())) {
-                    bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
+                    bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_delete_container)
                         .visibility = View.VISIBLE
                 } else {
-                    bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
+                    bottomSheetLL.find<LinearLayout>(com.sammengistu.stuckapp.R.id.bottom_delete_container)
                         .visibility = View.GONE
                 }
             }
@@ -116,17 +113,17 @@ class BottomSheetHelper(
     }
 
     private fun addClickListenersToViews() {
-        bottomSheetLL.find<ImageView>(R.id.close_btn)
+        bottomSheetLL.find<ImageView>(com.sammengistu.stuckapp.R.id.close_btn)
             .setOnClickListener { hideMenu() }
-        bottomSheetLL.find<TextView>(R.id.menu_delete_post)
+        bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_delete_post)
             .setOnClickListener { deletePost() }
-        bottomSheetLL.find<TextView>(R.id.menu_favorite)
+        bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_favorite)
             .setOnClickListener { starPost() }
-        bottomSheetLL.find<TextView>(R.id.menu_comments)
+        bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_comments)
             .setOnClickListener { showComments() }
-        bottomSheetLL.find<TextView>(R.id.menu_report)
+        bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_report)
             .setOnClickListener { reportPost() }
-        bottomSheetLL.find<TextView>(R.id.menu_hide)
+        bottomSheetLL.find<TextView>(com.sammengistu.stuckapp.R.id.menu_hide)
             .setOnClickListener { hidePost() }
     }
 
@@ -143,7 +140,26 @@ class BottomSheetHelper(
     }
 
     private fun reportPost() {
-        TODO("report post")
+        val arrayAdapter =
+            ArrayAdapter<String>(context, android.R.layout.select_dialog_singlechoice)
+        arrayAdapter.addAll(ReportReasons.getDisplayNames())
+
+        AlertDialog.Builder(context)
+            .setTitle("Reason for reporting")
+            .setAdapter(arrayAdapter) { _, pos ->
+                val reason = arrayAdapter.getItem(pos)
+                UserHelper.getCurrentUser {user ->
+                    if (user != null && reason != null && post != null) {
+                        ReportAccess().createItemInFB(
+                            ReportModel(reason, post!!.ref, user.ref, user.userId))
+                        HiddenPostsCollection.addRef(post!!.ref)
+                        EventBus.getDefault().post(DataChangedEvent())
+                        Toast.makeText(context, "Post has been reported", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
         hideMenu()
     }
 

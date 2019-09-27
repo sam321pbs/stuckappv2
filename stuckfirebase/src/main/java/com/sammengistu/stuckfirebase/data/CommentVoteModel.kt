@@ -8,6 +8,6 @@ data class CommentVoteModel(
     val commentRef: String,
     val postRef: String,
     val voteType: Int
-) : FirebaseItem() {
+) : FirebaseItem(ownerId, ownerRef) {
     constructor() : this("", "", "", "", "", "",0)
 }

@@ -4,6 +4,6 @@ data class DeviceTokenModel(
     val ownerId: String,
     val ownerRef: String,
     val token: String
-) : FirebaseItem() {
+) : FirebaseItem(ownerId, ownerRef) {
     constructor() : this("", "", "")
 }

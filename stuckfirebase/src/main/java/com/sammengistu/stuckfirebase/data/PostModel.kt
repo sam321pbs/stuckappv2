@@ -20,7 +20,7 @@ open class PostModel(
     var images: HashMap<String, String> = HashMap(),
     var choices: HashMap<String, String> = HashMap(),
     var votes: HashMap<String, Int> = HashMap()
-) : FirebaseItem() {
+) : FirebaseItem(ownerId, ownerRef) {
 
     @Exclude
     var draftId = -1L

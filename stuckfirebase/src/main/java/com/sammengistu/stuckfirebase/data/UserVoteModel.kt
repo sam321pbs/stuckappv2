@@ -9,6 +9,6 @@ data class UserVoteModel(
     val postOwnerRef: String,
     val postOwnerId: String,
     val voteItem: String
-) : FirebaseItem() {
+) : FirebaseItem(ownerId, ownerRef) {
     constructor() : this("", "", "", "", "","", "", "")
 }
