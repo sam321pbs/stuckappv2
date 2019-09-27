@@ -24,27 +24,27 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         incrementField(ref, "totalStars")
     }
 
-    fun getRecentPosts(listener: OnItemRetrieved<PostModel>) {
+    fun getRecentPosts(listener: OnItemsRetrieved<PostModel>) {
         getItems(listener)
     }
 
-    fun getRecentPosts(before: Any?, listener: OnItemRetrieved<PostModel>) {
+    fun getRecentPosts(before: Any?, listener: OnItemsRetrieved<PostModel>) {
         getItemsBefore(before, listener)
     }
 
-    fun getPostsInCategory(filterCategory: String, listener: OnItemRetrieved<PostModel>) {
+    fun getPostsInCategory(filterCategory: String, listener: OnItemsRetrieved<PostModel>) {
         getItemsWhereEqual("category", filterCategory, listener)
     }
 
-    fun getPostsInCategory(filterCategory: String, before: Any?, listener: OnItemRetrieved<PostModel>) {
+    fun getPostsInCategory(filterCategory: String, before: Any?, listener: OnItemsRetrieved<PostModel>) {
         getItemsWhereEqualAndBefore("category", filterCategory, before, listener)
     }
 
-    fun getOwnerPosts(ownerId: String, listener: OnItemRetrieved<PostModel>) {
+    fun getOwnerPosts(ownerId: String, listener: OnItemsRetrieved<PostModel>) {
         getItemsWhereEqual("ownerId", ownerId, listener)
     }
 
-    fun getOwnerPosts(ownerId: String, before: Any?, listener: OnItemRetrieved<PostModel>) {
+    fun getOwnerPosts(ownerId: String, before: Any?, listener: OnItemsRetrieved<PostModel>) {
         getItemsWhereEqualAndBefore("ownerId", ownerId, before, listener)
     }
 

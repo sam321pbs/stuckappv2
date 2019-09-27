@@ -65,7 +65,7 @@ class CommentsFragment : BaseFragment() {
 
     private fun reloadAdapter() {
         CommentsVoteAccess().getItemsWhereEqual("postRef", postRef, object :
-            FirebaseItemAccess.OnItemRetrieved<CommentVoteModel> {
+            FirebaseItemAccess.OnItemsRetrieved<CommentVoteModel> {
             override fun onSuccess(list: List<CommentVoteModel>) {
                 val map = HashMap<String, CommentVoteModel>()
                 for (commentVote in list) {
@@ -85,7 +85,7 @@ class CommentsFragment : BaseFragment() {
         CommentAccess().getItemsWhereEqual(
             "postRef",
             postRef,
-            object : FirebaseItemAccess.OnItemRetrieved<CommentModel> {
+            object : FirebaseItemAccess.OnItemsRetrieved<CommentModel> {
                 override fun onSuccess(list: List<CommentModel>) {
                     listComments = list as ArrayList<CommentModel>
                     commentsAdapter.swapData(listComments)

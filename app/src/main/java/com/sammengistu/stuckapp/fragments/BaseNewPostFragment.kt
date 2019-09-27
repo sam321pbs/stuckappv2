@@ -8,8 +8,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
 import com.sammengistu.stuckapp.AssetImageUtils
-import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
@@ -19,7 +17,10 @@ import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
 import com.sammengistu.stuckapp.events.PrivacySelectedEvent
 import com.sammengistu.stuckapp.utils.ImageStorageUtils
+import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
+import com.sammengistu.stuckfirebase.ErrorNotifier
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
@@ -40,32 +41,34 @@ abstract class BaseNewPostFragment : BaseFragment() {
     val CHOICES_VIEW = "choices_view"
     var draft: DraftPostModel? = null
 
-    var mSelectedCategory: String = Categories.GENERAL.toString()
-    var mSelectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
-    var avatarKey: String? = ""
+    private var selectedCategory: String = Categories.GENERAL.toString()
+    private var selectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
+    private var avatarKey: String? = ""
 
     abstract fun fieldsValidated(): Boolean
 
     @Subscribe
     fun onCategorySelected(event: CategorySelectedEvent) {
-        mSelectedCategory = event.category
-        category_choice.setText(mSelectedCategory)
+        selectedCategory = event.category
+        category_choice.setText(StringUtils.capitilizeFirstLetter(selectedCategory))
     }
 
     @Subscribe
     fun onPrivacySelected(event: PrivacySelectedEvent) {
-        mSelectedPrivacy = event.choice
-        privacy_choice.setText(mSelectedPrivacy)
-        if (mSelectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
+        selectedPrivacy = event.choice
+        privacy_choice.setText(StringUtils.capitilizeFirstLetter(selectedPrivacy))
+        if (selectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
             avatarKey = AssetImageUtils.getRandomAvatarKey()
-            var avaBit = AssetImageUtils.getAvatar(avatarKey ?: "")
+            val avaBit = AssetImageUtils.getAvatar(avatarKey ?: "")
             if (avaBit != null) {
                 avatar_view.setImageBitmap(avaBit)
             }
+            username.text = "Anonymous"
         } else {
             UserHelper.getCurrentUser { user ->
                 if (user != null) {
                     avatar_view.loadImage(user.avatar)
+                    username.text = user.username
                 }
             }
         }
@@ -143,10 +146,10 @@ abstract class BaseNewPostFragment : BaseFragment() {
 
     protected fun updateViewFromDraft(draft: DraftPostModel) {
         question.setText(draft.question)
-        mSelectedCategory = draft.category
-        mSelectedPrivacy = draft.privacy
-        category_choice.setText(mSelectedCategory)
-        privacy_choice.setText(mSelectedPrivacy)
+        selectedCategory = draft.category
+        selectedPrivacy = draft.privacy
+        category_choice.setText(StringUtils.capitilizeFirstLetter(selectedCategory))
+        privacy_choice.setText(StringUtils.capitilizeFirstLetter(selectedPrivacy))
     }
 
     private fun createPost(type: PostType, data: Map<String, Any?>) {
@@ -215,19 +218,23 @@ abstract class BaseNewPostFragment : BaseFragment() {
             val bitmap1 = if (data1 is Bitmap) data1 else null
             val bitmap2 = if (data2 is Bitmap) data2 else null
 
-            val image1Loc = ImageStorageUtils.saveToInternalStorage(
-                activity!!,
-                bitmap1!!,
-                "${UUID.randomUUID()}"
-            )
-            val image2Loc = ImageStorageUtils.saveToInternalStorage(
-                activity!!,
-                bitmap2!!,
-                "${UUID.randomUUID()}"
-            )
+            if (bitmap1 != null) {
+                val image1Loc = ImageStorageUtils.saveToInternalStorage(
+                    activity!!,
+                    bitmap1,
+                    "${UUID.randomUUID()}"
+                )
+                post.addImage(image1Loc)
+            }
 
-            post.addImage(image1Loc)
-            post.addImage(image2Loc)
+            if (bitmap2 != null) {
+                val image2Loc = ImageStorageUtils.saveToInternalStorage(
+                    activity!!,
+                    bitmap2,
+                    "${UUID.randomUUID()}"
+                )
+                post.addImage(image2Loc)
+            }
         }
     }
 
@@ -280,7 +287,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
         type: PostType
     ): PostModel {
         var avatar = user?.avatar ?: ""
-        if (mSelectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
+        if (selectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
             avatar = avatarKey ?: ""
         }
         return PostModel(
@@ -289,8 +296,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
             user?.username ?: "",
             avatar,
             question.text.toString(),
-            mSelectedPrivacy,
-            mSelectedCategory,
+            selectedPrivacy,
+            selectedCategory,
             type.toString()
         )
     }

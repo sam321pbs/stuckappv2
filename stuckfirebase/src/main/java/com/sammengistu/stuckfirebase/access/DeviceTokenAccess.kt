@@ -19,7 +19,7 @@ class DeviceTokenAccess(private val userRef: String) :
             if (user != null) {
                 getToken(context) { token ->
                     getItemsWhereEqual("ownerRef", userRef,
-                        object : OnItemRetrieved<DeviceTokenModel> {
+                        object : OnItemsRetrieved<DeviceTokenModel> {
                             override fun onSuccess(list: List<DeviceTokenModel>) {
                                 if (list.isEmpty()) {
                                     addDeviceToken(user, token)

@@ -14,7 +14,7 @@ class UserStarredCollection {
 
         fun loadUserStars(userRef: String) {
             StarPostAccess().getUsersStarredPosts(userRef,
-                object : FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
+                object : FirebaseItemAccess.OnItemsRetrieved<StarPostModel> {
                     override fun onSuccess(list: List<StarPostModel>) {
                         convertStarredPostsToMap(
                             list

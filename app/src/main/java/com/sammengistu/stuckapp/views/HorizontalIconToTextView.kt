@@ -37,7 +37,7 @@ class HorizontalIconToTextView(context: Context, attrs: AttributeSet) : LinearLa
     }
 
     private fun buildView() {
-        setPadding(10, 10, 10, 10)
+        setPadding(15, 12, 15, 12)
         orientation = HORIZONTAL
         countView.gravity = Gravity.CENTER_VERTICAL
 

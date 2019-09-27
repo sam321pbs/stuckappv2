@@ -165,7 +165,7 @@ class ProfileFragment : BaseFragment() {
         postUserNameAction: () -> Unit
     ) {
         UserAccess().getItemsWhereEqual("username", updateUser.username,
-            object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
+            object : FirebaseItemAccess.OnItemsRetrieved<UserModel> {
                 override fun onSuccess(list: List<UserModel>) {
                     if (list.isNotEmpty()) {
                         val fetchedUser = list[0]

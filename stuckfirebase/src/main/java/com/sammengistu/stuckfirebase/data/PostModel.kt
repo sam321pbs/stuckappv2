@@ -81,6 +81,15 @@ open class PostModel(
     }
 
     @Exclude
+    fun convertPostUpdatesToMap(): Map<String, Any> {
+        return mapOf(
+            Pair("totalStars", totalStars),
+            Pair("totalComments", totalComments),
+            Pair("votes", votes)
+        )
+    }
+
+    @Exclude
     fun addImage(loc: String) {
         val imageKey = convertToChoiceText(images.size + 1)
         images[imageKey] = loc

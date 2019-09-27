@@ -115,8 +115,14 @@ abstract class PostsListFragment : BasePostListsFragment() {
     }
 
     private fun setupRecyclerView() {
+        val viewMode = when {
+            getType() == TYPE_DRAFT -> PostsAdapter.VIEW_MODE_DRAFTS
+            getType() == TYPE_FAVORITE -> PostsAdapter.VIEW_MODE_FAVORITES
+            else -> PostsAdapter.VIEW_MODE_NORMAL
+        }
+
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = PostsAdapter(this.context!!, getType() == TYPE_DRAFT, mBottomSheetMenu)
+        viewAdapter = PostsAdapter(this.context!!, viewMode, mBottomSheetMenu)
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
@@ -184,8 +190,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
                     )
                     TYPE_DRAFT -> {
                         listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
-                            adapter.swapData(convertDraftToPost(draftList))
-                            swipeToRefreshLayout.isRefreshing = false
+                            updateAdapter(convertDraftToPost(draftList), adapter, false)
                         }
                     }
                     else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
@@ -207,28 +212,30 @@ abstract class PostsListFragment : BasePostListsFragment() {
     private fun getOnPostRetrievedListener(
         adapter: PostsAdapter,
         addItems: Boolean = false
-    ): FirebaseItemAccess.OnItemRetrieved<PostModel> {
+    ): FirebaseItemAccess.OnItemsRetrieved<PostModel> {
         return object :
-            FirebaseItemAccess.OnItemRetrieved<PostModel> {
+            FirebaseItemAccess.OnItemsRetrieved<PostModel> {
             override fun onSuccess(list: List<PostModel>) {
                 updateAdapter(list, adapter, addItems)
             }
 
             override fun onFailed(e: Exception) {
+                swipeToRefreshLayout.isRefreshing = false
                 ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts", e)
             }
         }
     }
 
     private fun getOnStarPostRetrievedListener(adapter: PostsAdapter, addItems: Boolean = false):
-            FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
+            FirebaseItemAccess.OnItemsRetrieved<StarPostModel> {
         return object :
-            FirebaseItemAccess.OnItemRetrieved<StarPostModel> {
+            FirebaseItemAccess.OnItemsRetrieved<StarPostModel> {
             override fun onSuccess(list: List<StarPostModel>) {
                 updateAdapter(list, adapter, addItems)
             }
 
             override fun onFailed(e: Exception) {
+                swipeToRefreshLayout.isRefreshing = false
                 ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts", e)
             }
         }

@@ -13,7 +13,7 @@ class UserVotesCollection {
 
         fun loadUserVotes(userId: String) {
             UserVoteAccess().getItemsWhereEqual("ownerId", userId,
-                object : FirebaseItemAccess.OnItemRetrieved<UserVoteModel> {
+                object : FirebaseItemAccess.OnItemsRetrieved<UserVoteModel> {
                     override fun onSuccess(list: List<UserVoteModel>) {
                         convertVotesToMap(
                             list

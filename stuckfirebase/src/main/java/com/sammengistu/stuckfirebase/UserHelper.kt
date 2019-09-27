@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemRetrieved
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemsRetrieved
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.data.UserModel
 
@@ -33,7 +33,7 @@ class UserHelper {
                 "userId",
                 getFirebaseUserId(),
                 1L,
-                object : OnItemRetrieved<UserModel> {
+                object : OnItemsRetrieved<UserModel> {
                     override fun onSuccess(list: List<UserModel>) {
                         if (list.isNotEmpty()) {
                             currentUser = list[0]

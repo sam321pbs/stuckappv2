@@ -52,15 +52,16 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
-    fun updateItemInFB(documentRef: String, updates: Map<String, Any>, listener: OnItemUpdated) {
+    fun updateItemInFB(documentRef: String, updates: Map<String, Any>, listener: OnItemUpdated?) {
         getCollectionRef()
             .document(documentRef)
             .update(updates)
             .addOnSuccessListener {
-                listener.onSuccess()
+                listener?.onSuccess()
+                Log.d(TAG, "Successful update")
             }
             .addOnFailureListener { e ->
-                listener.onFailed(e)
+                listener?.onFailed(e)
                 Log.e(TAG, "Error updating item", e)
             }
     }
@@ -91,7 +92,18 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
-    fun getItems(listener: OnItemRetrieved<T>) {
+    fun getItem(ref: String, listener: OnItemRetrieved<T>) {
+        getCollectionRef()
+            .document(ref)
+            .get()
+            .addOnSuccessListener(getDocumentSuccessListener(listener))
+            .addOnFailureListener {
+                Log.e(TAG, "Failed to get post", it)
+                listener.onFailed(it)
+            }
+    }
+
+    fun getItems(listener: OnItemsRetrieved<T>) {
         getCollectionRef()
             .limit(QUERY_LIMIT)
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -103,7 +115,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
-    fun getItemsWhereEqual(field: String, value: Any, listener: OnItemRetrieved<T>) {
+    fun getItemsWhereEqual(field: String, value: Any, listener: OnItemsRetrieved<T>) {
         getCollectionRef()
             .limit(QUERY_LIMIT)
             .whereEqualTo(field, value)
@@ -116,7 +128,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
-    fun getItemsWhereEqual(field: String, value: Any, limit: Long, listener: OnItemRetrieved<T>) {
+    fun getItemsWhereEqual(field: String, value: Any, limit: Long, listener: OnItemsRetrieved<T>) {
         getCollectionRef()
             .limit(QUERY_LIMIT)
             .whereEqualTo(field, value)
@@ -130,7 +142,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
-    fun getItemsBefore(beforeTime: Any?, listener: OnItemRetrieved<T>) {
+    fun getItemsBefore(beforeTime: Any?, listener: OnItemsRetrieved<T>) {
         if (beforeTime != null) {
             getCollectionRef()
                 .limit(QUERY_LIMIT)
@@ -145,7 +157,12 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         }
     }
 
-    fun getItemsWhereEqualAndBefore(field: String, value: Any, beforeTime: Any?, listener: OnItemRetrieved<T>) {
+    fun getItemsWhereEqualAndBefore(
+        field: String,
+        value: Any,
+        beforeTime: Any?,
+        listener: OnItemsRetrieved<T>
+    ) {
         if (beforeTime != null) {
             getCollectionRef()
                 .limit(QUERY_LIMIT)
@@ -204,7 +221,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .collection(collection)
     }
 
-    private fun getSuccessListener(listener: OnItemRetrieved<T>): OnSuccessListener<QuerySnapshot> {
+    private fun getSuccessListener(listener: OnItemsRetrieved<T>): OnSuccessListener<QuerySnapshot> {
         val weakRef = WeakReference(listener)
         return OnSuccessListener { document ->
             val listenerRef = weakRef.get()
@@ -219,6 +236,24 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         }
     }
 
+    private fun getDocumentSuccessListener(listener: OnItemRetrieved<T>): OnSuccessListener<DocumentSnapshot> {
+        val weakRef = WeakReference(listener)
+        return OnSuccessListener { document ->
+            val listenerRef = weakRef.get()
+            if (listenerRef != null) {
+                if (document != null) {
+                    try {
+                        val item = document.toObject(getModelClass())
+                        item!!.ref = document.reference.id
+                        listenerRef.onSuccess(item)
+                    } catch (e: Exception) {
+                        listenerRef.onFailed(e)
+                    }
+                }
+            }
+        }
+    }
+
     private fun addRefToItems(document: QuerySnapshot, list: List<T>) {
         val var4 = document.iterator()
         var pos = 0
@@ -228,8 +263,13 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         }
     }
 
-    interface OnItemRetrieved<T : FirebaseItem> {
+    interface OnItemsRetrieved<T : FirebaseItem> {
         fun onSuccess(list: List<T>)
+        fun onFailed(e: Exception)
+    }
+
+    interface OnItemRetrieved<T : FirebaseItem> {
+        fun onSuccess(item: T)
         fun onFailed(e: Exception)
     }
 

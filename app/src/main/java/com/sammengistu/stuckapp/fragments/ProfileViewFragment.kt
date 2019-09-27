@@ -61,7 +61,7 @@ class ProfileViewFragment : BaseFragment() {
         val userId = arguments?.getString(EXTRA_USER_ID)
         if (userId != null) {
             UserAccess().getItemsWhereEqual("userId", userId,
-                object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
+                object : FirebaseItemAccess.OnItemsRetrieved<UserModel> {
                     override fun onSuccess(list: List<UserModel>) {
                         if (list.isNotEmpty()) {
                             val user = list[0]

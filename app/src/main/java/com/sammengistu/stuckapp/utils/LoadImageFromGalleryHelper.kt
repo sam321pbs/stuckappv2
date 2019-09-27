@@ -14,7 +14,10 @@ class LoadImageFromGalleryHelper {
     companion object {
         fun addImageToView(activity: Activity?, imageView: ImageView, data: Intent?): Bitmap? {
             try {
-                val imageUri = data!!.data
+                if (data == null) {
+                    return null
+                }
+                val imageUri = data.data
                 val imageStream = activity!!.contentResolver.openInputStream(imageUri!!)
                 Picasso.get()
                     .load(imageUri)

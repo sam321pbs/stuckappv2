@@ -2,7 +2,6 @@ package com.sammengistu.stuckapp.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,16 +22,22 @@ import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils
+import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.*
+import com.sammengistu.stuckfirebase.ErrorNotifier
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
+import com.sammengistu.stuckfirebase.access.PostAccess
+import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.data.StarPostModel
 import com.sammengistu.stuckfirebase.data.UserVoteModel
 import org.jetbrains.anko.find
 
 
 class PostsAdapter(
     private val context: Context,
-    private val isDraft: Boolean,
+    private val viewMode: Int,
     private val bottomSheetMenu: BottomSheetMenu
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<PostModel>()
@@ -49,9 +54,9 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
 
-        if (PrivacyOptions.ANONYMOUS.toString() == post.privacy && !isDraft) {
+        if (PrivacyOptions.ANONYMOUS.toString() == post.privacy &&
+            viewMode != VIEW_MODE_DRAFTS) {
             val avatar = AssetImageUtils.getAvatar(post.avatar)
-            Log.d(TAG, "Avatar is null ${avatar == null}")
             holder.avatarView.setImageBitmap(avatar)
             holder.username.text = "Anonymous"
             holder.avatarView.setOnClickListener(null)
@@ -63,13 +68,13 @@ class PostsAdapter(
             holder.username.setOnClickListener { showProfile(context, post) }
         }
 
-        holder.questionView.text = post.question
+        holder.questionView.text = StringUtils.capitilizeFirstLetter(post.question)
         holder.timeSince.text =
-            if (isDraft) "" else DateUtils.convertDateToTimeElapsed(post.getDate())
+            if (viewMode == VIEW_MODE_DRAFTS) "Draft" else DateUtils.convertDateToTimeElapsed(post.getDate())
         holder.commentsTotalView.setText(post.totalComments.toString())
         holder.voteTotalView.setText(post.getTotalVotes().toString())
         holder.starTotalView.setText(post.totalStars.toString())
-        holder.categoriesView.setText(post.category)
+        holder.categoriesView.setText(StringUtils.capitilizeFirstLetter(post.category))
         holder.menuIcon.setOnClickListener { bottomSheetMenu.showMenu(post) }
 
         val userVote = UserVotesCollection.getVoteForPost(post.ref)
@@ -82,6 +87,32 @@ class PostsAdapter(
         updateStarIcon(post, holder)
         handleDraftPost(holder, post)
         handleHiddenPosts(post, holder)
+        handleRefreshIcon(post, holder)
+    }
+
+    private fun handleRefreshIcon(post: PostModel, holder: PostViewHolder) {
+        if (viewMode == VIEW_MODE_FAVORITES && post is StarPostModel) {
+            holder.refreshIcon.visibility = View.VISIBLE
+            holder.refreshIcon.setOnClickListener {
+                PostAccess().getItem(post.postRef,
+                    object : FirebaseItemAccess.OnItemRetrieved<PostModel> {
+                        override fun onSuccess(item: PostModel) {
+                            post.totalComments = item.totalComments
+                            post.totalStars = item.totalStars
+                            post.choices = item.choices
+                            notifyDataSetChanged()
+                            StarPostAccess().updateItemInFB(post.ref, item.convertPostUpdatesToMap(), null)
+                        }
+
+                        override fun onFailed(e: Exception) {
+                            ErrorNotifier.notifyError(context, TAG, "Error get latest data", e)
+                        }
+
+                    })
+            }
+        } else {
+            holder.refreshIcon.visibility = View.GONE
+        }
     }
 
     private fun updateStarIcon(
@@ -100,7 +131,7 @@ class PostsAdapter(
         holder: PostViewHolder,
         post: PostModel
     ) {
-        if (isDraft) {
+        if (viewMode == VIEW_MODE_DRAFTS) {
             holder.itemView.setOnClickListener {
                 val intent = Intent(context, NewPostActivity::class.java)
                 intent.putExtra(NewPostActivity.EXTRA_POST_TYPE, post.type)
@@ -230,6 +261,7 @@ class PostsAdapter(
         val unhideButton: Button = parentView.find(R.id.unhide_button)
         val menuIcon: ImageView = parentView.find(R.id.menu_icon)
         val starIcon: ImageView = parentView.find(R.id.user_star_icon)
+        val refreshIcon: ImageView = parentView.find(R.id.refresh_icon)
     }
 
     companion object {
@@ -237,5 +269,9 @@ class PostsAdapter(
         const val LANDSCAPE_VIEW_TYPE = 0
         const val PORTRAIT_VIEW_TYPE = 1
         const val TEXT_VIEW_TYPE = 2
+
+        const val VIEW_MODE_FAVORITES = 0
+        const val VIEW_MODE_DRAFTS = 1
+        const val VIEW_MODE_NORMAL = 2
     }
 }

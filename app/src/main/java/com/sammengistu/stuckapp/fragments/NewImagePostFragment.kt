@@ -54,20 +54,12 @@ class NewImagePostFragment : BaseNewPostFragment() {
 
         if (arguments != null) {
             val postId = arguments!!.getLong(EXTRA_POST_ID)
-
-//            doAsync {
-//                val draftPost = PostAccess.getPost(activity!!, postId)
-//                uiThread {
-//                    if (draftPost != null) {
-//                        updateImagesFromDraft(draftPost)
-//                    }
-//                }
-//            }
             val liveDraftPost = InjectorUtils.getPostRepository(activity as Context).getPost(postId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
                 if (draftList.isNotEmpty()) {
                     draft = draftList[0]
+                    updateViewFromDraft(draftList[0])
                     updateImagesFromDraft(draft!!)
                 }
             }

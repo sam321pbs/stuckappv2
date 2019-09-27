@@ -28,7 +28,6 @@ data class UserModel(
             Pair("gender", gender)
         )
     }
-    
 
     fun isEqualTo(updateUser: UserModel): Boolean {
         return username == updateUser.username &&
