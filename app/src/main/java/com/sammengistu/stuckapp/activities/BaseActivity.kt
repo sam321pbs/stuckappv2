@@ -3,12 +3,14 @@ package com.sammengistu.stuckapp.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.BaseFragment
 
 abstract class BaseActivity : AppCompatActivity() {
 
     private val mapFragmentTagsToCommits = HashMap<String, Int>()
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     abstract fun getLayoutId(): Int
 

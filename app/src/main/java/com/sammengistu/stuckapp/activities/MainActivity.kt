@@ -22,8 +22,10 @@ import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
+import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
+import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import com.sammengistu.stuckfirebase.data.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_layout.*
@@ -92,8 +94,22 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_profile -> addFragment(ProfileFragment.newInstance(false))
-            R.id.action_stats -> addFragment(StatsFragment())
-            R.id.action_drafts -> addFragment(DraftListFragment())
+            R.id.action_stats -> {
+                AnalyticsHelper.postSelectEvent(
+                    this,
+                    AnalyticEventType.CLICK,
+                    "view_stats_fragment"
+                )
+                addFragment(StatsFragment())
+            }
+            R.id.action_drafts -> {
+                AnalyticsHelper.postSelectEvent(
+                    this,
+                    AnalyticEventType.CLICK,
+                    "view_drafts_fragment"
+                )
+                addFragment(DraftListFragment())
+            }
             R.id.action_favorite -> Toast.makeText(
                 this,
                 "Clicked Favorites",

@@ -19,10 +19,12 @@ import com.sammengistu.stuckapp.events.PrivacySelectedEvent
 import com.sammengistu.stuckapp.utils.ImageStorageUtils
 import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
+import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
+import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.data.PostModel
 import com.sammengistu.stuckfirebase.data.UserModel
@@ -255,6 +257,11 @@ abstract class BaseNewPostFragment : BaseFragment() {
         return object : FirebaseItemAccess.OnItemCreated<PostModel> {
             override fun onSuccess(item: PostModel) {
                 handleItemCreated("Post has been created")
+                AnalyticsHelper.postSelectEvent(
+                    activity!!,
+                    AnalyticEventType.CREATE,
+                    "created_post"
+                )
             }
 
             override fun onFailed(e: java.lang.Exception) {

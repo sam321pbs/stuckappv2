@@ -8,6 +8,8 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.CategoriesAdapter
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
+import com.sammengistu.stuckfirebase.AnalyticsHelper
+import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import kotlinx.android.synthetic.main.basic_list_view.*
 
 class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
@@ -16,7 +18,14 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
 
     override fun getFragmentTag() = TAG
 
-    override fun onItemClicked(item: String) = addFragment(CategoriesListFragment.newInstance(item))
+    override fun onItemClicked(item: String) {
+        AnalyticsHelper.postSelectEvent(
+            activity!!,
+            AnalyticEventType.CLICK,
+            "category_${item.toLowerCase()}"
+        )
+        addFragment(CategoriesListFragment.newInstance(item))
+    }
 
     override fun getLayoutId() = R.layout.basic_list_view
 
