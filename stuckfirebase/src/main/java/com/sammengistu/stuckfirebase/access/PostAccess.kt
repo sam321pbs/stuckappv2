@@ -3,11 +3,11 @@ package com.sammengistu.stuckfirebase.access
 import android.content.Context
 import android.graphics.Bitmap
 import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckapp.data.DraftPostModel
-import com.sammengistu.stuckapp.data.PostRepository
 import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.constants.POSTS
-import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.database.DraftPostModel
+import com.sammengistu.stuckfirebase.database.PostRepository
+import com.sammengistu.stuckfirebase.models.PostModel
 
 class PostAccess: FirebaseItemAccess<PostModel>() {
     override fun getModelClass() = PostModel::class.java

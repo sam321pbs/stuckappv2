@@ -5,7 +5,7 @@ import android.view.View
 import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
-import com.sammengistu.stuckfirebase.data.PostModel
+import com.sammengistu.stuckfirebase.models.PostModel
 import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 import kotlinx.android.synthetic.main.fragment_post_list.*
 

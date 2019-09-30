@@ -7,7 +7,7 @@ import com.sammengistu.stuckfirebase.NotificationFactory
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.constants.KEY_TARGET_REF
-import com.sammengistu.stuckfirebase.data.DeviceTokenModel
+import com.sammengistu.stuckfirebase.models.DeviceTokenModel
 
 class FbMessagingService : FirebaseMessagingService() {
 

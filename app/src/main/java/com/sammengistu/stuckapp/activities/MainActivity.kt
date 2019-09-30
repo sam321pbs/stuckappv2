@@ -20,13 +20,14 @@ import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.*
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
+import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.greenrobot.eventbus.EventBus
@@ -61,6 +62,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 DeviceTokenAccess(user.ref).checkTokenExists(this)
             }
         }
+        HiddenItemsHelper(this)
         addFragment(HomeListFragment())
     }
 

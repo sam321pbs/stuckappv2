@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp.data
+package com.sammengistu.stuckfirebase.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

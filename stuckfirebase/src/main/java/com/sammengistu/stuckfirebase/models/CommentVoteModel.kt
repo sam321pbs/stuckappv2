@@ -1,4 +1,4 @@
-package com.sammengistu.stuckfirebase.data
+package com.sammengistu.stuckfirebase.models
 
 data class CommentVoteModel(
     val ownerId: String,

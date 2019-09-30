@@ -7,8 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckfirebase.data.PostModel
-import com.sammengistu.stuckfirebase.data.UserVoteModel
+import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.UserVoteModel
 import org.jetbrains.anko.centerVertically
 
 class VotableChoiceView(

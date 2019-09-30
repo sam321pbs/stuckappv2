@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp.data
+package com.sammengistu.stuckfirebase.database
 
 class PostRepository(val dao: PostDao) {
 
@@ -18,7 +18,8 @@ class PostRepository(val dao: PostDao) {
 
         fun getInstance(postDao: PostDao) =
             instance ?: synchronized(this) {
-                instance ?: PostRepository(postDao).also { instance = it }
+                instance
+                    ?: PostRepository(postDao).also { instance = it }
             }
     }
 }

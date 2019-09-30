@@ -11,21 +11,21 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
-import com.sammengistu.stuckapp.data.DraftPostModel
 import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
-import com.sammengistu.stuckapp.utils.InjectorUtils
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.data.PostModel
-import com.sammengistu.stuckfirebase.data.StarPostModel
+import com.sammengistu.stuckfirebase.database.DraftPostModel
+import com.sammengistu.stuckfirebase.database.InjectorUtils
+import com.sammengistu.stuckfirebase.database.viewmodels.PostListViewModel
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
-import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
+import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.StarPostModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -40,7 +40,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
     private var lastCreatedAt: Any? = 0L
 
     private val listViewModel: PostListViewModel by viewModels {
-        InjectorUtils.providePostListViewModelFactory(requireContext())
+        InjectorUtils.provideDraftPostListFactory(requireContext())
     }
 
     abstract fun getType(): String

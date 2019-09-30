@@ -3,8 +3,8 @@ package com.sammengistu.stuckapp.collections
 import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.data.PostModel
-import com.sammengistu.stuckfirebase.data.StarPostModel
+import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.StarPostModel
 import org.greenrobot.eventbus.EventBus
 
 class UserStarredCollection {

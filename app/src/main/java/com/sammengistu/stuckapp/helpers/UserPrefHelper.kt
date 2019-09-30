@@ -2,7 +2,7 @@ package com.sammengistu.stuckapp.helpers
 
 import android.content.Context
 import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.UserModel
 
 class UserPrefHelper {
     companion object {

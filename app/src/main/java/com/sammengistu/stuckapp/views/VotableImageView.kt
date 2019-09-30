@@ -13,8 +13,8 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.helpers.ViewHelper
 import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckfirebase.data.PostModel
-import com.sammengistu.stuckfirebase.data.UserVoteModel
+import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.UserVoteModel
 import com.squareup.picasso.Picasso
 import java.io.File
 

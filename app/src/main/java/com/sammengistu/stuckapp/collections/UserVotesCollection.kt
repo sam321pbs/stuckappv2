@@ -3,7 +3,7 @@ package com.sammengistu.stuckapp.collections
 import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
-import com.sammengistu.stuckfirebase.data.UserVoteModel
+import com.sammengistu.stuckfirebase.models.UserVoteModel
 import org.greenrobot.eventbus.EventBus
 
 class UserVotesCollection {

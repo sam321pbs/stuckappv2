@@ -1,4 +1,4 @@
-package com.sammengistu.stuckapp.data
+package com.sammengistu.stuckfirebase.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
@@ -10,10 +10,6 @@ interface PostDao {
 
     @Query("SELECT * FROM posts WHERE postId = :id")
     fun getPost(id: Long): LiveData<List<DraftPostModel>>
-
-    // todo: some reason it does not work
-//    @Query("SELECT * FROM posts WHERE postId = :id")
-//    fun getPost(id: Long): LiveData<DraftPostModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPost(post: DraftPostModel)

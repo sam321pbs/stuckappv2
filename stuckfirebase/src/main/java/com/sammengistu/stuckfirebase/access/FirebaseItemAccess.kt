@@ -7,7 +7,7 @@ import com.sammengistu.stuckfirebase.BuildConfig
 import com.sammengistu.stuckfirebase.constants.FirebaseConstants
 import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.constants.USERS
-import com.sammengistu.stuckfirebase.data.FirebaseItem
+import com.sammengistu.stuckfirebase.models.FirebaseItem
 import java.lang.ref.WeakReference
 
 abstract class FirebaseItemAccess<T : FirebaseItem> {

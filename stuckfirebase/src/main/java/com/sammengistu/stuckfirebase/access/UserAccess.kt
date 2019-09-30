@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import com.google.firebase.firestore.CollectionReference
 import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.constants.USERS
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.UserModel
 
 class UserAccess : FirebaseItemAccess<UserModel>() {
     override fun getCollectionRef(): CollectionReference {

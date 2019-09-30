@@ -1,4 +1,4 @@
-package com.sammengistu.stuckfirebase.data
+package com.sammengistu.stuckfirebase.models
 
 class StarPostModel(
     ownerId: String,

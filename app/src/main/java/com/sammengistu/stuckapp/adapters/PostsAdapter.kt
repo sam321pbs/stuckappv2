@@ -16,11 +16,11 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
-import com.sammengistu.stuckapp.collections.HiddenPostsCollection
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
+import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.*
@@ -29,9 +29,11 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.data.PostModel
-import com.sammengistu.stuckfirebase.data.StarPostModel
-import com.sammengistu.stuckfirebase.data.UserVoteModel
+import com.sammengistu.stuckfirebase.database.access.HiddenItemsAccess
+import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.StarPostModel
+import com.sammengistu.stuckfirebase.models.UserVoteModel
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 
 
@@ -147,14 +149,17 @@ class PostsAdapter(
         post: PostModel,
         holder: PostViewHolder
     ) {
-        if (HiddenPostsCollection.containesRef(post.ref)) {
+        if (HiddenItemsHelper.containesRef(post.ref)) {
             holder.questionView.visibility = View.GONE
             holder.choiceContainer.visibility = View.GONE
             holder.postInfo.visibility = View.GONE
             holder.unhideButton.visibility = View.VISIBLE
             holder.unhideButton.setOnClickListener {
-                HiddenPostsCollection.removeRef(post.ref)
-                notifyDataSetChanged()
+                doAsync {
+                    val itemId = HiddenItemsHelper.getItem(post.ref)?._id
+                    if (itemId != null)
+                        HiddenItemsAccess(context).deleteItem(itemId)
+                }
             }
         } else {
             holder.questionView.visibility = View.VISIBLE

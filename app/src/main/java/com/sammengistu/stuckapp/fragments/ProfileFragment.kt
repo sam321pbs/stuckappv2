@@ -23,7 +23,7 @@ import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.greenrobot.eventbus.EventBus
 

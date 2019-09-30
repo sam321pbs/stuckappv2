@@ -14,9 +14,9 @@ import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
-import com.sammengistu.stuckfirebase.data.CommentModel
-import com.sammengistu.stuckfirebase.data.CommentVoteModel
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.CommentModel
+import com.sammengistu.stuckfirebase.models.CommentVoteModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import org.jetbrains.anko.find
 
 

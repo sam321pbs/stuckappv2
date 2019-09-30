@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemsRetrieved
 import com.sammengistu.stuckfirebase.access.UserAccess
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.UserModel
 
 class UserHelper {
     companion object {

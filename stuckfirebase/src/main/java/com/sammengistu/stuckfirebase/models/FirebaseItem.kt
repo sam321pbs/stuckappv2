@@ -1,4 +1,4 @@
-package com.sammengistu.stuckfirebase.data
+package com.sammengistu.stuckfirebase.models
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Exclude

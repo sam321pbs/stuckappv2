@@ -1,7 +1,7 @@
 package com.sammengistu.stuckfirebase.access
 
 import com.google.firebase.firestore.CollectionReference
-import com.sammengistu.stuckfirebase.data.FirebaseItem
+import com.sammengistu.stuckfirebase.models.FirebaseItem
 
 abstract class FirebaseSubPostItemAccess<T : FirebaseItem>(private val postId: String) :
     FirebaseItemAccess<T>() {

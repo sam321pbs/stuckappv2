@@ -5,8 +5,8 @@ import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.constants.DEVICE_TOKENS
-import com.sammengistu.stuckfirebase.data.DeviceTokenModel
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.DeviceTokenModel
+import com.sammengistu.stuckfirebase.models.UserModel
 
 
 class DeviceTokenAccess(private val userRef: String) :

@@ -9,9 +9,9 @@ import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.NewPostActivity
-import com.sammengistu.stuckapp.data.DraftPostModel
+import com.sammengistu.stuckfirebase.database.DraftPostModel
 import com.sammengistu.stuckapp.events.SaveDraftEvent
-import com.sammengistu.stuckapp.utils.InjectorUtils
+import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
@@ -57,7 +57,7 @@ class NewTextPostFragment : BaseNewPostFragment() {
 //                }
 //            }
 
-            val liveDraftPost = InjectorUtils.getPostRepository(activity as Context).getPost(postId)
+            val liveDraftPost = InjectorUtils.getDraftPostRepository(activity as Context).getPost(postId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
                 if (draftList.isNotEmpty()) {

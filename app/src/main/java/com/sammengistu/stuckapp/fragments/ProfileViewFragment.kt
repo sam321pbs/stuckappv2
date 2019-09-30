@@ -10,7 +10,7 @@ import com.sammengistu.stuckapp.views.StatCardView
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.fragment_profile_view.*
 import kotlinx.android.synthetic.main.fragment_stats.*
 

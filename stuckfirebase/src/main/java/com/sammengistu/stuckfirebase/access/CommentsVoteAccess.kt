@@ -2,7 +2,7 @@ package com.sammengistu.stuckfirebase.access
 
 import com.google.firebase.firestore.CollectionReference
 import com.sammengistu.stuckfirebase.constants.COMMENT_VOTES
-import com.sammengistu.stuckfirebase.data.CommentVoteModel
+import com.sammengistu.stuckfirebase.models.CommentVoteModel
 
 class CommentsVoteAccess : FirebaseItemAccess<CommentVoteModel>() {
 

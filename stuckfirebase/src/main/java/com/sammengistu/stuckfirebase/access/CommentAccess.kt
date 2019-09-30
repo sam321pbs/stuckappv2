@@ -2,7 +2,7 @@ package com.sammengistu.stuckfirebase.access
 
 import com.google.firebase.firestore.CollectionReference
 import com.sammengistu.stuckfirebase.constants.POST_COMMENTS
-import com.sammengistu.stuckfirebase.data.CommentModel
+import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
 import org.greenrobot.eventbus.EventBus
 

@@ -18,9 +18,9 @@ import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.CommentAccess
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.data.CommentModel
-import com.sammengistu.stuckfirebase.data.CommentVoteModel
-import com.sammengistu.stuckfirebase.data.UserModel
+import com.sammengistu.stuckfirebase.models.CommentModel
+import com.sammengistu.stuckfirebase.models.CommentVoteModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.compose_area.*
 import kotlinx.android.synthetic.main.fragment_comments.*
 

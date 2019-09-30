@@ -1,4 +1,4 @@
-package com.sammengistu.stuckfirebase.data
+package com.sammengistu.stuckfirebase.models
 
 class ReportModel(
     val reason: String,
