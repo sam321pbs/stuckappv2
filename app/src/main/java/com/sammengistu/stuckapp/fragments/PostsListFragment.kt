@@ -122,7 +122,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         }
 
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = PostsAdapter(this.context!!, viewMode, mBottomSheetMenu)
+        viewAdapter = PostsAdapter(this.context!!, viewMode, bottomSheetMenu)
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager

@@ -21,14 +21,21 @@
             android:scrollbars="vertical" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <include layout="@layout/bottom_sheet_post_view" />
-
     <com.sammengistu.stuckapp.views.VerticalIconToTextView
         android:id="@+id/empty_list_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_image_grey_500_24dp"
         android:layout_gravity="center"
+        android:visibility="gone"
         custom:verticalIconSrc="@mipmap/emoticon_sad_outline"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/invisible_view"/>
+
+    <include layout="@layout/bottom_sheet_post_view" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
