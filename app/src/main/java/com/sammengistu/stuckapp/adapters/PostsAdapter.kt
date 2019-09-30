@@ -20,6 +20,7 @@ import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
+import com.sammengistu.stuckapp.helpers.AnimationHelper
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.utils.StringUtils
@@ -96,6 +97,7 @@ class PostsAdapter(
         if (viewMode == VIEW_MODE_FAVORITES && post is StarPostModel) {
             holder.refreshIcon.visibility = View.VISIBLE
             holder.refreshIcon.setOnClickListener {
+                AnimationHelper.startRotateAnimation(it)
                 PostAccess().getItem(post.postRef,
                     object : FirebaseItemAccess.OnItemRetrieved<PostModel> {
                         override fun onSuccess(item: PostModel) {
