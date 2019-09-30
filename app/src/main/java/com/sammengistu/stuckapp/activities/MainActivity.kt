@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
@@ -14,9 +15,11 @@ import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.*
+import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
@@ -26,8 +29,10 @@ import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
+import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -38,10 +43,21 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
+    private lateinit var bottomSheetHelper: BottomSheetHelper
+    private lateinit var invisibleCover: View
 
     @Subscribe
     fun onUserProfileUpdated(event: UserUpdatedEvent) {
         UserHelper.getCurrentUser{setupNavHeader(it)}
+    }
+
+    @Subscribe
+    fun onChangeBottomSheet(event: ChangeBottomSheetStateEvent) {
+        if (event.show && event.post != null) {
+            showBottomSheet(event.post)
+        } else {
+            hideBottomSheet()
+        }
     }
 
     override fun getLayoutId() = R.layout.activity_main
@@ -61,6 +77,10 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 DeviceTokenAccess(user.ref).checkTokenExists(this)
             }
         }
+
+        bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
+        invisibleCover = invisible_view
+        invisibleCover.setOnClickListener { hideBottomSheet() }
         HiddenItemsHelper(this)
         addFragment(HomeListFragment())
     }
@@ -121,6 +141,20 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         }
         drawer.closeDrawers()
         return true
+    }
+
+    fun showBottomSheet(post: PostModel) {
+        if (invisibleCover != null) {
+            invisibleCover.visibility = View.VISIBLE
+        }
+        bottomSheetHelper.showMenu(post)
+    }
+
+    fun hideBottomSheet() {
+        if (invisibleCover != null) {
+            invisibleCover.visibility = View.GONE
+        }
+        bottomSheetHelper.hideMenu()
     }
 
     fun hideNavBar() {

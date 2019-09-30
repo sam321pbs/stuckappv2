@@ -7,7 +7,6 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.CommentsActivity
-import com.sammengistu.stuckapp.adapters.NotifyAdapter
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.constants.ReportReasons
 import com.sammengistu.stuckapp.events.DataChangedEvent
@@ -30,10 +29,8 @@ import org.jetbrains.anko.uiThread
 
 class BottomSheetHelper(
     private val context: Context,
-    private val bottomSheetLL: LinearLayout,
-    private val notifyAdapter: NotifyAdapter
-) :
-    BottomSheetMenu {
+    private val bottomSheetLL: LinearLayout
+) {
 
     val TAG = BottomSheetHelper::class.java.simpleName
 
@@ -47,13 +44,13 @@ class BottomSheetHelper(
         addClickListenersToViews()
     }
 
-    override fun showMenu(post: PostModel) {
+    fun showMenu(post: PostModel) {
         this.post = post
         updateBottomSheet()
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    override fun hideMenu() {
+    fun hideMenu() {
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
@@ -213,7 +210,7 @@ class BottomSheetHelper(
                         UserAccess().incrementTotalStars(item.ownerRef)
                         UserStarredCollection.addStarPostToMap(item)
                         post!!.totalStars = post!!.totalStars + 1
-                        notifyAdapter.onDataUpdated()
+                        EventBus.getDefault().post(DataChangedEvent())
                         Toast.makeText(context, "Added to favorites!", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -235,7 +232,7 @@ class BottomSheetHelper(
                         UserAccess().decrementTotalStars(post!!.ownerRef)
                         UserStarredCollection.removeStarPostFromMap(post!!)
                         post!!.totalStars = post!!.totalStars - 1
-                        notifyAdapter.onDataUpdated()
+                        EventBus.getDefault().post(DataChangedEvent())
                         Toast.makeText(context, "Removed from favorites!", Toast.LENGTH_SHORT)
                             .show()
                     }

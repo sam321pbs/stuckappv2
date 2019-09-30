@@ -15,10 +15,10 @@ import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity
-import com.sammengistu.stuckapp.bottomsheet.BottomSheetMenu
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
+import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.helpers.AnimationHelper
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
@@ -34,14 +34,14 @@ import com.sammengistu.stuckfirebase.database.access.HiddenItemsAccess
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 
 
 class PostsAdapter(
     private val context: Context,
-    private val viewMode: Int,
-    private val bottomSheetMenu: BottomSheetMenu
+    private val viewMode: Int
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<PostModel>()
 
@@ -78,7 +78,9 @@ class PostsAdapter(
         holder.voteTotalView.setText(post.getTotalVotes().toString())
         holder.starTotalView.setText(post.totalStars.toString())
         holder.categoriesView.setText(StringUtils.capitilizeFirstLetter(post.category))
-        holder.menuIcon.setOnClickListener { bottomSheetMenu.showMenu(post) }
+        holder.menuIcon.setOnClickListener {
+            EventBus.getDefault().post(ChangeBottomSheetStateEvent(true, post))
+        }
 
         val userVote = UserVotesCollection.getVoteForPost(post.ref)
         if (holder is PostTextViewHolder) {

@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
-abstract class PostsListFragment : BasePostListsFragment() {
+abstract class PostsListFragment : BaseFragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: PostsAdapter
@@ -88,7 +88,6 @@ abstract class PostsListFragment : BasePostListsFragment() {
         setupRecyclerView()
         setupSwipeToRefresh()
         showEmptyMessage(true)
-        hideMenu()
         EventBus.getDefault().register(this)
         if (AssetImageUtils.isLoaded) {
             refreshAdapter(viewAdapter)
@@ -100,7 +99,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onDataUpdated() {
+    fun onDataUpdated() {
         viewAdapter.notifyDataSetChanged()
     }
 
@@ -122,7 +121,7 @@ abstract class PostsListFragment : BasePostListsFragment() {
         }
 
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = PostsAdapter(this.context!!, viewMode, bottomSheetMenu)
+        viewAdapter = PostsAdapter(this.context!!, viewMode)
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
