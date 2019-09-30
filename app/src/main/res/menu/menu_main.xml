@@ -3,6 +3,11 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.sammengistu.stuckapp.activities.MainActivity">
 
+    <item android:id="@+id/action_home"
+        android:title="Home"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+
     <item android:id="@+id/action_profile"
         android:title="Profile"
         android:orderInCategory="100"
@@ -18,10 +23,10 @@
         android:orderInCategory="100"
         app:showAsAction="never"/>
 
-    <item android:id="@+id/action_favorite"
-        android:title="Favorites"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
+<!--    <item android:id="@+id/action_favorite"-->
+<!--        android:title="Favorites"-->
+<!--        android:orderInCategory="100"-->
+<!--        app:showAsAction="never"/>-->
 
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"

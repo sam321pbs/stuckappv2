@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
@@ -95,6 +94,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_home -> addFragment(HomeListFragment())
             R.id.action_profile -> addFragment(ProfileFragment.newInstance(false))
             R.id.action_stats -> {
                 AnalyticsHelper.postSelectEvent(
@@ -112,11 +112,11 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 )
                 addFragment(DraftListFragment())
             }
-            R.id.action_favorite -> Toast.makeText(
-                this,
-                "Clicked Favorites",
-                Toast.LENGTH_SHORT
-            ).show()
+//            R.id.action_favorite -> Toast.makeText(
+//                this,
+//                "Clicked Favorites",
+//                Toast.LENGTH_SHORT
+//            ).show()
             R.id.action_settings -> addFragment(SettingsFragment())
         }
         drawer.closeDrawers()
