@@ -8,7 +8,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
 import com.sammengistu.stuckapp.AssetImageUtils
-import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
@@ -100,20 +99,6 @@ abstract class BaseNewPostFragment : BaseFragment() {
                 avatar_view.loadImage(user.avatar)
                 username.text = user.username
             }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (activity is NewPostActivity) {
-            (activity as NewPostActivity).showDraftIcon()
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (activity is NewPostActivity) {
-            (activity as NewPostActivity).hideDraftIcon()
         }
     }
 

@@ -3,6 +3,7 @@ package com.sammengistu.stuckapp.activities
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.Fragment
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.fragments.NewImagePostFragment
@@ -15,6 +16,7 @@ import org.greenrobot.eventbus.EventBus
 class NewPostActivity : LoggedInActivity() {
 
     private var draftIcon: MenuItem? = null
+    private var hideDraftIcon = false
 
     override fun getLayoutId(): Int {
         return R.layout.activity_base
@@ -40,6 +42,7 @@ class NewPostActivity : LoggedInActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.new_post_menu, menu)
         draftIcon = menu.findItem(R.id.save_draft)
+        if (hideDraftIcon) hideDraftIcon() else showDraftIcon()
         return true
     }
 
@@ -53,11 +56,26 @@ class NewPostActivity : LoggedInActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onFragmentChanged(topFragment: Fragment) {
+        super.onFragmentChanged(topFragment)
+        if (topFragment is NewPostTypeFragment) {
+            hideDraftIcon()
+        } else {
+            showDraftIcon()
+        }
+    }
+
     fun showDraftIcon() {
+        if (draftIcon == null) {
+            hideDraftIcon = false
+        }
         draftIcon?.isVisible = true
     }
 
     fun hideDraftIcon() {
+        if (draftIcon == null) {
+            hideDraftIcon = true
+        }
         draftIcon?.isVisible = false
     }
 
