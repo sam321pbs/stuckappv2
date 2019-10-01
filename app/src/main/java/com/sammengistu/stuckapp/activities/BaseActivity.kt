@@ -3,6 +3,7 @@ package com.sammengistu.stuckapp.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.BaseFragment
@@ -18,7 +19,12 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
         supportFragmentManager.addOnBackStackChangedListener {
-            updateTitle()
+            val manager = supportFragmentManager
+            val frag = manager.findFragmentById(R.id.fragment_container)
+            if (frag != null) {
+                onFragmentChanged(frag)
+                updateTitle(frag)
+            }
         }
     }
 
@@ -26,10 +32,13 @@ abstract class BaseActivity : AppCompatActivity() {
         val manager = supportFragmentManager
         if (manager.backStackEntryCount > 1) {
             super.onBackPressed()
-            updateTitle()
         } else {
             finish()
         }
+    }
+
+    open fun onFragmentChanged(topFragment: Fragment) {
+        // Override me
     }
 
     fun addFragment(fragment: BaseFragment) {
@@ -71,9 +80,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return false
     }
 
-    private fun updateTitle() {
-        val manager = supportFragmentManager
-        val frag = manager.findFragmentById(R.id.fragment_container)
+    private fun updateTitle(frag: Fragment) {
         if (frag is BaseFragment) {
             supportActionBar?.title = frag.getFragmentTitle()
         }

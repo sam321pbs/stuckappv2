@@ -5,11 +5,10 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.AssetImageUtils
@@ -143,26 +142,30 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         return true
     }
 
-    fun showBottomSheet(post: PostModel) {
+    override fun onFragmentChanged(topFragment: Fragment) {
+        super.onFragmentChanged(topFragment)
+        when (topFragment) {
+            is HomeListFragment -> navigationBar.selectView(navigationBar.homeView)
+            is CategoriesListFragment -> navigationBar.selectView(navigationBar.categoriesView)
+            is CategoriesFragment -> navigationBar.selectView(navigationBar.categoriesView)
+            is FavoritesListFragment -> navigationBar.selectView(navigationBar.favView)
+            is UserPostsListFragment -> navigationBar.selectView(navigationBar.myPostsView)
+            else -> navigationBar.deselectViews()
+        }
+    }
+
+    private fun showBottomSheet(post: PostModel) {
         if (invisibleCover != null) {
             invisibleCover.visibility = View.VISIBLE
         }
         bottomSheetHelper.showMenu(post)
     }
 
-    fun hideBottomSheet() {
+    private fun hideBottomSheet() {
         if (invisibleCover != null) {
             invisibleCover.visibility = View.GONE
         }
         bottomSheetHelper.hideMenu()
-    }
-
-    fun hideNavBar() {
-        navigationBar.visibility = GONE
-    }
-
-    fun showNavBar() {
-        navigationBar.visibility = VISIBLE
     }
 
     private fun setupDrawer() {

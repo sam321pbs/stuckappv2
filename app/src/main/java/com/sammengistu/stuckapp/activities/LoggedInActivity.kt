@@ -15,9 +15,4 @@ abstract class LoggedInActivity : BaseActivity(), FirebaseAuth.AuthStateListener
             launchSplashScreenActivity()
         }
     }
-
-    fun getFirebaseUserId(): String {
-        val user = FirebaseAuth.getInstance().currentUser
-        return user?.uid ?: ""
-    }
 }
