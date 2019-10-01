@@ -24,6 +24,7 @@ import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
+import com.sammengistu.stuckapp.views.VerticalIconToTextView
 import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
@@ -145,13 +146,21 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     override fun onFragmentChanged(topFragment: Fragment) {
         super.onFragmentChanged(topFragment)
         when (topFragment) {
-            is HomeListFragment -> navigationBar.selectView(navigationBar.homeView)
-            is CategoriesListFragment -> navigationBar.selectView(navigationBar.categoriesView)
-            is CategoriesFragment -> navigationBar.selectView(navigationBar.categoriesView)
-            is FavoritesListFragment -> navigationBar.selectView(navigationBar.favView)
-            is UserPostsListFragment -> navigationBar.selectView(navigationBar.myPostsView)
-            else -> navigationBar.deselectViews()
+            is HomeListFragment -> updateNavBar(navigationBar.homeView)
+            is CategoriesListFragment -> updateNavBar(navigationBar.categoriesView)
+            is CategoriesFragment -> updateNavBar(navigationBar.categoriesView)
+            is FavoritesListFragment -> updateNavBar(navigationBar.favView)
+            is UserPostsListFragment -> updateNavBar(navigationBar.myPostsView)
+            else -> {
+                navigationBar.deselectViews()
+                navigationBar.visibility = View.GONE
+            }
         }
+    }
+
+    private fun updateNavBar(view: VerticalIconToTextView) {
+        navigationBar.selectView(view)
+        navigationBar.visibility = View.VISIBLE
     }
 
     private fun showBottomSheet(post: PostModel) {
