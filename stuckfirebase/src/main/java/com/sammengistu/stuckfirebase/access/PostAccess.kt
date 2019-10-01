@@ -1,12 +1,8 @@
 package com.sammengistu.stuckfirebase.access
 
-import android.content.Context
 import android.graphics.Bitmap
-import com.sammengistu.stuckapp.data.AppDatabase
 import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.constants.POSTS
-import com.sammengistu.stuckfirebase.database.DraftPostModel
-import com.sammengistu.stuckfirebase.database.PostRepository
 import com.sammengistu.stuckfirebase.models.PostModel
 
 class PostAccess: FirebaseItemAccess<PostModel>() {
@@ -75,24 +71,5 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
                 listener.onFailed(exception)
             }
         })
-    }
-
-    companion object {
-        fun insertPost(context: Context, post: DraftPostModel) {
-            PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).insertPost(post)
-        }
-
-        fun getPost(context: Context, postId: Long) : DraftPostModel? {
-            return PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).getPost(postId).value?.get(0)
-        }
-
-        // todo this does not work
-        fun deletePost(context: Context, post: DraftPostModel) {
-            PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).deletePost(post)
-        }
-
-        fun deletePost(context: Context, postId: Long) {
-            PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).deletePost(postId)
-        }
     }
 }

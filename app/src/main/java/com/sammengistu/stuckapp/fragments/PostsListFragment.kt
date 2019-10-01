@@ -40,7 +40,8 @@ abstract class PostsListFragment : BaseFragment() {
     private var lastCreatedAt: Any? = 0L
 
     private val listViewModel: PostListViewModel by viewModels {
-        InjectorUtils.provideDraftPostListFactory(requireContext())
+        val ownerId = UserHelper.getFirebaseUserId()
+        InjectorUtils.provideDraftPostListFactory(requireContext(), ownerId)
     }
 
     abstract fun getType(): String

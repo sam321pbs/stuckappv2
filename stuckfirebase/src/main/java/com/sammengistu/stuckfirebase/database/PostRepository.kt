@@ -2,7 +2,7 @@ package com.sammengistu.stuckfirebase.database
 
 class PostRepository(val dao: PostDao) {
 
-    fun getAllPosts() = dao.getAllPosts()
+    fun getAllPosts(ownerId: String) = dao.getAllPosts(ownerId)
 
     fun getPost(id: Long) = dao.getPost(id)
 

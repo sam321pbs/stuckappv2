@@ -10,9 +10,9 @@ object InjectorUtils {
         return PostRepository.getInstance(AppDatabase.getInstance(context.applicationContext).postsDao())
     }
 
-    fun provideDraftPostListFactory(context: Context): PostListViewModelFactory {
+    fun provideDraftPostListFactory(context: Context, ownerId: String): PostListViewModelFactory {
         val repository = getDraftPostRepository(context)
-        return PostListViewModelFactory(repository)
+        return PostListViewModelFactory(repository, ownerId)
     }
 
     fun getHiddenItemsRepository(context: Context): HiddenItemsRepository {

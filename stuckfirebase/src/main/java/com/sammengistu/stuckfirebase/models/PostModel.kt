@@ -145,6 +145,8 @@ open class PostModel(
     fun toDraft(): DraftPostModel {
         return DraftPostModel(
             draftId,
+            ownerId,
+            ownerRef,
             question,
             privacy,
             category,

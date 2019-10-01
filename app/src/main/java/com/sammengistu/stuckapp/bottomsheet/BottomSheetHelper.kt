@@ -16,6 +16,7 @@ import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.*
 import com.sammengistu.stuckfirebase.database.HiddenItemModel
 import com.sammengistu.stuckfirebase.database.HiddenItemModel.Companion.TYPE_POST
+import com.sammengistu.stuckfirebase.database.access.DraftPostAccess
 import com.sammengistu.stuckfirebase.database.access.HiddenItemsAccess
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.ReportModel
@@ -281,7 +282,7 @@ class BottomSheetHelper(
     private fun deleteDraft(post: PostModel) {
         doAsync {
             try {
-                PostAccess.deletePost(context, post.draftId)
+                DraftPostAccess(context).deletePost(post.draftId)
                 uiThread { Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show() }
             } catch (e: Exception) {
                 ErrorNotifier.notifyError(context, TAG, "Error deleting post", e)

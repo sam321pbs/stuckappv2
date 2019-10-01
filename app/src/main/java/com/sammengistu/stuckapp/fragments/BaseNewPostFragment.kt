@@ -11,7 +11,6 @@ import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
-import com.sammengistu.stuckfirebase.database.DraftPostModel
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
 import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
@@ -26,6 +25,8 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import com.sammengistu.stuckfirebase.constants.PostType
+import com.sammengistu.stuckfirebase.database.DraftPostModel
+import com.sammengistu.stuckfirebase.database.access.DraftPostAccess
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
@@ -192,20 +193,22 @@ abstract class BaseNewPostFragment : BaseFragment() {
     }
 
     private fun saveAsDraft(type: PostType, data: Map<String, Any?>) {
-        val post = buildPost(null, type)
+        UserHelper.getCurrentUser { user ->
+            val post = buildPost(user, type)
 
-        if (data.containsKey(CHOICES_VIEW)) {
-            addChoicesToPost(data, post)
-        }
-
-        doAsync {
-            uiThread {
-                progress_bar.visibility = View.VISIBLE
+            if (data.containsKey(CHOICES_VIEW)) {
+                addChoicesToPost(data, post)
             }
-            saveImagesToLocalStorage(data, post)
-            PostAccess.insertPost(activity!!.applicationContext, post.toDraft())
-            uiThread {
-                handleItemCreated("Draft Saved!")
+
+            doAsync {
+                uiThread {
+                    progress_bar.visibility = View.VISIBLE
+                }
+                saveImagesToLocalStorage(data, post)
+                DraftPostAccess(activity!!).insertPost(post.toDraft())
+                uiThread {
+                    handleItemCreated("Draft Saved!")
+                }
             }
         }
     }
@@ -313,7 +316,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
         if (draft != null) {
             doAsync {
                 try {
-                    PostAccess.deletePost(context!!, draft!!.postId)
+                    DraftPostAccess(activity!!).deletePost(draft!!.postId)
                 } catch (e: Exception) {
                     ErrorNotifier.notifyError(context!!, TAG, "Error deleting post", e)
                 }

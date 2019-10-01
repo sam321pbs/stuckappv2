@@ -5,8 +5,8 @@ import androidx.room.*
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM posts ORDER BY postId")
-    fun getAllPosts(): LiveData<List<DraftPostModel>>
+    @Query("SELECT * FROM posts WHERE ownerId = :ownerId ORDER BY postId")
+    fun getAllPosts(ownerId: String): LiveData<List<DraftPostModel>>
 
     @Query("SELECT * FROM posts WHERE postId = :id")
     fun getPost(id: Long): LiveData<List<DraftPostModel>>

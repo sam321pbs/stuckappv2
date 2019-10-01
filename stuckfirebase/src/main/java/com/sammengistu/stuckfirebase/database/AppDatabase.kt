@@ -12,7 +12,7 @@ import com.sammengistu.stuckfirebase.database.HiddenItemModel
 import com.sammengistu.stuckfirebase.database.HiddenItemsDao
 import com.sammengistu.stuckfirebase.database.PostDao
 
-@Database(entities = [DraftPostModel::class, HiddenItemModel::class], version = 4, exportSchema = false)
+@Database(entities = [DraftPostModel::class, HiddenItemModel::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postsDao(): PostDao
     abstract fun hiddenItemsDao(): HiddenItemsDao
@@ -30,6 +30,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): AppDatabase {
 
+            val MIGRATION_3_4 = object : Migration(3, 4) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("ALTER TABLE posts ADD COLUMN ownerId TEXT DEFAULT 'N/A' NOT NULL")
+                    database.execSQL("ALTER TABLE posts ADD COLUMN ownerRef TEXT DEFAULT 'N/A' NOT NULL")
+                }
+            }
+
             val MIGRATION_2_3 = object : Migration(2, 3) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("ALTER TABLE posts ADD COLUMN privacy TEXT DEFAULT 'public' NOT NULL")
@@ -41,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
                 AppDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_2_3)
+                .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                 .fallbackToDestructiveMigration().build()
         }
     }

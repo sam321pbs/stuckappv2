@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sammengistu.stuckfirebase.database.PostRepository
 
-class PostListViewModelFactory(private val repository: PostRepository) : ViewModelProvider.NewInstanceFactory() {
+class PostListViewModelFactory(private val repository: PostRepository, private val ownerId: String) : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>) = PostListViewModel(repository) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>) = PostListViewModel(repository, ownerId) as T
 }
