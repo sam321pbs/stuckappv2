@@ -19,6 +19,7 @@ import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
+import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.helpers.AnimationHelper
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
@@ -31,6 +32,7 @@ import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.database.access.HiddenItemsAccess
+import com.sammengistu.stuckfirebase.exceptions.DocNotExistException
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
@@ -107,13 +109,21 @@ class PostsAdapter(
                             post.totalStars = item.totalStars
                             post.choices = item.choices
                             notifyDataSetChanged()
-                            StarPostAccess().updateItemInFB(post.ref, item.convertPostUpdatesToMap(), null)
+                            StarPostAccess().updateItemInFB(
+                                post.ref, item.convertPostUpdatesToMap(), null)
                         }
 
                         override fun onFailed(e: Exception) {
-                            ErrorNotifier.notifyError(context, TAG, "Error get latest data", e)
+                            if (e is DocNotExistException) {
+                                StarPostAccess().deleteItemInFb(post.ref)
+                                EventBus.getDefault().post(DeletedPostEvent(post.ref))
+                                ErrorNotifier.notifyError(
+                                    context, TAG, "Post has been deleted", e)
+                            } else {
+                                ErrorNotifier.notifyError(
+                                    context, TAG, "Error getting latest data", e)
+                            }
                         }
-
                     })
             }
         } else {
