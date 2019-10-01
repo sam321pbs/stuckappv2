@@ -1,6 +1,6 @@
 package com.sammengistu.stuckapp.collections
 
-import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
+import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.models.PostModel
@@ -20,7 +20,7 @@ class UserStarredCollection {
                             list
                         )
                         isInitialized = true
-                        EventBus.getDefault().post(UserStarsLoadedEvent())
+                        EventBus.getDefault().post(DataChangedEvent())
                     }
 
                     override fun onFailed(e: Exception) {
@@ -32,12 +32,12 @@ class UserStarredCollection {
         fun addNewList(list: List<StarPostModel>) {
             starMap.clear()
             convertStarredPostsToMap(list)
-            EventBus.getDefault().post(UserStarsLoadedEvent())
+            EventBus.getDefault().post(DataChangedEvent())
         }
 
         fun addStarPostToMap(starPost: StarPostModel) {
             starMap[starPost.postRef] = starPost
-            EventBus.getDefault().post(UserStarsLoadedEvent())
+            EventBus.getDefault().post(DataChangedEvent())
         }
 
         fun removeStarPostFromMap(post: PostModel) {
@@ -46,7 +46,7 @@ class UserStarredCollection {
                     post
                 )
             )
-            EventBus.getDefault().post(UserStarsLoadedEvent())
+            EventBus.getDefault().post(DataChangedEvent())
         }
 
         fun getStarPost(post: PostModel) = starMap[getRef(

@@ -10,6 +10,7 @@ import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.constants.ReportReasons
 import com.sammengistu.stuckapp.events.DataChangedEvent
+import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
@@ -254,29 +255,32 @@ class BottomSheetHelper(
                 .setMessage("Are you sure you want to delete this post?")
                 .setTitle("Delete Post")
                 .setPositiveButton("Delete") { _, _ ->
-                    if (post!!.ref.isNotBlank()) {
-                        PostAccess().deleteItemInFb(post!!.ref,
-                            object : FirebaseItemAccess.OnItemDeleted {
-                                override fun onSuccess() {
-                                    //Todo: hide post that was deleted
-                                    Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-
-                                override fun onFailed(e: Exception) {
-                                    ErrorNotifier.notifyError(context, "Delete Failed", TAG, e)
-                                }
-
-                            })
-                    } else {
-                        deleteDraft(post!!)
-                    }
+                    handleDeletePost()
                     hideMenu()
                 }
                 ?.setNegativeButton("Cancel", null)
             builder.show()
         }
         hideMenu()
+    }
+
+    private fun handleDeletePost() {
+        if (post!!.ref.isNotBlank()) {
+            PostAccess().deleteItemInFb(post!!.ref,
+                object : FirebaseItemAccess.OnItemDeleted {
+                    override fun onSuccess() {
+                        EventBus.getDefault().post(DeletedPostEvent(post!!.ref))
+                        Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+                    override fun onFailed(e: Exception) {
+                        ErrorNotifier.notifyError(context, "Delete Failed", TAG, e)
+                    }
+                })
+        } else {
+            deleteDraft(post!!)
+        }
     }
 
     private fun deleteDraft(post: PostModel) {

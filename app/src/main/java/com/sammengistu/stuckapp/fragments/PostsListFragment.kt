@@ -13,8 +13,7 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.adapters.PostsAdapter
 import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.DataChangedEvent
-import com.sammengistu.stuckapp.events.UserStarsLoadedEvent
-import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
+import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
@@ -48,23 +47,20 @@ abstract class PostsListFragment : BaseFragment() {
     abstract fun getEmptyMessage(): String
 
     @Subscribe
-    fun onUserVotesLoaded(event: UserVotesLoadedEvent) {
-        onDataUpdated()
-    }
+    fun onDataChanged(event: DataChangedEvent) = onDataUpdated()
 
     @Subscribe
-    fun onUserStarsLoaded(event: UserStarsLoadedEvent) {
-        onDataUpdated()
-    }
+    fun onAssetsLoaded(event: AssetsLoadedEvent) = refreshAdapter(viewAdapter)
 
     @Subscribe
-    fun onDataChanged(event: DataChangedEvent) {
-        onDataUpdated()
-    }
-
-    @Subscribe
-    fun onAssetsLoaded(event: AssetsLoadedEvent) {
-        refreshAdapter(viewAdapter)
+    fun onPostDeleted(event: DeletedPostEvent) {
+        for (post in postsList) {
+            if (post.ref == event.ref) {
+                postsList.remove(post)
+                onDataUpdated()
+                break
+            }
+        }
     }
 
     @Subscribe

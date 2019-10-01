@@ -1,6 +1,6 @@
 package com.sammengistu.stuckapp.collections
 
-import com.sammengistu.stuckapp.events.UserVotesLoadedEvent
+import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.models.UserVoteModel
@@ -19,7 +19,7 @@ class UserVotesCollection {
                             list
                         )
                         isInitialized = true
-                        EventBus.getDefault().post(UserVotesLoadedEvent())
+                        EventBus.getDefault().post(DataChangedEvent())
                     }
 
                     override fun onFailed(e: Exception) {

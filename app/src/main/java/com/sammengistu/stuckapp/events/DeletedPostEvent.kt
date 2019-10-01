@@ -1,3 +1,3 @@
 package com.sammengistu.stuckapp.events
 
-class UserStarsLoadedEvent
+class DeletedPostEvent(val ref: String)
