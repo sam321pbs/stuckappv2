@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StuckAppV2</string>
+    <string name="app_name">Stuck</string>
     <string name="action_settings">Settings</string>
     <string name="post_type_question">What kind of post do you want to make?</string>
     <string name="image">Image</string>

@@ -64,7 +64,7 @@ class VerticalIconToTextView(context: Context, attrs: AttributeSet?) : LinearLay
 
         val highlightParams = LayoutParams(LayoutParams.MATCH_PARENT, 7)
         highlightParams.gravity = Gravity.CENTER
-        highlightView.setBackgroundColor(context.resources.getColor(android.R.color.holo_blue_bright))
+        highlightView.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
         highlightView.layoutParams = highlightParams
 
         iconView.layoutParams = params

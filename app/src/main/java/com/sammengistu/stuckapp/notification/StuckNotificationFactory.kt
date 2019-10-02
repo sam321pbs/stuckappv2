@@ -70,7 +70,7 @@ class StuckNotificationFactory(context: Context) : NotificationFactory() {
                 if (data[KEY_TAG] == "comment" && UserPrefHelper.getCommentsPref(context, user) ||
                     data[KEY_TAG] == "vote" && UserPrefHelper.getVotesPref(context, user)) {
                     val builder = NotificationCompat.Builder(context, channelId)
-                        .setSmallIcon(R.drawable.superman)
+                        .setSmallIcon(R.mipmap.s_stuck_transparent)
                         .setContentTitle(data[KEY_TITLE])
                         .setContentText(data[KEY_BODY])
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)

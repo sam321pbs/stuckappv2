@@ -26,14 +26,6 @@ class SplashScreenActivity : BaseActivity() {
         launchNextActivity()
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         try_again_container.visibility = View.GONE
@@ -86,6 +78,8 @@ class SplashScreenActivity : BaseActivity() {
             AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setLogo(R.mipmap.ic_launcher_1_round)
+//                .setTheme(R.style.LoginTheme)
                 .build(),
             RC_SIGN_IN
         )
