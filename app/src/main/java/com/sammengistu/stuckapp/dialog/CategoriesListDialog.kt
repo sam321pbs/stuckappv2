@@ -6,13 +6,9 @@ import org.greenrobot.eventbus.EventBus
 
 
 class CategoriesListDialog : BasicListSelectorDialog() {
-    override fun getDialogTitle(): String {
-        return "Select a category"
-    }
+    override fun getDialogTitle() = "Select a category"
 
-    override fun getListDataSet(): List<String> {
-        return Categories.asListRemoveSortCategories()
-    }
+    override fun getListDataSet() = Categories.asListRemoveSortCategories()
 
     override fun onItemClicked(item: String) {
         EventBus.getDefault().post(CategorySelectedEvent(item))

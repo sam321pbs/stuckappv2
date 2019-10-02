@@ -24,8 +24,16 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_margin="10dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Avatar"
+                    android:id="@+id/text_add_avatar"
                     android:layout_gravity="center_horizontal"
-                    custom:avatarSrc="@drawable/ic_add_a_photo_blue_400_24dp" />
+                    android:padding="5dp"
+                    android:textColor="@android:color/holo_blue_dark"/>
 
                 <com.sammengistu.stuckapp.views.InputFormItemView
                     android:id="@+id/username_field"

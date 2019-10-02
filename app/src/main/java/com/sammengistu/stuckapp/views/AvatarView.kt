@@ -26,6 +26,8 @@ class AvatarView(context: Context, attrs: AttributeSet?) : CircleImageView(conte
         }
     }
 
+    constructor(context: Context) : this(context, null)
+
     fun loadImage(url: String) {
         if (url.isNotBlank()) {
             post {

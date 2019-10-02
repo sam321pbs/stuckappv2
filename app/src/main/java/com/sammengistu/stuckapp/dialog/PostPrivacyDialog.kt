@@ -5,13 +5,9 @@ import com.sammengistu.stuckapp.events.PrivacySelectedEvent
 import org.greenrobot.eventbus.EventBus
 
 class PostPrivacyDialog : BasicListSelectorDialog() {
-    override fun getDialogTitle(): String {
-        return "Select post Privacy"
-    }
+    override fun getDialogTitle() = "Select post Privacy"
 
-    override fun getListDataSet(): List<String> {
-        return PrivacyOptions.asList()
-    }
+    override fun getListDataSet() = PrivacyOptions.asList()
 
     override fun onItemClicked(item: String) {
         EventBus.getDefault().post(PrivacySelectedEvent(item))

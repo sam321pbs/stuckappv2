@@ -31,7 +31,7 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        RecyclerViewHelper.setupRecyclerView(
+        RecyclerViewHelper.setupWithLinearManager(
             activity!!, recycler_view,
             CategoriesAdapter(
                 this,

@@ -6,11 +6,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.OnItemClickListener
-import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.adapters.CategoriesAdapter
+import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 
 abstract class BasicListSelectorDialog : DialogFragment(), OnItemClickListener<String> {
+
     abstract fun getDialogTitle(): String
+
     abstract fun getListDataSet(): List<String>
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -20,7 +22,7 @@ abstract class BasicListSelectorDialog : DialogFragment(), OnItemClickListener<S
             val containerView =
                 inflater.inflate(com.sammengistu.stuckapp.R.layout.basic_list_view, null)
 
-            RecyclerViewHelper.setupRecyclerView(
+            RecyclerViewHelper.setupWithLinearManager(
                 activity!!,
                 containerView.findViewById(com.sammengistu.stuckapp.R.id.recycler_view),
                 CategoriesAdapter(

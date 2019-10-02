@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckapp.R
@@ -13,23 +15,27 @@ import com.sammengistu.stuckapp.activities.MainActivity
 import com.sammengistu.stuckapp.constants.Gender.Companion.FEMALE
 import com.sammengistu.stuckapp.constants.Gender.Companion.IGNORE
 import com.sammengistu.stuckapp.constants.Gender.Companion.MALE
+import com.sammengistu.stuckapp.dialog.GetImageFromDialog
+import com.sammengistu.stuckapp.events.GetPhotoFromEvent
+import com.sammengistu.stuckapp.events.OnAvatarSelected
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper.Companion.loadImageFromGallery
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.InputFormItemView
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 
 class ProfileFragment : BaseFragment() {
 
     lateinit var avatarView: AvatarView
+    lateinit var addAvatar: TextView
     lateinit var usernameField: InputFormItemView
     lateinit var bioField: InputFormItemView
     lateinit var nameField: InputFormItemView
@@ -45,9 +51,23 @@ class ProfileFragment : BaseFragment() {
     private var selectedGender: Int? = IGNORE
     private val formFieldsList = ArrayList<InputFormItemView>()
     private var createMode = false
-    private lateinit var arrayAgeGroup : Array<CharSequence>
-    private lateinit var arrayGender : Array<CharSequence>
+    private lateinit var arrayAgeGroup: Array<CharSequence>
+    private lateinit var arrayGender: Array<CharSequence>
 
+    @Subscribe
+    fun onAvatarSelected(event: OnAvatarSelected) {
+        avatarImage = event.bitmap
+        avatarView.setImageBitmap(avatarImage)
+    }
+
+    @Subscribe
+    fun getPhotoFrom(event: GetPhotoFromEvent) {
+        if (event.choice == GetImageFromDialog.listOfChoices[0]) {
+            loadImageFromGallery(this, REQUEST_LOAD_IMG_3)
+        } else {
+            addFragment(SelectAvatarFragment())
+        }
+    }
 
     override fun getFragmentTitle(): String = TITLE
 
@@ -64,8 +84,8 @@ class ProfileFragment : BaseFragment() {
         if (!createMode) {
             populateFields()
         }
-        avatarView.setOnClickListener {
-            loadImageFromGallery(this, REQUEST_LOAD_IMG_3)
+        addAvatar.setOnClickListener {
+            GetImageFromDialog().show(activity!!.supportFragmentManager, GetImageFromDialog.TAG)
         }
         createProfileButton.setOnClickListener {
             if (createMode) {
@@ -82,6 +102,20 @@ class ProfileFragment : BaseFragment() {
             REQUEST_LOAD_IMG_3 -> avatarImage =
                 LoadImageFromGalleryHelper.addImageToView(activity, avatarView, data)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        EventBus.getDefault().register(this)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        EventBus.getDefault().unregister(this)
     }
 
     private fun allFieldsValid(): Boolean {
@@ -103,6 +137,7 @@ class ProfileFragment : BaseFragment() {
             if (user != null) {
                 if (user.avatar.isNotBlank()) {
                     avatarView.loadImage(user.avatar)
+                    addAvatar.text = "Change Avatar"
                 }
                 usernameField.setText(user.username)
                 bioField.setText(user.bio)
@@ -137,22 +172,31 @@ class ProfileFragment : BaseFragment() {
         user: UserModel,
         updateUser: UserModel
     ) {
+        updateUser.ref = user.ref
         if (avatarImage != null) {
-            FbStorageHelper.uploadAvatar(avatarImage!!,
-                object : FbStorageHelper.UploadCompletionCallback {
-                    override fun onSuccess(url: String) {
-                        user.avatar = url
-                        sendUpdates(user, updateUser)
+            UserAccess().updateUserAndAvatar(avatarImage!!, updateUser,
+                object : FirebaseItemAccess.OnItemUpdated {
+                    override fun onSuccess() {
+                        if (activity != null) {
+                            progressBar.visibility = View.GONE
+                            UserHelper.currentUser = updateUser
+                            EventBus.getDefault().post(UserUpdatedEvent())
+                            Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT)
+                                .show()
+                            activity!!.supportFragmentManager.popBackStack()
+                        }
                     }
 
-                    override fun onFailed(exception: Exception) {
-                        progressBar.visibility = View.GONE
-                        ErrorNotifier.notifyError(
-                            activity!!,
-                            TAG,
-                            "Unable to update avatar",
-                            exception
-                        )
+                    override fun onFailed(e: Exception) {
+                        if (activity != null) {
+                            progressBar.visibility = View.GONE
+                            ErrorNotifier.notifyError(
+                                activity as Context,
+                                TAG,
+                                "Failed to update profile",
+                                e
+                            )
+                        }
                     }
                 })
         } else {
@@ -268,6 +312,7 @@ class ProfileFragment : BaseFragment() {
 
     private fun initViews() {
         avatarView = avatar_view
+        addAvatar = text_add_avatar
         usernameField = username_field
         bioField = description_field
         nameField = name_field
@@ -308,9 +353,16 @@ class ProfileFragment : BaseFragment() {
 
         ageGroupSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) { selectedAgeGroup = IGNORE }
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    selectedAgeGroup = IGNORE
+                }
 
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
                     selectedAgeGroup = convertPosToAgeGroup(position)
                 }
 
@@ -318,9 +370,16 @@ class ProfileFragment : BaseFragment() {
 
         genderSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) { selectedGender = IGNORE }
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    selectedGender = IGNORE
+                }
 
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
                     selectedGender = convertPosToGender(position)
                 }
             }
@@ -340,7 +399,7 @@ class ProfileFragment : BaseFragment() {
             5 -> 3140
             6 -> 4150
             7 -> 5160
-            8 ->  6100
+            8 -> 6100
             else -> IGNORE
         }
     }
@@ -359,7 +418,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun convertPosToGender(position: Int): Int {
-        return when(position) {
+        return when (position) {
             2 -> MALE
             3 -> FEMALE
             else -> IGNORE
@@ -367,7 +426,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun convertGenderToPos(gender: Int): Int {
-        return when(gender) {
+        return when (gender) {
             MALE -> 2
             FEMALE -> 3
             else -> 1

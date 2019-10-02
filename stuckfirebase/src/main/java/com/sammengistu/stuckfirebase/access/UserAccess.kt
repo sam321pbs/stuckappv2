@@ -46,6 +46,20 @@ class UserAccess : FirebaseItemAccess<UserModel>() {
             })
     }
 
+    fun updateUserAndAvatar(image: Bitmap, updateUserModel: UserModel, callback: OnItemUpdated) {
+        FbStorageHelper.uploadAvatar(image,
+            object : FbStorageHelper.UploadCompletionCallback {
+                override fun onSuccess(url: String) {
+                    updateUserModel.avatar = url
+                    updateItemInFB(updateUserModel.ref, updateUserModel.convertUserToMap(), callback)
+                }
+
+                override fun onFailed(exception: Exception) {
+                    callback.onFailed(exception)
+                }
+            })
+    }
+
     companion object {
         const val MADE_VOTES = "totalMadeVotes"
         const val RECEIVED_VOTES = "totalReceivedVotes"

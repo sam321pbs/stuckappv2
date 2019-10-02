@@ -53,7 +53,7 @@ class CommentsFragment : BaseFragment() {
         } else {
 
             commentsAdapter = CommentsAdapter(context!!, ArrayList())
-            RecyclerViewHelper.setupRecyclerView(
+            RecyclerViewHelper.setupWithLinearManager(
                 activity!!, recycler_view,
                 commentsAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>
             )
