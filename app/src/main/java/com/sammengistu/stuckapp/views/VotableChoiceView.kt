@@ -54,7 +54,7 @@ class VotableChoiceView(
         bulletParams.topMargin = 6
         bulletParams.bottomMargin = 6
         mBullet.id = View.generateViewId()
-        mBullet.setImageResource(R.drawable.gray_circle)
+        mBullet.setImageResource(R.drawable.circle_gray)
         mBullet.layoutParams = bulletParams
         addView(mBullet)
     }
@@ -67,7 +67,7 @@ class VotableChoiceView(
         votesParams.addRule(ALIGN_PARENT_END)
         mVotesText.layoutParams = votesParams
         mVotesText.gravity = Gravity.CENTER
-        mVotesText.setBackgroundResource(R.drawable.gray_circle)
+        mVotesText.setBackgroundResource(R.drawable.circle_gray)
         mVotesText.setPadding(5, 5, 5, 5)
         mVotesText.textSize = 15f
         setBackgroundColor(resources.getColor(R.color.white))

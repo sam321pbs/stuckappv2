@@ -11,6 +11,7 @@ import com.sammengistu.stuckapp.views.AvatarView
 class AvatarsAdapter(val context: Context,
                      val onItemClickListener: OnItemClickListener<Bitmap>)
     : RecyclerView.Adapter<AvatarsAdapter.AvatarViewHolder>() {
+
     private val listOfAvatars = ArrayList(AssetImageUtils.mapOfHeadShots.values)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AvatarViewHolder =

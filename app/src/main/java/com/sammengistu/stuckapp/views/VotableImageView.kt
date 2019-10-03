@@ -108,7 +108,7 @@ class VotableImageView(
         votesParams.addRule(ALIGN_PARENT_END)
         votesTextView.layoutParams = votesParams
         votesTextView.gravity = Gravity.CENTER
-        votesTextView.setBackgroundResource(R.drawable.gray_circle)
+        votesTextView.setBackgroundResource(R.drawable.circle_gray)
         votesTextView.setPadding(5, 5, 5, 5)
         votesTextView.textSize = 15f
         setTotal(choiceItem.third)
@@ -125,7 +125,7 @@ class VotableImageView(
         } else {
             votesTextView.visibility = View.VISIBLE
             if (choiceItem.first == userVote.voteItem) {
-                votesTextView.setBackgroundResource(R.drawable.green_circle)
+                votesTextView.setBackgroundResource(R.drawable.circle_green)
                 if (isUpdate) {
                     setTotal(choiceItem.third + 1)
                 }

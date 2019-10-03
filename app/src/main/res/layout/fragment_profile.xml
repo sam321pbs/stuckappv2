@@ -19,27 +19,48 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.sammengistu.stuckapp.views.AvatarView
-                    android:id="@+id/avatar_view"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center_horizontal" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add Avatar"
+                    android:layout_gravity="center_horizontal">
+
+                    <View
+                        android:layout_width="155dp"
+                        android:layout_height="155dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/circle_primary" />
+
+                    <View
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/circle_white" />
+
+                    <com.sammengistu.stuckapp.views.AvatarView
+                        android:id="@+id/avatar_view"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp" />
+
+                </FrameLayout>
+
+                <TextView
                     android:id="@+id/text_add_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:padding="5dp"
-                    android:textColor="@android:color/holo_blue_dark"/>
+                    android:text="Add Avatar"
+                    android:textColor="@android:color/holo_blue_dark" />
 
                 <com.sammengistu.stuckapp.views.InputFormItemView
                     android:id="@+id/username_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     custom:formItemHint="Enter Username"
+                    custom:formItemOptional="false"
+                    custom:formItemTag="Username"
                     custom:formItemTitle="Username" />
 
                 <com.sammengistu.stuckapp.views.InputFormItemView
@@ -47,79 +68,81 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     custom:formItemHint="Enter description"
-                    custom:formItemTitle="Description About You" />
+                    custom:formItemOptional="true"
+                    custom:formItemTag="Description"
+                    custom:formItemTitle="Description" />
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="About"
+                android:textSize="25sp" />
+
+            <com.sammengistu.stuckapp.views.InputFormItemView
+                android:id="@+id/name_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter Name"
+                custom:formItemOptional="false"
+                custom:formItemTag="Name"
+                custom:formItemTitle="Name" />
+
+            <com.sammengistu.stuckapp.views.InputFormItemView
+                android:id="@+id/occupation_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter Occupation"
+                custom:formItemOptional="true"
+                custom:formItemTag="Occupation"
+                custom:formItemTitle="Occupation" />
+
+            <com.sammengistu.stuckapp.views.InputFormItemView
+                android:id="@+id/education_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:formItemHint="Enter Education"
+                custom:formItemOptional="true"
+                custom:formItemTag="Education"
+                custom:formItemTitle="Education" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_margin="7dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="About You"
-                    android:textSize="25sp" />
+                    android:padding="5dp"
+                    android:text="Age Group" />
 
-                <com.sammengistu.stuckapp.views.InputFormItemView
-                    android:id="@+id/name_field"
+                <Spinner
+                    android:id="@+id/age_group_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="7dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="Gender" />
+
+                <Spinner
+                    android:id="@+id/gender_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    custom:formItemHint="Enter Full Name"
-                    custom:formItemTitle="Full Name" />
-
-                <com.sammengistu.stuckapp.views.InputFormItemView
-                    android:id="@+id/occupation_field"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    custom:formItemHint="Enter Occupation"
-                    custom:formItemTitle="Occupation" />
-
-                <com.sammengistu.stuckapp.views.InputFormItemView
-                    android:id="@+id/education_field"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    custom:formItemHint="Enter Education"
-                    custom:formItemTitle="Education" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="7dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Age Group"/>
-
-                    <Spinner
-                        android:id="@+id/age_group_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="7dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:text="Gender"/>
-
-                    <Spinner
-                        android:id="@+id/gender_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                    android:layout_marginBottom="10dp" />
             </LinearLayout>
 
             <Button
@@ -129,16 +152,17 @@
                 android:text="Create Profile" />
         </LinearLayout>
 
+        <!-- added the container so user cannot edit fields after clicking button-->
         <FrameLayout
+            android:id="@+id/progress_bar_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:id="@+id/progress_bar_container">
+            android:visibility="gone">
 
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
         </FrameLayout>
     </FrameLayout>
 </ScrollView>

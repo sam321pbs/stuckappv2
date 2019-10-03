@@ -3,7 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:id="@+id/compose_area_container">
+    android:id="@+id/compose_area_container"
+    android:padding="3dp">
+
+    <View android:layout_height="1dp"
+        android:layout_width="match_parent"/>
 
     <EditText
         android:layout_width="match_parent"

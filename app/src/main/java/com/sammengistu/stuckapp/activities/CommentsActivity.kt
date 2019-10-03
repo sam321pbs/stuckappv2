@@ -9,9 +9,7 @@ import kotlinx.android.synthetic.main.toolbar_layout.*
 
 class CommentsActivity : LoggedInActivity() {
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_base
-    }
+    override fun getLayoutId() = R.layout.activity_base
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

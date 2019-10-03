@@ -129,6 +129,15 @@ class ProfileFragment : BaseFragment() {
                 return false
             }
         }
+
+        if (avatarImage == null) {
+            Toast.makeText(
+                activity,
+                "Avatar is empty",
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
         return true
     }
 
@@ -326,10 +335,10 @@ class ProfileFragment : BaseFragment() {
         setupSpinners()
 
         formFieldsList.add(usernameField)
-        formFieldsList.add(bioField)
+//        formFieldsList.add(bioField)
         formFieldsList.add(nameField)
-        formFieldsList.add(occupationField)
-        formFieldsList.add(educationField)
+//        formFieldsList.add(occupationField)
+//        formFieldsList.add(educationField)
     }
 
     private fun setupSpinners() {

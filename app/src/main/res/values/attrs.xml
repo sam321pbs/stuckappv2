@@ -22,6 +22,8 @@
     <declare-styleable name="InputFormItemView">
         <attr name="formItemTitle" format="string" />
         <attr name="formItemHint" format="string" />
+        <attr name="formItemOptional" format="boolean" />
+        <attr name="formItemTag" format="string" />
     </declare-styleable>
 
     <declare-styleable name="DisplayFormItemView">
