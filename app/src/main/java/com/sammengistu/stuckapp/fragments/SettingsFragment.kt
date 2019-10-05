@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.collections.UserStarredCollection
+import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckfirebase.UserHelper
 import kotlinx.android.synthetic.main.fragment_settings.*
 
@@ -15,9 +17,7 @@ class SettingsFragment : BaseFragment() {
     lateinit var logoutItem: TextView
 
     override fun getLayoutId() = R.layout.fragment_settings
-
-    override fun getFragmentTag() = TAG
-
+    override fun getFragmentTag(): String = TAG
     override fun getFragmentTitle() = TITLE
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,7 +27,11 @@ class SettingsFragment : BaseFragment() {
         logoutItem = logout
         notificationItem.setOnClickListener { addFragment(NotificationSettings()) }
         deleteAccountItem.setOnClickListener { showDeleteAccountAlertDialog() }
-        logoutItem.setOnClickListener { UserHelper.logUserOut() }
+        logoutItem.setOnClickListener {
+            UserVotesCollection.clearList()
+            UserStarredCollection.clearList()
+            UserHelper.logUserOut()
+        }
     }
 
     private fun showDeleteAccountAlertDialog() {

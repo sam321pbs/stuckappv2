@@ -13,6 +13,7 @@ import com.sammengistu.stuckapp.adapters.AvatarsAdapter
 import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.OnAvatarSelected
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
+import com.sammengistu.stuckfirebase.ErrorNotifier
 import kotlinx.android.synthetic.main.fragment_select_avatar.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -58,6 +59,9 @@ class SelectAvatarFragment : BaseFragment(), OnItemClickListener<Bitmap> {
     }
 
     private fun setupRecyclerView() {
+        if (AssetImageUtils.mapOfHeadShots.isEmpty()) {
+            ErrorNotifier.notifyError(context, TAG, "Error loading avatars.")
+        }
         progress_bar.visibility = View.GONE
         recyclerView = recycler_view
         val adapter =

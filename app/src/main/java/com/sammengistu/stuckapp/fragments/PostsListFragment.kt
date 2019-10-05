@@ -47,7 +47,9 @@ abstract class PostsListFragment : BaseFragment() {
     abstract fun getEmptyMessage(): String
 
     @Subscribe
-    fun onDataChanged(event: DataChangedEvent) = onDataUpdated()
+    fun onDataChanged(event: DataChangedEvent) { onDataUpdated()
+        Log.d(TAG, "On data changed")
+    }
 
     @Subscribe
     fun onAssetsLoaded(event: AssetsLoadedEvent) = refreshAdapter(viewAdapter)

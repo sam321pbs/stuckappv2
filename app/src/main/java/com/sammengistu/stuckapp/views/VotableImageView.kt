@@ -102,7 +102,8 @@ class VotableImageView(
     }
 
     private fun buildVotesText() {
-        val votesParams = LayoutParams(80, 80)
+        val votesParams = LayoutParams(ViewHelper.convertDpToPixel(30F, context).toInt(),
+            ViewHelper.convertDpToPixel(30F, context).toInt())
         votesParams.marginEnd = 20
         votesParams.topMargin = 20
         votesParams.addRule(ALIGN_PARENT_END)
@@ -134,7 +135,7 @@ class VotableImageView(
     }
 
     private fun getParams(): ViewGroup.LayoutParams =
-        ViewGroup.LayoutParams(MATCH_PARENT, ViewHelper.convertDpToPixel(250F, context).toInt())
+        ViewGroup.LayoutParams(MATCH_PARENT, ViewHelper.convertDpToPixel(200F, context).toInt())
 
     companion object {
         val TAG = VotableImageView::class.java.simpleName

@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.helpers.ViewHelper
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
@@ -60,7 +61,9 @@ class VotableChoiceView(
     }
 
     private fun buildVotesText() {
-        val votesParams = LayoutParams(80, 80)
+        val votesParams = LayoutParams(
+            ViewHelper.convertDpToPixel(30F, context).toInt(),
+            ViewHelper.convertDpToPixel(30F, context).toInt())
         votesParams.centerVertically()
         votesParams.marginEnd = 20
         votesParams.addRule(START_OF, mBullet.id)

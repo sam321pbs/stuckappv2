@@ -29,9 +29,7 @@ class NewTextPostFragment : BaseNewPostFragment() {
     }
 
     override fun getFragmentTitle(): String = TITLE
-
     override fun getFragmentTag(): String = TAG
-
     override fun getLayoutId(): Int = R.layout.fragment_new_text_post
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

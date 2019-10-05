@@ -2,7 +2,7 @@ package com.sammengistu.stuckapp.fragments
 
 class FavoritesListFragment : PostsListFragment() {
 
-    override fun getEmptyMessage() = "No Favorites. Favorite a post to see it here."
+    override fun getEmptyMessage() = "No Favorites.\nFavorite a post to see it here."
 
     override fun getType(): String = TYPE_FAVORITE
 

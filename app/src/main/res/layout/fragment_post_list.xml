@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_post_list_container"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_post_list_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_to_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/swipe_to_refresh">
+        android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -25,9 +24,9 @@
         android:id="@+id/empty_list_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_image_grey_500_24dp"
         android:layout_gravity="center"
+        android:src="@drawable/ic_image_grey_500_24dp"
         android:visibility="gone"
-        custom:verticalIconSrc="@mipmap/emoticon_sad_outline"/>
+        custom:verticalIconSrc="@mipmap/emoticon_sad_outline" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

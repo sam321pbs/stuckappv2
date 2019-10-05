@@ -35,6 +35,7 @@ class StuckNavigationBar(context: Context, attrs: AttributeSet?) : LinearLayout(
         favView.setIcon(R.drawable.ic_star_blue_400_24dp)
         myPostsView.setIcon(R.drawable.ic_person_blue_400_24dp)
 
+
         val params = LayoutParams(0, LayoutParams.WRAP_CONTENT)
         params.gravity = Gravity.CENTER
         params.weight = 1f
@@ -44,6 +45,12 @@ class StuckNavigationBar(context: Context, attrs: AttributeSet?) : LinearLayout(
         createView.layoutParams = params
         favView.layoutParams = params
         myPostsView.layoutParams = params
+
+        homeView.hideText(true)
+        categoriesView.hideText(true)
+        createView.hideText(true)
+        favView.hideText(true)
+        myPostsView.hideText(true)
 
         homeView.setOnClickListener { getOnItemClicked(it as VerticalIconToTextView, HOME) }
         categoriesView.setOnClickListener { getOnItemClicked(it as VerticalIconToTextView, CATEGORIES) }

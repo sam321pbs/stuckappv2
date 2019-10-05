@@ -8,14 +8,14 @@
     <string name="navigation_drawer_open">Open</string>
 
     <string-array name="gender_array">
-        <item>Select One</item>
+        <item>Select</item>
         <item>Ignore</item>
         <item>Male</item>
         <item>Female</item>
     </string-array>
 
     <string-array name="age_group_array">
-        <item>Select One</item>
+        <item>Select</item>
         <item>Ignore</item>
         <item>&gt;18</item>
         <item>18–25</item>

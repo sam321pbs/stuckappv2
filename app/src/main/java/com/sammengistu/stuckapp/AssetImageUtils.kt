@@ -35,13 +35,14 @@ class AssetImageUtils {
         private fun loadImages(context: Context) {
             if (mapOfHeadShots.isEmpty()) {
                 val assetManager = context.assets
-                val directoryPath = "avatar_replacer/"
-                val list = assetManager.list(directoryPath)
+                val directoryName = "avatar_replacer"
+                val list = assetManager.list(directoryName)
                 if (list != null) {
-                    for (path in list) {
-                        val inputStream = assetManager.open(directoryPath + path)
+                    for (fileName in list) {
+                        val filePath = directoryName.plus("/").plus(fileName)
+                        val inputStream = assetManager.open(filePath)
                         val bitmap = BitmapFactory.decodeStream(inputStream)
-                        mapOfHeadShots[path] = bitmap
+                        mapOfHeadShots[filePath] = bitmap
                     }
                 } else {
                     ErrorNotifier.notifyError(context, "Assets were empty")

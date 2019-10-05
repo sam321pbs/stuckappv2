@@ -21,7 +21,7 @@ class UserPrefHelper {
 
         fun getVotesPref(context: Context, user: UserModel): Boolean {
             val pref = context.getSharedPreferences(NOTIFICATION_PREF, Context.MODE_PRIVATE)
-            return pref.getBoolean("${user.ref}$KEY_NOTIFICATION_VOTES", false)
+            return pref.getBoolean("${user.ref}$KEY_NOTIFICATION_VOTES", true)
         }
 
         fun addCommentsPref(context: Context, enabled: Boolean) {
@@ -35,7 +35,7 @@ class UserPrefHelper {
 
         fun getCommentsPref(context: Context, user: UserModel): Boolean {
             val pref = context.getSharedPreferences(NOTIFICATION_PREF, Context.MODE_PRIVATE)
-            return pref.getBoolean("${user.ref}$KEY_NOTIFICATION_COMMENTS", false)
+            return pref.getBoolean("${user.ref}$KEY_NOTIFICATION_COMMENTS", true)
         }
     }
 }

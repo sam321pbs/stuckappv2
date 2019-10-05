@@ -3,24 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:id="@+id/compose_area_container"
-    android:padding="3dp">
+    android:id="@+id/compose_area_container">
 
-    <View android:layout_height="1dp"
-        android:layout_width="match_parent"/>
+    <View android:layout_height="2dp"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"/>
 
-    <EditText
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_comment_edit_text"
-        android:hint="Type comment"
-        android:layout_toStartOf="@+id/send_button"/>
+        android:padding="3dp">
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_send_blue_400_24dp"
-        android:id="@+id/send_button"
-        android:layout_alignParentEnd="true"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_comment_edit_text"
+            android:layout_margin="2dp"
+            android:hint="Type comment"
+            android:layout_toStartOf="@+id/send_button"/>
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_send_blue_400_24dp"
+            android:id="@+id/send_button"
+            android:layout_centerInParent="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
 </RelativeLayout>

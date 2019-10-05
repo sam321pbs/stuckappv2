@@ -1,6 +1,8 @@
 package com.sammengistu.stuckapp.collections
 
+import android.util.Log
 import com.sammengistu.stuckapp.events.DataChangedEvent
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.models.PostModel
@@ -9,30 +11,31 @@ import org.greenrobot.eventbus.EventBus
 
 class UserStarredCollection {
     companion object {
-        private var isInitialized = false
+        const val UNLOADED = -1
+        const val LOADING = 0
+        const val LOADED = 1
+        private val TAG = UserStarredCollection::class.java.simpleName
         private val starMap = HashMap<String, StarPostModel>()
+        private var state = UNLOADED
 
         fun loadUserStars(userRef: String) {
+            if (state == LOADING || state == LOADED) return
+
+            state = LOADING
             StarPostAccess().getUsersStarredPosts(userRef,
                 object : FirebaseItemAccess.OnItemsRetrieved<StarPostModel> {
                     override fun onSuccess(list: List<StarPostModel>) {
-                        convertStarredPostsToMap(
-                            list
-                        )
-                        isInitialized = true
+                        Log.d(TAG, "Finished star load")
+                        convertStarredPostsToMap(list)
+                        state = LOADED
                         EventBus.getDefault().post(DataChangedEvent())
                     }
 
                     override fun onFailed(e: Exception) {
-                        TODO("Failed to get user votes")
+                        Log.e(TAG, "Error loading stars")
+                        state = UNLOADED
                     }
                 })
-        }
-
-        fun addNewList(list: List<StarPostModel>) {
-            starMap.clear()
-            convertStarredPostsToMap(list)
-            EventBus.getDefault().post(DataChangedEvent())
         }
 
         fun addStarPostToMap(starPost: StarPostModel) {
@@ -41,17 +44,27 @@ class UserStarredCollection {
         }
 
         fun removeStarPostFromMap(post: PostModel) {
-            starMap.remove(
-                getRef(
-                    post
-                )
-            )
+            starMap.remove(getRef(post))
             EventBus.getDefault().post(DataChangedEvent())
         }
 
-        fun getStarPost(post: PostModel) = starMap[getRef(
-            post
-        )]
+        fun getStarPost(post: PostModel): StarPostModel? {
+            reloadStars()
+            return starMap[getRef(post)]
+        }
+
+        fun clearList() { starMap.clear() }
+
+        fun reloadStars() {
+            if (state == UNLOADED) {
+                Log.d(TAG, "Reloading stars")
+                UserHelper.getCurrentUser {
+                    if (it != null) {
+                        loadUserStars(it.ref)
+                    }
+                }
+            }
+        }
 
         private fun getRef(post: PostModel) = if (post is StarPostModel) post.postRef else post.ref
 

@@ -38,6 +38,8 @@ class VerticalIconToTextView(context: Context, attrs: AttributeSet?) : LinearLay
         isSelected(false)
     }
 
+    fun hideText(hide: Boolean) { textView.visibility = if (hide) View.GONE else View.VISIBLE }
+
     fun setText(text: String) {
         textView.text = text
     }
@@ -64,15 +66,23 @@ class VerticalIconToTextView(context: Context, attrs: AttributeSet?) : LinearLay
 
         val highlightParams = LayoutParams(LayoutParams.MATCH_PARENT, 7)
         highlightParams.gravity = Gravity.CENTER
-        highlightView.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
+        highlightParams.bottomMargin = 10
         highlightView.layoutParams = highlightParams
+        highlightView.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
 
-        iconView.layoutParams = params
         textView.layoutParams = params
-
         textView.gravity = Gravity.CENTER
-        addView(iconView)
+
+        setupIconView()
         addView(textView)
         addView(highlightView)
+    }
+
+    fun setupIconView() {
+        val params = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        params.gravity = Gravity.CENTER
+        iconView.setPadding(10, 10, 10, 10)
+        iconView.layoutParams = params
+        addView(iconView)
     }
 }

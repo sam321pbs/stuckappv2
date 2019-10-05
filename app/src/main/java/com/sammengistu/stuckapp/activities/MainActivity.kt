@@ -95,6 +95,12 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         EventBus.getDefault().unregister(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        UserStarredCollection.reloadStars()
+        UserVotesCollection.reloadVotes()
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         toggle.syncState()

@@ -3,7 +3,6 @@ package com.sammengistu.stuckfirebase.access
 import android.util.Log
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.firestore.*
-import com.sammengistu.stuckfirebase.BuildConfig
 import com.sammengistu.stuckfirebase.constants.FirebaseConstants
 import com.sammengistu.stuckfirebase.constants.POSTS
 import com.sammengistu.stuckfirebase.constants.USERS
@@ -27,9 +26,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         getCollectionRef()
             .add(item)
             .addOnSuccessListener { documentReference ->
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "Snapshot added with ID: ${documentReference.id}")
-                }
+                Log.d(TAG, "Successfully created ${getModelClass().simpleName}")
                 item.ref = documentReference.id
                 onItemCreated(item)
             }
@@ -43,13 +40,14 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .add(item)
             .addOnSuccessListener {
                 if (it != null) {
+                    Log.d(TAG, "Successfully created ${getModelClass().simpleName}")
                     item.ref = it.id
                     listener.onSuccess(item)
                 }
             }
             .addOnFailureListener { e ->
                 listener.onFailed(e)
-                Log.e(TAG, "Error creating item", e)
+                Log.e(TAG, "Error creating ${getModelClass().simpleName}", e)
             }
     }
 
@@ -59,11 +57,11 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .update(updates)
             .addOnSuccessListener {
                 listener?.onSuccess()
-                Log.d(TAG, "Successful update")
+                Log.d(TAG, "Successful update of ${getModelClass().simpleName}")
             }
             .addOnFailureListener { e ->
                 listener?.onFailed(e)
-                Log.e(TAG, "Error updating item", e)
+                Log.e(TAG, "Error updating ${getModelClass().simpleName}", e)
             }
     }
 
@@ -72,10 +70,10 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .document(documentId)
             .delete()
             .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                Log.d(TAG, "${getModelClass().simpleName} successfully deleted!")
                 onItemDeleted()
             }
-            .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e) }
+            .addOnFailureListener { e -> Log.w(TAG, "Error deleting ${getModelClass().simpleName}", e) }
     }
 
     fun deleteItemInFb(documentId: String, listener: OnItemDeleted) {
@@ -84,12 +82,12 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .delete()
             .addOnSuccessListener {
                 listener.onSuccess()
-                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                Log.d(TAG, "${getModelClass().simpleName} successfully deleted!")
                 onItemDeleted()
             }
             .addOnFailureListener { e ->
                 listener.onFailed(e)
-                Log.w(TAG, "Error deleting document", e)
+                Log.w(TAG, "Error deleting ${getModelClass().simpleName}", e)
             }
     }
 
@@ -99,7 +97,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .get()
             .addOnSuccessListener(getDocumentSuccessListener(listener))
             .addOnFailureListener {
-                Log.e(TAG, "Failed to get post", it)
+                Log.e(TAG, "Failed to get ${getModelClass().simpleName}", it)
                 listener.onFailed(it)
             }
     }
@@ -111,7 +109,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .get()
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
-                Log.e(TAG, "Failed to get posts", it)
+                Log.e(TAG, "Failed to get ${getModelClass().simpleName}", it)
                 listener.onFailed(it)
             }
     }
@@ -124,7 +122,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .get()
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
-                Log.e(TAG, "Failed to get items", it)
+                Log.e(TAG, "Failed to get ${getModelClass().simpleName}", it)
                 listener.onFailed(it)
             }
     }
@@ -138,12 +136,13 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .get()
             .addOnSuccessListener(getSuccessListener(listener))
             .addOnFailureListener {
-                Log.e(TAG, "Failed to get items", it)
+                Log.e(TAG, "Failed to get ${getModelClass().simpleName}", it)
                 listener.onFailed(it)
             }
     }
 
     fun getItemsBefore(beforeTime: Any?, listener: OnItemsRetrieved<T>) {
+        Log.d(TAG, "Getting list of ${getModelClass().simpleName} before")
         if (beforeTime != null) {
             getCollectionRef()
                 .limit(QUERY_LIMIT)
@@ -152,7 +151,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
                 .get()
                 .addOnSuccessListener(getSuccessListener(listener))
                 .addOnFailureListener {
-                    Log.e(TAG, "Failed to get items", it)
+                    Log.e(TAG, "Failed to get ${getModelClass().simpleName}", it)
                     listener.onFailed(it)
                 }
         }
@@ -164,6 +163,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         beforeTime: Any?,
         listener: OnItemsRetrieved<T>
     ) {
+        Log.d(TAG, "Getting list of ${getModelClass().simpleName} where and before")
         if (beforeTime != null) {
             getCollectionRef()
                 .limit(QUERY_LIMIT)
@@ -173,22 +173,14 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
                 .get()
                 .addOnSuccessListener(getSuccessListener(listener))
                 .addOnFailureListener {
-                    Log.e(TAG, "Failed to get items", it)
+                    Log.e(TAG, "Failed to get ${getModelClass().simpleName}", it)
                     listener.onFailed(it)
                 }
         }
     }
 
     fun incrementField(documentRef: String, fieldToIncrement: String) {
-        getCollectionRef()
-            .document(documentRef)
-            .update(fieldToIncrement, FieldValue.increment(1))
-            .addOnSuccessListener {
-                Log.d(TAG, "Incremented: $fieldToIncrement")
-            }
-            .addOnFailureListener {
-                Log.e(TAG, "Failed to increment: $fieldToIncrement", it)
-            }
+        incrementField(documentRef, fieldToIncrement, 1)
     }
 
     fun incrementField(documentRef: String, fieldToIncrement: String, amount: Int) {
@@ -225,14 +217,17 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
     private fun getSuccessListener(listener: OnItemsRetrieved<T>): OnSuccessListener<QuerySnapshot> {
         val weakRef = WeakReference(listener)
         return OnSuccessListener { document ->
-            val listenerRef = weakRef.get()
+            val listenerRef = listener
             var resultList: List<T> = ArrayList()
             if (listenerRef != null) {
                 if (document != null) {
                     resultList = document.toObjects(getModelClass())
+                    Log.d(TAG, "Retrieved ${resultList.size} ${getModelClass().simpleName}")
                     addRefToItems(document, resultList)
                 }
                 listenerRef.onSuccess(resultList)
+            } else {
+                Log.d(TAG, "ListenerRef was null")
             }
         }
     }
@@ -240,12 +235,14 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
     private fun getDocumentSuccessListener(listener: OnItemRetrieved<T>): OnSuccessListener<DocumentSnapshot> {
         val weakRef = WeakReference(listener)
         return OnSuccessListener { document ->
-            val listenerRef = weakRef.get()
+//            val listenerRef = weakRef.get()
+            val listenerRef = listener
             if (listenerRef != null) {
                 if (document != null) {
                     if (document.exists()) {
                         try {
                             val item = document.toObject(getModelClass())
+                            Log.d(TAG, "Retrieved single ${getModelClass().simpleName}")
                             item!!.ref = document.reference.id
                             listenerRef.onSuccess(item)
                         } catch (e: Exception) {
@@ -255,6 +252,8 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
                         listenerRef.onFailed(DocNotExistException())
                     }
                 }
+            } else {
+                Log.d(TAG, "ListenerRef was null")
             }
         }
     }
