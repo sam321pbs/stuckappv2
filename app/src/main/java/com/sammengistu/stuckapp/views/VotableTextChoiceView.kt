@@ -93,7 +93,7 @@ class VotableTextChoiceView(
         if (isUsersPost()) {
             mVotesText.visibility = View.VISIBLE
         } else if (userVote == null) {
-            mVotesText.visibility = View.GONE
+            mVotesText.visibility = View.INVISIBLE
         } else {
             mVotesText.visibility = View.VISIBLE
             if (choiceItem.first == userVote.voteItem) {
