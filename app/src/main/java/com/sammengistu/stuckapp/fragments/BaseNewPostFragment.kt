@@ -290,7 +290,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
             user?.ref ?: "",
             user?.username ?: "",
             avatar,
-            question.text.toString(),
+            question.text.toString().trim(),
             selectedPrivacy,
             selectedCategory,
             type.toString()

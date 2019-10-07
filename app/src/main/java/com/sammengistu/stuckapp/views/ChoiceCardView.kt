@@ -3,17 +3,24 @@ package com.sammengistu.stuckapp.views
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
-import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.cardview.widget.CardView
 import com.sammengistu.stuckapp.R
 
 
-class ChoiceCardView(context: Context, attrs: AttributeSet?) :
+class ChoiceCardView(context: Context, attrs: AttributeSet?, val clearClicked: OnClearClicked) :
     CardView(ContextThemeWrapper(context, R.style.new_post_choice), attrs) {
 
-    private val choiceEditText: EditText = EditText(context)
+    private val choiceText = TextView(context)
+    private val container = RelativeLayout(context)
+
+    interface OnClearClicked {
+        fun onClearClicked(tag: Int)
+    }
 
     init {
         if (attrs == null) {
@@ -25,18 +32,18 @@ class ChoiceCardView(context: Context, attrs: AttributeSet?) :
                 0, 0
             ).apply {
                 try {
-                    choiceEditText.hint =
+                    choiceText.hint =
                         getString(R.styleable.ChoiceCardView_hintText)
                 } finally {
                     recycle()
                 }
             }
         }
-        setPadding(5, 5, 5, 5)
-        buildEditTextView()
+        setPadding(15, 15, 15, 15)
+        buildViews()
     }
 
-    constructor(context: Context) : this(context, null)
+    constructor(context: Context, clearClicked: OnClearClicked) : this(context, null, clearClicked)
 
     private fun applyStyleManually(context: Context) {
         val attrs =
@@ -71,29 +78,50 @@ class ChoiceCardView(context: Context, attrs: AttributeSet?) :
         params.topMargin = marginTop.toInt()
         params.marginStart = marginStart.toInt()
         params.marginEnd = marginEnd.toInt()
+
+        radius = 10f
+        choiceText.textSize = 17f
+        choiceText.setPadding(10, 10, 10, 10)
+        choiceText.setBackgroundColor(context.resources.getColor(R.color.white))
+        setBackgroundColor(context.resources.getColor(R.color.white))
     }
 
     fun setHint(hint: String) {
-        choiceEditText.hint = hint
+        choiceText.hint = hint
     }
 
     fun getChoiceText(): String {
-        return choiceEditText.text.toString()
+        return choiceText.text.toString()
     }
 
     fun setChoiceText(text: String) {
-        return choiceEditText.setText(text)
+        return choiceText.setText(text)
     }
 
-    private fun buildEditTextView() {
+    private fun buildViews() {
         val params = LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+        container.layoutParams = params
         params.marginEnd = 10
         params.marginStart = 10
         params.topMargin = 10
-        choiceEditText.layoutParams = params
-        addView(choiceEditText)
+        choiceText.layoutParams = params
+
+        val iconParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT)
+        val clearIcon = ImageView(context)
+
+        iconParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+        clearIcon.layoutParams = iconParams
+        clearIcon.setImageDrawable(context.getDrawable(R.drawable.ic_clear_blue_400_24dp))
+        clearIcon.setOnClickListener {
+            clearClicked.onClearClicked(tag as Int)
+        }
+        container.setPadding(15,15,15,15)
+        container.addView(choiceText)
+        container.addView(clearIcon)
+        addView(container)
     }
 }

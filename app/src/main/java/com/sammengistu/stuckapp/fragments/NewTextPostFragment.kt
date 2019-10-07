@@ -3,58 +3,86 @@ package com.sammengistu.stuckapp.fragments
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.children
 import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.NewPostActivity
-import com.sammengistu.stuckfirebase.database.DraftPostModel
 import com.sammengistu.stuckapp.events.SaveDraftEvent
-import com.sammengistu.stuckfirebase.database.InjectorUtils
+import com.sammengistu.stuckapp.utils.KeyboardUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
+import com.sammengistu.stuckfirebase.database.DraftPostModel
+import com.sammengistu.stuckfirebase.database.InjectorUtils
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.Subscribe
 
 
-class NewTextPostFragment : BaseNewPostFragment() {
+class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked {
 
-    lateinit var mChoicesContainer: LinearLayout
-    val MAX_NUMBER_OF_CHOICES = 4
+    lateinit var choicesContainer: LinearLayout
+    lateinit var composeAreaContainer: LinearLayout
+    lateinit var composeHeader: TextView
+    lateinit var editText: EditText
+    lateinit var doneButton: TextView
+    lateinit var submitButton: Button
+    private var selectedChoice: Int = 0
 
     @Subscribe
     fun onSaveDraft(event: SaveDraftEvent) {
-        draftTextPost(mChoicesContainer)
+        draftTextPost(choicesContainer)
     }
 
     override fun getFragmentTitle(): String = TITLE
     override fun getFragmentTag(): String = TAG
     override fun getLayoutId(): Int = R.layout.fragment_new_text_post
 
+    override fun onClearClicked(tag: Int) {
+        for (view in choicesContainer.children) {
+            if (view.tag == tag) {
+                choicesContainer.removeView(view)
+                break
+            }
+        }
+
+        var pos = 1
+        for (view in choicesContainer.children) {
+            view.tag = pos++
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mChoicesContainer = choices_container
-        add_choice_fab.setOnClickListener {
+        choicesContainer = choices_container
+        composeAreaContainer = compose_area_container
+        composeHeader = choice_header
+        editText = new_choice_edit_text
+        doneButton = send_button
+        submitButton = submit_button
+
+        add_choice_button.setOnClickListener {
             addChoiceView()
         }
 
-        submit_button.setOnClickListener {
-            createTextPost(mChoicesContainer)
+        submitButton.setOnClickListener {
+            createTextPost(choicesContainer)
+        }
+
+        doneButton.setOnClickListener {
+            val view = choicesContainer.findViewWithTag<ChoiceCardView>(selectedChoice)
+            view.setChoiceText(editText.text.toString().trim())
+            editText.setText("")
+            composeAreaContainer.visibility = View.GONE
+            submitButton.visibility = View.VISIBLE
+            KeyboardUtils.hideKeyboard(activity!!, editText)
         }
 
         if (arguments != null) {
             val postId = arguments!!.getLong(NewPostActivity.EXTRA_POST_ID)
-
-//            doAsync {
-//                val draftPost = PostAccess.getPost(activity!!, postId)
-//                uiThread {
-//                    if (draftPost != null) {
-//                        updateViewFromDraftItem(draftPost)
-//                    }
-//                }
-//            }
-
             val liveDraftPost = InjectorUtils.getDraftPostRepository(activity as Context).getPost(postId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
@@ -63,10 +91,14 @@ class NewTextPostFragment : BaseNewPostFragment() {
                     updateViewFromDraftItem(draft!!)
                 }
             }
+        } else {
+            addChoiceView()
+            addChoiceView()
         }
     }
 
     private fun updateViewFromDraftItem(draftPost: DraftPostModel) {
+        choicesContainer.removeAllViews()
         updateViewFromDraft(draftPost)
         if (draftPost.choice1.isNotBlank()) {
             addChoiceView(draftPost.choice1)
@@ -83,25 +115,37 @@ class NewTextPostFragment : BaseNewPostFragment() {
     }
 
     private fun addChoiceView(text: String) {
-        if (mChoicesContainer.childCount < 4) {
-            val newChild = ChoiceCardView(this@NewTextPostFragment.activity!!.applicationContext)
+        if (choicesContainer.childCount < 4) {
+            val newChild = ChoiceCardView(activity!!.applicationContext, this)
+            newChild.tag = choicesContainer.childCount + 1
+            newChild.setHint("Create Choice")
             newChild.setChoiceText(text)
-            mChoicesContainer.addView(newChild)
-            if (mChoicesContainer.childCount >= MAX_NUMBER_OF_CHOICES) {
-                add_choice_fab.visibility = View.GONE
+            choicesContainer.addView(newChild)
+            if (choicesContainer.childCount >= MAX_NUMBER_OF_CHOICES) {
+                add_choice_button.visibility = View.GONE
+            }
+            setOnClickListenerOnChoice(newChild)
+            if (choicesContainer.childCount >= MAX_NUMBER_OF_CHOICES) {
+                add_choice_button.visibility = View.GONE
             }
         }
     }
 
     private fun addChoiceView() {
-        if (mChoicesContainer.childCount < 4) {
-            val newChild =
-                ChoiceCardView(this@NewTextPostFragment.activity!!.applicationContext)
-            newChild.setHint("Choice ${mChoicesContainer.childCount + 1}")
-            mChoicesContainer.addView(newChild)
+        addChoiceView("")
+    }
 
-            if (mChoicesContainer.childCount >= MAX_NUMBER_OF_CHOICES) {
-                add_choice_fab.visibility = View.GONE
+    private fun setOnClickListenerOnChoice(newChild: ChoiceCardView) {
+        newChild.setOnClickListener {
+            selectedChoice = it.tag as Int
+            if (it is ChoiceCardView) {
+                submitButton.visibility = View.GONE
+                composeAreaContainer.visibility = View.VISIBLE
+                composeHeader.text = "Choice ${selectedChoice.toString()}"
+                editText.setText(newChild.getChoiceText())
+                editText.hint = "Type here"
+                editText.requestFocus()
+                KeyboardUtils.showKeyboard(activity!!, editText)
             }
         }
     }
@@ -112,7 +156,7 @@ class NewTextPostFragment : BaseNewPostFragment() {
             return false
         }
 
-        for (choiceView in mChoicesContainer.children) {
+        for (choiceView in choicesContainer.children) {
             if (choiceView is ChoiceCardView && choiceView.getChoiceText().isEmpty()) {
                 Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT)
                     .show()
@@ -125,6 +169,7 @@ class NewTextPostFragment : BaseNewPostFragment() {
     companion object {
         val TAG = NewTextPostFragment::class.java.simpleName
         const val TITLE = "Text Post"
+        const val MAX_NUMBER_OF_CHOICES = 4
 
         fun newInstance(postId: Long): NewTextPostFragment {
             val bundle = Bundle()

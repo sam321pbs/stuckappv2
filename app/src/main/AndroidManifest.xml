@@ -32,7 +32,7 @@
             android:name=".activities.NewPostActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activities.CommentsActivity"
