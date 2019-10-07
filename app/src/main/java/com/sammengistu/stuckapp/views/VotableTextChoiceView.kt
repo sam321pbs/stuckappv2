@@ -12,7 +12,7 @@ import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
 import org.jetbrains.anko.centerVertically
 
-class VotableChoiceView(
+class VotableTextChoiceView(
     context: Context,
     post: PostModel,
     choiceItem: Triple<String, String, Int>,
@@ -49,11 +49,7 @@ class VotableChoiceView(
 
     private fun buildBullet() {
         val bulletParams = LayoutParams(20, 20)
-        bulletParams.centerVertically()
-        bulletParams.marginEnd = 6
-        bulletParams.marginStart = 6
-        bulletParams.topMargin = 6
-        bulletParams.bottomMargin = 6
+        bulletParams.setMargins(  0,30,0,0)
         mBullet.id = View.generateViewId()
         mBullet.setImageResource(R.drawable.circle_gray)
         mBullet.layoutParams = bulletParams
@@ -64,21 +60,33 @@ class VotableChoiceView(
         val votesParams = LayoutParams(
             ViewHelper.convertDpToPixel(30F, context).toInt(),
             ViewHelper.convertDpToPixel(30F, context).toInt())
-        votesParams.centerVertically()
         votesParams.marginEnd = 20
         votesParams.addRule(START_OF, mBullet.id)
         votesParams.addRule(ALIGN_PARENT_END)
+        mVotesText.id = View.generateViewId()
         mVotesText.layoutParams = votesParams
         mVotesText.gravity = Gravity.CENTER
         mVotesText.setBackgroundResource(R.drawable.circle_gray)
-        mVotesText.setPadding(5, 5, 5, 5)
+        mVotesText.setPadding(2, 5, 5, 5)
         mVotesText.textSize = 15f
         setBackgroundColor(resources.getColor(R.color.white))
         setTotal(choiceItem.third)
 
         handleVotedItem(userVote)
-
         addView(mVotesText)
+    }
+
+    private fun buildChoiceText() {
+        val choiceTextParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        choiceTextParams.centerVertically()
+        choiceTextParams.addRule(END_OF, mBullet.id)
+        choiceTextParams.addRule(START_OF, mVotesText.id)
+        choiceTextParams.marginStart = 10
+        mChoiceText.layoutParams = choiceTextParams
+        mChoiceText.setTextColor(resources.getColor(android.R.color.black))
+        mChoiceText.textSize = 21f
+        setChoiceText(choiceItem.second)
+        addView(mChoiceText)
     }
 
     private fun handleVotedItem(userVote: UserVoteModel?, isUpdate: Boolean = false) {
@@ -100,20 +108,7 @@ class VotableChoiceView(
     private fun isUsersPost() =
         UserHelper.currentUser != null && UserHelper.currentUser!!.ref == post.ownerRef
 
-    private fun buildChoiceText() {
-        val choiceTextParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        choiceTextParams.centerVertically()
-        choiceTextParams.addRule(END_OF, mBullet.id)
-        choiceTextParams.addRule(START_OF, mVotesText.id)
-        choiceTextParams.marginStart = 10
-        mChoiceText.layoutParams = choiceTextParams
-        mChoiceText.setTextColor(resources.getColor(android.R.color.black))
-        mChoiceText.textSize = 21f
-        setChoiceText(choiceItem.second)
-        addView(mChoiceText)
-    }
-
     companion object {
-        val TAG = VotableChoiceView::class.java.simpleName
+        val TAG = VotableTextChoiceView::class.java.simpleName
     }
 }

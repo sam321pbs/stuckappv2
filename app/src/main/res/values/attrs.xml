@@ -9,7 +9,7 @@
         <attr name="hintText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="VotableChoiceView">
+    <declare-styleable name="VotableTextChoiceView">
         <attr name="choiceText" format="string" />
         <attr name="voteTotal" format="string" />
     </declare-styleable>

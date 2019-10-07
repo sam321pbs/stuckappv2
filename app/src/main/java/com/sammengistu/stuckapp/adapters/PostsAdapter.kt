@@ -221,7 +221,7 @@ class PostsAdapter(
         }
         for (tripleItem in post.getChoicesToVoteList()) {
             container.addView(
-                VotableChoiceView(context, post, tripleItem, userVote, updateParentContainer)
+                VotableTextChoiceView(context, post, tripleItem, userVote, updateParentContainer)
             )
         }
     }
