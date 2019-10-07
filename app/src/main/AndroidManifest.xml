@@ -29,6 +29,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name=".activities.PostViewActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".activities.NewPostActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"

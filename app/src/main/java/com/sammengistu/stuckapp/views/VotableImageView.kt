@@ -23,7 +23,7 @@ class VotableImageView(
     post: PostModel,
     choiceItem: Triple<String, String, Int>,
     userVote: UserVoteModel?,
-    updateParentContainer: UpdateParentContainer
+    updateParentContainer: UpdateParentContainer?
 ) : VotableContainer(context, post, choiceItem, userVote, updateParentContainer) {
 
     private val imageView = ImageView(context)
@@ -126,7 +126,7 @@ class VotableImageView(
         } else {
             votesTextView.visibility = View.VISIBLE
             if (choiceItem.first == userVote.voteItem) {
-                votesTextView.setBackgroundResource(R.drawable.circle_green)
+                votesTextView.setBackgroundResource(R.drawable.circle_gold)
                 if (isUpdate) {
                     setTotal(choiceItem.third + 1)
                 }

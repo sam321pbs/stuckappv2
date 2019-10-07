@@ -8,11 +8,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.AvatarView
+import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.models.CommentVoteModel
@@ -47,7 +47,8 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
             holder.timeSince.text = "now"
         }
 
-        holder.votedOn.text = comment.usersChoice.toString()
+//        holder.votedOn.text = comment.usersChoice.toString()
+//        holder.votedOn.visibility = View.GONE
 
         addOnClickListener(holder, comment)
         updateVoteUi(holder, comment)
@@ -83,12 +84,12 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
         val vote = commentVotesMap[comment.ref]
         if (vote != null) {
             if (vote.voteType == CommentsVoteAccess.UP_VOTE) {
-                holder.upVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_upward_yellow_500_24dp))
+                holder.upVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_upward_yellow_50_24dp))
                 holder.downVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_downward_blue_400_24dp))
                 holder.upVoteText.text = (comment.upVotes + 1).toString()
             } else {
                 holder.upVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_upward_blue_400_24dp))
-                holder.downVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_downward_yellow_500_24dp))
+                holder.downVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_downward_yellow_50_24dp))
                 holder.upVoteText.text = (comment.upVotes - 1).toString()
             }
         } else {
@@ -157,7 +158,7 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
         val avatar: AvatarView = parentView.find(R.id.avatar_view)
         val username: TextView = parentView.find(R.id.username)
         val timeSince: TextView = parentView.find(R.id.time_since)
-        val votedOn: TextView = parentView.find(R.id.voted_on)
+//        val votedOn: TextView = parentView.find(R.id.voted_on)
         val commentText: TextView = parentView.find(R.id.comment_text)
         val upVote: ImageView = parentView.find(R.id.up_vote)
         val downVote: ImageView = parentView.find(R.id.down_vote)

@@ -18,7 +18,7 @@ abstract class VotableContainer(
     var post: PostModel,
     var choiceItem: Triple<String, String, Int>,
     var userVote: UserVoteModel?,
-    private val updateParentContainer: UpdateParentContainer
+    private val updateParentContainer: UpdateParentContainer?
 ) : RelativeLayout(context), DoubleTapGesture.DoubleTapListener {
 
     var mGestureDetector = DoubleTapGesture(context, this)
@@ -30,6 +30,7 @@ abstract class VotableContainer(
     init {
         applyStyleManually(context)
     }
+
     abstract fun onItemVotedOn(userVote: UserVoteModel?)
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -39,20 +40,22 @@ abstract class VotableContainer(
     override fun onDoubleTapped() {
         UserHelper.getCurrentUser { user ->
             if (allowUserToVote(user)) {
-                    val userVote = UserVoteModel(
-                        user!!.userId,
-                        user.ref,
-                        user.username,
-                        user.avatar,
-                        post.ref,
-                        post.ownerRef,
-                        post.ownerId,
-                        choiceItem.first
-                    )
-                    UserVoteAccess().createItemInFB(userVote)
-                    UserVotesCollection.addVoteToMap(userVote)
-                    onItemVotedOn(userVote)
+                val userVote = UserVoteModel(
+                    user!!.userId,
+                    user.ref,
+                    user.username,
+                    user.avatar,
+                    post.ref,
+                    post.ownerRef,
+                    post.ownerId,
+                    choiceItem.first
+                )
+                UserVoteAccess().createItemInFB(userVote)
+                UserVotesCollection.addVoteToMap(userVote)
+                onItemVotedOn(userVote)
+                if (updateParentContainer != null) {
                     updateParentContainer.updateContainer(userVote)
+                }
             }
         }
     }

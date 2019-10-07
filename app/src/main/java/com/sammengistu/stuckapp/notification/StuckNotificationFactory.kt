@@ -2,14 +2,20 @@ package com.sammengistu.stuckapp.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
+import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.activities.SplashScreenActivity
 import com.sammengistu.stuckapp.helpers.UserPrefHelper
 import com.sammengistu.stuckfirebase.NotificationFactory
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.constants.KEY_BODY
+import com.sammengistu.stuckfirebase.constants.KEY_POST_REF
 import com.sammengistu.stuckfirebase.constants.KEY_TAG
 import com.sammengistu.stuckfirebase.constants.KEY_TITLE
 import java.util.*
@@ -74,6 +80,8 @@ class StuckNotificationFactory(context: Context) : NotificationFactory() {
                         .setContentTitle(data[KEY_TITLE])
                         .setContentText(data[KEY_BODY])
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(createPendingIntent(context, data[KEY_POST_REF]))
+                        .setAutoCancel(true)
 
                     val notificationManager: NotificationManager =
                         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -84,8 +92,24 @@ class StuckNotificationFactory(context: Context) : NotificationFactory() {
         }
     }
 
+    private fun createPendingIntent(context: Context, postRef: String?) : PendingIntent? {
+        if (postRef == null) {
+            return null
+        }
+        // Create an explicit intent for an Activity in your app
+        val intent = Intent(context, SplashScreenActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        Log.d(TAG, "Push notification ref : $postRef")
+        intent.putExtra(EXTRA_POST_REF, postRef)
+       return PendingIntent.getActivity(context, REQUEST_SHOW_POST, intent, FLAG_UPDATE_CURRENT)
+    }
+
     companion object {
+        val TAG = StuckNotificationFactory::class.java.simpleName
         const val COMMENTS_CHANNEL_ID = "comments"
         const val VOTES_CHANNEL_ID = "votes"
+        const val REQUEST_SHOW_POST = 10100
+        const val EXTRA_POST_REF = "post_ref"
     }
 }

@@ -8,6 +8,7 @@ import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.sammengistu.stuckapp.R
+import com.sammengistu.stuckapp.notification.StuckNotificationFactory
 import com.sammengistu.stuckfirebase.ErrorNotifier.Companion.notifyError
 import com.sammengistu.stuckfirebase.UserHelper
 import kotlinx.android.synthetic.main.activity_splash_screen.*
@@ -94,6 +95,17 @@ class SplashScreenActivity : BaseActivity() {
         val mainIntent = Intent(this, MainActivity::class.java)
         mainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        if (intent != null &&
+            intent.extras != null &&
+            !intent.getStringExtra(StuckNotificationFactory.EXTRA_POST_REF).isNullOrBlank()) {
+            val postRef = intent.getStringExtra(StuckNotificationFactory.EXTRA_POST_REF)
+            mainIntent.putExtra(
+                StuckNotificationFactory.EXTRA_POST_REF,
+                postRef)
+            Log.d(TAG, "Found ref $postRef")
+            intent = null
+        }
         startActivity(mainIntent)
     }
 

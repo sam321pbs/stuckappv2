@@ -17,12 +17,12 @@ class VotableTextChoiceView(
     post: PostModel,
     choiceItem: Triple<String, String, Int>,
     userVote: UserVoteModel?,
-    updateParentContainer: UpdateParentContainer
+    updateParentContainer: UpdateParentContainer?
 ) : VotableContainer(context, post, choiceItem, userVote, updateParentContainer) {
 
-    private val mBullet = ImageView(context)
-    private val mChoiceText = TextView(context)
-    private val mVotesText = TextView(context)
+    private val bullet = ImageView(context)
+    private val choiceText = TextView(context)
+    private val votesText = TextView(context)
 
     init {
         buildViews()
@@ -34,11 +34,11 @@ class VotableTextChoiceView(
     }
 
     fun setChoiceText(choiceText: String) {
-        mChoiceText.text = choiceText
+        this.choiceText.text = choiceText
     }
 
     fun setTotal(total: Int) {
-        mVotesText.text = total.toString()
+        votesText.text = total.toString()
     }
 
     private fun buildViews() {
@@ -50,10 +50,10 @@ class VotableTextChoiceView(
     private fun buildBullet() {
         val bulletParams = LayoutParams(20, 20)
         bulletParams.setMargins(  0,30,0,0)
-        mBullet.id = View.generateViewId()
-        mBullet.setImageResource(R.drawable.circle_gray)
-        mBullet.layoutParams = bulletParams
-        addView(mBullet)
+        bullet.id = View.generateViewId()
+        bullet.setImageResource(R.drawable.circle_gray)
+        bullet.layoutParams = bulletParams
+        addView(bullet)
     }
 
     private fun buildVotesText() {
@@ -61,43 +61,43 @@ class VotableTextChoiceView(
             ViewHelper.convertDpToPixel(30F, context).toInt(),
             ViewHelper.convertDpToPixel(30F, context).toInt())
         votesParams.marginEnd = 20
-        votesParams.addRule(START_OF, mBullet.id)
+        votesParams.addRule(START_OF, bullet.id)
         votesParams.addRule(ALIGN_PARENT_END)
-        mVotesText.id = View.generateViewId()
-        mVotesText.layoutParams = votesParams
-        mVotesText.gravity = Gravity.CENTER
-        mVotesText.setBackgroundResource(R.drawable.circle_gray)
-        mVotesText.setPadding(2, 5, 5, 5)
-        mVotesText.textSize = 15f
+        votesText.id = View.generateViewId()
+        votesText.layoutParams = votesParams
+        votesText.gravity = Gravity.CENTER
+        votesText.setBackgroundResource(R.drawable.circle_gray)
+        votesText.setPadding(2, 5, 5, 5)
+        votesText.textSize = 15f
         setBackgroundColor(resources.getColor(R.color.white))
         setTotal(choiceItem.third)
 
         handleVotedItem(userVote)
-        addView(mVotesText)
+        addView(votesText)
     }
 
     private fun buildChoiceText() {
         val choiceTextParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         choiceTextParams.centerVertically()
-        choiceTextParams.addRule(END_OF, mBullet.id)
-        choiceTextParams.addRule(START_OF, mVotesText.id)
+        choiceTextParams.addRule(END_OF, bullet.id)
+        choiceTextParams.addRule(START_OF, votesText.id)
         choiceTextParams.marginStart = 10
-        mChoiceText.layoutParams = choiceTextParams
-        mChoiceText.setTextColor(resources.getColor(android.R.color.black))
-        mChoiceText.textSize = 21f
+        choiceText.layoutParams = choiceTextParams
+        choiceText.setTextColor(resources.getColor(android.R.color.black))
+        choiceText.textSize = 21f
         setChoiceText(choiceItem.second)
-        addView(mChoiceText)
+        addView(choiceText)
     }
 
     private fun handleVotedItem(userVote: UserVoteModel?, isUpdate: Boolean = false) {
         if (isUsersPost()) {
-            mVotesText.visibility = View.VISIBLE
+            votesText.visibility = View.VISIBLE
         } else if (userVote == null) {
-            mVotesText.visibility = View.INVISIBLE
+            votesText.visibility = View.INVISIBLE
         } else {
-            mVotesText.visibility = View.VISIBLE
+            votesText.visibility = View.VISIBLE
             if (choiceItem.first == userVote.voteItem) {
-                setBackgroundColor(resources.getColor(R.color.green))
+                votesText.setBackgroundResource(R.drawable.circle_gold)
                 if (isUpdate) {
                     setTotal(choiceItem.third + 1)
                 }

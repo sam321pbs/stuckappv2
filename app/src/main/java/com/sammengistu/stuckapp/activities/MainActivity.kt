@@ -3,6 +3,7 @@ package com.sammengistu.stuckapp.activities
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -22,6 +23,7 @@ import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
+import com.sammengistu.stuckapp.notification.StuckNotificationFactory
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckapp.views.VerticalIconToTextView
@@ -99,6 +101,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         super.onResume()
         UserStarredCollection.reloadStars()
         UserVotesCollection.reloadVotes()
+        handleStarterIntent()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -138,11 +141,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 )
                 addFragment(DraftListFragment())
             }
-//            R.id.action_favorite -> Toast.makeText(
-//                this,
-//                "Clicked Favorites",
-//                Toast.LENGTH_SHORT
-//            ).show()
             R.id.action_settings -> addFragment(SettingsFragment())
         }
         drawer.closeDrawers()
@@ -161,6 +159,19 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 navigationBar.deselectViews()
                 navigationBar.visibility = View.GONE
             }
+        }
+    }
+
+    private fun handleStarterIntent() {
+        if (intent != null &&
+            intent.extras != null &&
+            !intent.getStringExtra(StuckNotificationFactory.EXTRA_POST_REF).isNullOrBlank()) {
+            val postRef = intent.getStringExtra(StuckNotificationFactory.EXTRA_POST_REF)
+            Log.d(TAG, "Main found ref $postRef")
+            intent = null
+            val postViewIntent = Intent(this, PostViewActivity::class.java)
+            postViewIntent.putExtra(StuckNotificationFactory.EXTRA_POST_REF, postRef)
+            startActivity(postViewIntent)
         }
     }
 
@@ -226,5 +237,9 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
                 }
             }
         }
+    }
+
+    companion object {
+        val TAG = MainActivity::class.java.simpleName
     }
 }

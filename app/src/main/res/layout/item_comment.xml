@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,25 +35,26 @@
                     android:layout_height="wrap_content"
                     android:text="samtheman" />
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/circle_gray" />
+<!--                <View-->
+<!--                    android:layout_width="10dp"-->
+<!--                    android:layout_height="10dp"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:background="@drawable/circle_gray" />-->
 
-                <TextView
-                    android:id="@+id/time_since"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="1 hour ago" />
             </LinearLayout>
 
+<!--            <TextView-->
+<!--                android:id="@+id/voted_on"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Voted on: 1" />-->
+
             <TextView
-                android:id="@+id/voted_on"
+                android:id="@+id/time_since"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Voted on: 1" />
+                android:layout_gravity="center_vertical"
+                android:text="1 hour ago" />
         </LinearLayout>
     </LinearLayout>
 
