@@ -1,7 +1,6 @@
 package com.sammengistu.stuckfirebase
 
 import android.content.Context
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemsRetrieved
@@ -57,32 +56,51 @@ class UserHelper {
         fun deleteUserAccount(context: Context) {
             getCurrentUser { user ->
                 if (user != null) {
-                    UserAccess().deleteItemInFb(
-                        user.ref,
-                        object : FirebaseItemAccess.OnItemDeleted {
-                            override fun onSuccess() {
-                                // Todo: delete all posts, votes, avatar
-                                val fbUser = FirebaseAuth.getInstance().currentUser
-                                fbUser?.delete()
-                                    ?.addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            Toast.makeText(
-                                                context,
-                                                "Account deleted", Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
+                    FirebaseAuth.getInstance().currentUser?.delete()
+                        ?.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                deleteUserInDb(user, context)
+                            } else {
+                                if (task.exception != null) {
+                                    ErrorNotifier.notifyError(
+                                        context,
+                                        TAG,
+                                        "Error deleting account, sign in again to delete account.",
+                                        task.exception!!
+                                    )
+                                } else {
+                                    ErrorNotifier.notifyError(
+                                        context,
+                                        TAG,
+                                        "Error deleting account, sign in again to delete account."
+                                    )
+                                }
+                                logUserOut()
                             }
-
-                            override fun onFailed(e: Exception) {
-                                ErrorNotifier.notifyError(
-                                    context, "Error deleting account",
-                                    TAG, e
-                                )
-                            }
-                        })
+                        }
                 }
             }
+        }
+
+        private fun deleteUserInDb(
+            user: UserModel,
+            context: Context
+        ) {
+            UserAccess().deleteItemInFb(
+                user.ref,
+                object : FirebaseItemAccess.OnItemDeleted {
+                    override fun onSuccess() {
+                        // Todo: delete all posts, votes, avatar
+                        currentUser = null
+                    }
+
+                    override fun onFailed(e: Exception) {
+                        ErrorNotifier.notifyError(
+                            context, "Error deleting account",
+                            TAG, e
+                        )
+                    }
+                })
         }
     }
 }

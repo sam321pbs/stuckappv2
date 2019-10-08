@@ -39,6 +39,7 @@ class SettingsFragment : BaseFragment() {
             .setTitle("Delete Account")
             .setMessage("Are you sure you want to delete your account?")
             .setNegativeButton("Delete") { _, _ ->
+                progress_bar.visibility = View.VISIBLE
                 UserHelper.deleteUserAccount(activity!!)
             }
             .setPositiveButton("Cancel", null)

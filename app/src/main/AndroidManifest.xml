@@ -3,7 +3,7 @@
     package="com.sammengistu.stuckapp">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".StuckApplication"
@@ -13,6 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_1_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_application_id"/>
+        <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled" android:value="false"/>
 
         <receiver android:name=".receiver.StuckReceiver"  android:exported="true">
             <intent-filter>

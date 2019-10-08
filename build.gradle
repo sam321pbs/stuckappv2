@@ -36,7 +36,7 @@ buildscript {
         firebaseCloudVersion = '19.0.1'
         firebaseUiAuthVersion = '4.3.1'
         firebasAuthVersion = '19.1.0'
-        facebookAndroidVersion = '5.5.1'
+        facebookAndroidVersion = '5.5.2'
         twitterCoreVersion = '3.3.0@aar'
         firebaseMessagingVersion = '20.0.0'
 
@@ -46,15 +46,10 @@ buildscript {
         eventBusVersion = '3.1.1'
     }
 
-    dependencies {
-
-
-
-    }
-
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven {
             url 'https://maven.fabric.io/public'
         }
