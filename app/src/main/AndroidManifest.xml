@@ -14,6 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <receiver android:name=".receiver.StuckReceiver"  android:exported="true">
+            <intent-filter>
+                <action android:name="com.sammengistu.stuckapp.receiver.ACTION_DAILY_NOTIFIER"/>
+            </intent-filter>
+        </receiver>
+
         <service
             android:name="com.sammengistu.stuckfirebase.services.FbMessagingService"
             android:exported="false">

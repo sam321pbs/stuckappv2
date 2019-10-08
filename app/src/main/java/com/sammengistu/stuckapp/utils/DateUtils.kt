@@ -5,6 +5,13 @@ import java.util.*
 
 class DateUtils {
     companion object {
+
+        // MS = milliseconds
+        const val MS_ONE_SEC: Long = 1000
+        const val MS_ONE_MIN: Long = MS_ONE_SEC * 60
+        const val MS_ONE_HOUR: Long = MS_ONE_MIN * 60
+        const val MS_ONE_DAY: Long = MS_ONE_HOUR * 24
+        
         fun convertDateToTimeElapsed(date: Date?): String {
             if (date == null) {
                 return "N/A"

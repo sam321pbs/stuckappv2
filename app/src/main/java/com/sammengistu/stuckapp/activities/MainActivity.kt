@@ -1,5 +1,7 @@
 package com.sammengistu.stuckapp.activities
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -12,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
+import com.sammengistu.stuckapp.AlarmHelper
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
@@ -85,6 +88,10 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         invisibleCover.setOnClickListener { hideBottomSheet() }
         HiddenItemsHelper(this)
         addFragment(HomeListFragment())
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (nm != null) {
+            nm.cancelAll()
+        }
     }
 
     override fun onStart() {
@@ -102,6 +109,12 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         UserStarredCollection.reloadStars()
         UserVotesCollection.reloadVotes()
         handleStarterIntent()
+        AlarmHelper.cancelDailyNotifier(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        AlarmHelper.setDailyNotifier(this)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
