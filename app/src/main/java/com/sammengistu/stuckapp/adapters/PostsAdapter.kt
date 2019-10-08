@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
+import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
@@ -89,6 +90,10 @@ class PostsAdapter(
             buildTextChoices(holder, post, userVote)
         } else if (holder is PostImageViewHolder) {
             buildImageChoices(holder, post, userVote)
+        }
+
+        holder.commentsTotalView.setOnClickListener {
+            CommentsActivity.startActivity(context, post.ref, post.ownerId, post.ownerRef, 0)
         }
 
         updateStarIcon(post, holder)
