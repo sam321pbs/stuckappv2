@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.events.SaveDraftEvent
+import com.sammengistu.stuckapp.helpers.KeyboardStateHelper
 import com.sammengistu.stuckapp.utils.KeyboardUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import com.sammengistu.stuckfirebase.database.DraftPostModel
@@ -30,6 +31,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
     lateinit var editText: EditText
     lateinit var doneButton: TextView
     lateinit var submitButton: Button
+    lateinit var keyboardHelper: KeyboardStateHelper
     private var selectedChoice: Int = 0
 
     @Subscribe
@@ -45,6 +47,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         for (view in choicesContainer.children) {
             if (view.tag == tag) {
                 choicesContainer.removeView(view)
+                updateSubmitButton()
                 break
             }
         }
@@ -63,6 +66,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         editText = new_choice_edit_text
         doneButton = send_button
         submitButton = submit_button
+        updateSubmitButton()
 
         add_choice_button.setOnClickListener {
             addChoiceView()
@@ -73,11 +77,8 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         }
 
         doneButton.setOnClickListener {
-            val view = choicesContainer.findViewWithTag<ChoiceCardView>(selectedChoice)
-            view.setChoiceText(editText.text.toString().trim())
-            editText.setText("")
-            composeAreaContainer.visibility = View.GONE
-            submitButton.visibility = View.VISIBLE
+            setChoice()
+            updateSubmitButton()
             KeyboardUtils.hideKeyboard(activity!!, editText)
         }
 
@@ -95,6 +96,42 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
             addChoiceView()
             addChoiceView()
         }
+
+        keyboardHelper = KeyboardStateHelper(view) { open ->
+            if (open) {
+                submitButton.visibility = View.GONE
+            } else {
+                updateSubmitButton()
+            }
+        }
+    }
+
+    private fun updateSubmitButton() {
+        if (!fieldsValidated(false)){
+            submitButton.visibility = View.GONE
+            return
+        }
+        for (view in choicesContainer.children) {
+            if (view is ChoiceCardView) {
+                if (view.getChoiceText().isBlank()) {
+                    submitButton.visibility = View.GONE
+                    return
+                }
+            }
+        }
+
+        if (question.text.isBlank()) {
+            submitButton.visibility = View.GONE
+            return
+        }
+        submitButton.visibility = View.VISIBLE
+    }
+
+    private fun setChoice() {
+        val view = choicesContainer.findViewWithTag<ChoiceCardView>(selectedChoice)
+        view.setChoiceText(editText.text.toString().trim())
+        editText.setText("")
+        composeAreaContainer.visibility = View.GONE
     }
 
     private fun updateViewFromDraftItem(draftPost: DraftPostModel) {
@@ -129,6 +166,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
                 add_choice_button.visibility = View.GONE
             }
         }
+        updateSubmitButton()
     }
 
     private fun addChoiceView() {
@@ -150,15 +188,17 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         }
     }
 
-    override fun fieldsValidated(): Boolean {
+    override fun fieldsValidated(showSnack: Boolean): Boolean {
         if (question.text.toString().isEmpty()) {
-            Snackbar.make(view!!, "Question is empty", Snackbar.LENGTH_SHORT).show()
+            if (showSnack)
+                Snackbar.make(view!!, "Question is empty", Snackbar.LENGTH_SHORT).show()
             return false
         }
 
         for (choiceView in choicesContainer.children) {
             if (choiceView is ChoiceCardView && choiceView.getChoiceText().isEmpty()) {
-                Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT)
+                if (showSnack)
+                    Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT)
                     .show()
                 return false
             }

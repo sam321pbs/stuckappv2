@@ -102,7 +102,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
         }
     }
 
-    override fun fieldsValidated(): Boolean {
+    override fun fieldsValidated(showSnack: Boolean): Boolean {
         if (question.text.toString().isEmpty()) {
             Snackbar.make(view!!, "Question is empty", Snackbar.LENGTH_SHORT).show()
             return false

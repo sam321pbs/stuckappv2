@@ -47,7 +47,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
     private var selectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
     private var avatarKey: String? = ""
 
-    abstract fun fieldsValidated(): Boolean
+    abstract fun fieldsValidated(showSnack: Boolean = true): Boolean
 
     @Subscribe
     fun onCategorySelected(event: CategorySelectedEvent) {
