@@ -40,9 +40,15 @@ class InputFormItemView(context: Context, attrs: AttributeSet) : FrameLayout(con
         }
     }
 
-    fun setText(text: String) = itemEditText.setText(text)
     fun getText(): String = itemEditText.text.toString()
     fun getTitle(): String = titleView.text.toString()
+
+    fun setText(text: String) {
+        itemEditText.setText(text)
+        if (text.isNotBlank()) {
+            showField(false)
+        }
+    }
 
     fun showField(optional: Boolean) {
         if (!optional) {

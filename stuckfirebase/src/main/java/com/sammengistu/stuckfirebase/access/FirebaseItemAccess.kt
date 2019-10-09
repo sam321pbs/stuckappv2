@@ -18,7 +18,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
         // Override me
     }
 
-    protected open fun onItemDeleted() {
+    protected open fun onItemDeleted(item: T?) {
         // Override me
     }
 
@@ -65,13 +65,24 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
+    fun deleteItemInFb(document: T) {
+        getCollectionRef()
+            .document(document.ref)
+            .delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "${getModelClass().simpleName} successfully deleted!")
+                onItemDeleted(document)
+            }
+            .addOnFailureListener { e -> Log.w(TAG, "Error deleting ${getModelClass().simpleName}", e) }
+    }
+
     fun deleteItemInFb(documentId: String) {
         getCollectionRef()
             .document(documentId)
             .delete()
             .addOnSuccessListener {
                 Log.d(TAG, "${getModelClass().simpleName} successfully deleted!")
-                onItemDeleted()
+                onItemDeleted(null)
             }
             .addOnFailureListener { e -> Log.w(TAG, "Error deleting ${getModelClass().simpleName}", e) }
     }
@@ -83,7 +94,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .addOnSuccessListener {
                 listener.onSuccess()
                 Log.d(TAG, "${getModelClass().simpleName} successfully deleted!")
-                onItemDeleted()
+                onItemDeleted(null)
             }
             .addOnFailureListener { e ->
                 listener.onFailed(e)
@@ -214,7 +225,7 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             .collection(collection)
     }
 
-    private fun getSuccessListener(listener: OnItemsRetrieved<T>): OnSuccessListener<QuerySnapshot> {
+    fun getSuccessListener(listener: OnItemsRetrieved<T>): OnSuccessListener<QuerySnapshot> {
         val weakRef = WeakReference(listener)
         return OnSuccessListener { document ->
             val listenerRef = listener

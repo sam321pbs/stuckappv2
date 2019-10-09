@@ -68,22 +68,26 @@ class CommentsFragment : BaseFragment() {
 
     private fun reloadAdapter() {
         progressBar.visibility = View.VISIBLE
-        CommentsVoteAccess().getItemsWhereEqual("postRef", postRef, object :
-            FirebaseItemAccess.OnItemsRetrieved<CommentVoteModel> {
-            override fun onSuccess(list: List<CommentVoteModel>) {
-                val map = HashMap<String, CommentVoteModel>()
-                for (commentVote in list) {
-                    map[commentVote.commentRef] = commentVote
-                }
-                commentVotesMap = map
-                getComments()
-            }
+        UserHelper.getCurrentUser { user ->
+            if (user != null) {
+                CommentsVoteAccess().getCommentVotesForPost(user.ref, postRef, object :
+                    FirebaseItemAccess.OnItemsRetrieved<CommentVoteModel> {
+                    override fun onSuccess(list: List<CommentVoteModel>) {
+                        val map = HashMap<String, CommentVoteModel>()
+                        for (commentVote in list) {
+                            map[commentVote.commentRef] = commentVote
+                        }
+                        commentVotesMap = map
+                        getComments()
+                    }
 
-            override fun onFailed(e: Exception) {
-                progressBar.visibility = View.GONE
-                ErrorNotifier.notifyError(context!!, "Error getting comments", TAG, e)
+                    override fun onFailed(e: Exception) {
+                        progressBar.visibility = View.GONE
+                        ErrorNotifier.notifyError(context!!, TAG, "Error getting comments", e)
+                    }
+                })
             }
-        })
+        }
     }
 
     private fun getComments() {
@@ -98,7 +102,11 @@ class CommentsFragment : BaseFragment() {
                     } else {
                         emptyListMessage.visibility = View.GONE
                     }
-                    listComments = list as ArrayList<CommentModel>
+                    listComments = if (list.isEmpty()) {
+                        ArrayList()
+                    } else {
+                        ArrayList(list.reversed())
+                    }
                     commentsAdapter.swapData(listComments)
                     commentsAdapter.updateCommentVoteMap(commentVotesMap)
                 }

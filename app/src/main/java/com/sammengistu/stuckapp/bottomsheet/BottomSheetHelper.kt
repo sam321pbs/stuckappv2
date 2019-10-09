@@ -14,7 +14,10 @@ import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckfirebase.access.*
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
+import com.sammengistu.stuckfirebase.access.PostAccess
+import com.sammengistu.stuckfirebase.access.ReportAccess
+import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.database.HiddenItemModel
 import com.sammengistu.stuckfirebase.database.HiddenItemModel.Companion.TYPE_POST
 import com.sammengistu.stuckfirebase.database.access.DraftPostAccess
@@ -209,7 +212,6 @@ class BottomSheetHelper(
             object : FirebaseItemAccess.OnItemCreated<StarPostModel> {
                 override fun onSuccess(item: StarPostModel) {
                     if (post != null) {
-                        UserAccess().incrementTotalStars(item.ownerRef)
                         UserStarredCollection.addStarPostToMap(item)
                         post!!.totalStars = post!!.totalStars + 1
                         EventBus.getDefault().post(DataChangedEvent())
@@ -231,7 +233,6 @@ class BottomSheetHelper(
             object : FirebaseItemAccess.OnItemDeleted {
                 override fun onSuccess() {
                     if (post != null) {
-                        UserAccess().decrementTotalStars(post!!.ownerRef)
                         UserStarredCollection.removeStarPostFromMap(post!!)
                         post!!.totalStars = post!!.totalStars - 1
                         EventBus.getDefault().post(DataChangedEvent())

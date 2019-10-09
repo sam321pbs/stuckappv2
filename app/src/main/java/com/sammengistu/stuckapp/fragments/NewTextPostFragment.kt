@@ -48,6 +48,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
             if (view.tag == tag) {
                 choicesContainer.removeView(view)
                 updateSubmitButton()
+                add_choice_button.visibility = View.VISIBLE
                 break
             }
         }

@@ -7,6 +7,18 @@ class StarPostAccess : FirebaseItemAccess<StarPostModel>() {
     override fun getCollectionRef() = getEnvironmentCollectionRef(STARRED_POSTS)
     override fun getModelClass() = StarPostModel::class.java
 
+    override fun onItemCreated(item: StarPostModel) {
+        super.onItemCreated(item)
+        UserAccess().incrementTotalStars(item.ownerRef)
+    }
+
+    override fun onItemDeleted(item: StarPostModel?) {
+        super.onItemDeleted(item)
+        if (item != null) {
+            UserAccess().decrementTotalStars(item.ownerRef)
+        }
+    }
+
     fun getUsersStarredPosts(userRef: String, listener: OnItemsRetrieved<StarPostModel>) {
         getItemsWhereEqual("starPostOwnerRef", userRef, listener)
     }

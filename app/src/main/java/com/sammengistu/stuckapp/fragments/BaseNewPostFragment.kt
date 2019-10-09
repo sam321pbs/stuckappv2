@@ -42,6 +42,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
     val IMAGE_2 = "image_2"
     val CHOICES_VIEW = "choices_view"
     var draft: DraftPostModel? = null
+    var isPostGettingCreated = false
 
     private var selectedCategory: String = Categories.GENERAL.toString()
     private var selectedPrivacy: String = PrivacyOptions.PUBLIC.toString()
@@ -141,13 +142,16 @@ abstract class BaseNewPostFragment : BaseFragment() {
     }
 
     private fun createPost(type: PostType, data: Map<String, Any?>) {
+        if (isPostGettingCreated) {
+            return
+        }
         if (fieldsValidated()) {
-            UserHelper.getCurrentUser {
+            isPostGettingCreated = true
+            UserHelper.getCurrentUser { user ->
                 progress_bar.visibility = View.VISIBLE
-
-                if (it != null) {
+                if (user != null) {
                     try {
-                        val post = buildPost(it, type)
+                        val post = buildPost(user, type)
 
                         if (data.containsKey(IMAGE_1) && data.containsKey(IMAGE_2)) {
                             val data1 = data[IMAGE_1]
@@ -172,6 +176,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
                     }
                 } else {
                     handleFailedToCreateItem("User was null")
+                    isPostGettingCreated = false
                 }
             }
         }
@@ -269,12 +274,14 @@ abstract class BaseNewPostFragment : BaseFragment() {
     private fun handleFailedToCreateItem(message: String) {
         progress_bar.visibility = View.GONE
         Toast.makeText(activity!!, message, Toast.LENGTH_SHORT).show()
+        isPostGettingCreated = false
     }
 
     private fun handleFailedToCreateItem(message: String, e: java.lang.Exception) {
         progress_bar.visibility = View.GONE
         Toast.makeText(activity!!, message, Toast.LENGTH_SHORT).show()
         Log.e(TAG, message, e)
+        isPostGettingCreated = false
     }
 
     private fun buildPost(
@@ -283,7 +290,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
     ): PostModel {
         var avatar = user?.avatar ?: ""
         if (selectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
-            avatar = avatarKey ?: ""
+            avatar = avatarKey ?: AssetImageUtils.getRandomAvatarKey() ?: ""
         }
         return PostModel(
             user?.userId ?: "",

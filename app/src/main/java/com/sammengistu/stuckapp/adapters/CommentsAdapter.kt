@@ -51,7 +51,7 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
 //        holder.votedOn.visibility = View.GONE
 
         addOnClickListener(holder, comment)
-        updateVoteUi(holder, comment)
+        updateVoteUi(holder, comment, null, false)
     }
 
     private fun addOnClickListener(
@@ -59,13 +59,15 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
         comment: CommentModel
     ) {
         holder.upVote.setOnClickListener {
+            val vote = commentVotesMap[comment.ref]
             updateCommentVote(comment, CommentsVoteAccess.UP_VOTE)
-            updateVoteUi(holder, comment)
+            updateVoteUi(holder, comment, vote)
         }
 
         holder.downVote.setOnClickListener {
+            val vote = commentVotesMap[comment.ref]
             updateCommentVote(comment, CommentsVoteAccess.DOWN_VOTE)
-            updateVoteUi(holder, comment)
+            updateVoteUi(holder, comment, vote)
         }
 
         holder.avatar.setOnClickListener { showProfile(context, comment.ownerId) }
@@ -80,22 +82,56 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
         }
     }
 
-    private fun updateVoteUi(holder: CommentsViewHolder, comment: CommentModel) {
+    private fun updateVoteUi(
+        holder: CommentsViewHolder, comment: CommentModel, prevVote: CommentVoteModel?,
+        userClick: Boolean = true
+    ) {
         val vote = commentVotesMap[comment.ref]
         if (vote != null) {
             if (vote.voteType == CommentsVoteAccess.UP_VOTE) {
                 holder.upVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_upward_yellow_50_24dp))
                 holder.downVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_downward_blue_400_24dp))
-                holder.upVoteText.text = (comment.upVotes + 1).toString()
             } else {
                 holder.upVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_upward_blue_400_24dp))
                 holder.downVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_downward_yellow_50_24dp))
-                holder.upVoteText.text = (comment.upVotes - 1).toString()
             }
         } else {
             holder.upVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_upward_blue_400_24dp))
             holder.downVote.setImageDrawable(context.getDrawable(R.drawable.ic_arrow_downward_blue_400_24dp))
-            holder.upVoteText.text = comment.upVotes.toString()
+        }
+        val addAmount = if (userClick) addAmount(vote, prevVote) else 0
+        comment.upVotes = comment.upVotes + addAmount
+        holder.upVoteText.text = comment.upVotes.toString()
+    }
+
+    fun addAmount(currentVote: CommentVoteModel?, prevVote: CommentVoteModel?): Int {
+        val currentVoteType: Int = currentVote?.voteType ?: CommentsVoteAccess.NO_VOTE
+        val prevVoteType: Int = prevVote?.voteType ?: CommentsVoteAccess.NO_VOTE
+
+        return if (currentVoteType == CommentsVoteAccess.UP_VOTE &&
+            prevVoteType == CommentsVoteAccess.DOWN_VOTE
+        ) {
+            return 2
+        } else if (currentVoteType == CommentsVoteAccess.DOWN_VOTE &&
+            prevVoteType == CommentsVoteAccess.UP_VOTE
+        ) {
+            return -2
+        } else if (currentVoteType == CommentsVoteAccess.UP_VOTE &&
+            prevVoteType == CommentsVoteAccess.NO_VOTE
+        ) {
+            return 1
+        } else if (currentVoteType == CommentsVoteAccess.DOWN_VOTE &&
+            prevVoteType == CommentsVoteAccess.NO_VOTE
+        ) {
+            return -1
+        } else if (currentVoteType == CommentsVoteAccess.NO_VOTE  &&
+            prevVoteType == CommentsVoteAccess.UP_VOTE) {
+            return -1
+        } else if (currentVoteType == CommentsVoteAccess.NO_VOTE  &&
+            prevVoteType == CommentsVoteAccess.DOWN_VOTE) {
+            return 1
+        } else {
+            0
         }
     }
 
@@ -142,7 +178,7 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
     private fun deleteVote(oldCommentVote: CommentVoteModel?) {
         if (oldCommentVote != null) {
             commentVotesMap.remove(oldCommentVote.commentRef)
-            CommentsVoteAccess().deleteItemInFb(oldCommentVote.ref)
+            CommentsVoteAccess().deleteItemInFb(oldCommentVote)
         }
     }
 
@@ -152,13 +188,15 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
         notifyDataSetChanged()
     }
 
-    fun updateCommentVoteMap(map : HashMap<String, CommentVoteModel>) { commentVotesMap = map }
+    fun updateCommentVoteMap(map: HashMap<String, CommentVoteModel>) {
+        commentVotesMap = map
+    }
 
     open class CommentsViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {
         val avatar: AvatarView = parentView.find(R.id.avatar_view)
         val username: TextView = parentView.find(R.id.username)
         val timeSince: TextView = parentView.find(R.id.time_since)
-//        val votedOn: TextView = parentView.find(R.id.voted_on)
+        //        val votedOn: TextView = parentView.find(R.id.voted_on)
         val commentText: TextView = parentView.find(R.id.comment_text)
         val upVote: ImageView = parentView.find(R.id.up_vote)
         val downVote: ImageView = parentView.find(R.id.down_vote)

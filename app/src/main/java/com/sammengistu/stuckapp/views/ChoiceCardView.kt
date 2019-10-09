@@ -83,6 +83,7 @@ class ChoiceCardView(context: Context, attrs: AttributeSet?, val clearClicked: O
         choiceText.textSize = 17f
         choiceText.setPadding(10, 10, 10, 10)
         choiceText.setBackgroundColor(context.resources.getColor(R.color.white))
+        choiceText.setTextColor(context.resources.getColor(R.color.black))
         setBackgroundColor(context.resources.getColor(R.color.white))
     }
 

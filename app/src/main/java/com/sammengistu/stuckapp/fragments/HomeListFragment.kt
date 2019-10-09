@@ -2,7 +2,7 @@ package com.sammengistu.stuckapp.fragments
 
 class HomeListFragment : PostsListFragment() {
 
-    override fun getEmptyMessage() = "No Posts"
+    override fun getEmptyMessage() = "No Posts.\nYou can be the first to create one!"
 
     override fun getType(): String = TYPE_HOME
 

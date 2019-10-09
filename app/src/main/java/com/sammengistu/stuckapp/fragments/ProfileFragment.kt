@@ -34,17 +34,17 @@ import org.greenrobot.eventbus.Subscribe
 
 class ProfileFragment : BaseFragment() {
 
-    lateinit var avatarView: AvatarView
-    lateinit var addAvatar: TextView
-    lateinit var usernameField: InputFormItemView
-    lateinit var bioField: InputFormItemView
-    lateinit var nameField: InputFormItemView
-    lateinit var occupationField: InputFormItemView
-    lateinit var educationField: InputFormItemView
-    lateinit var ageGroupSpinner: Spinner
-    lateinit var genderSpinner: Spinner
-    lateinit var createProfileButton: Button
-    lateinit var progressBar: FrameLayout
+    private lateinit var avatarView: AvatarView
+    private lateinit var addAvatar: TextView
+    private lateinit var usernameField: InputFormItemView
+    private lateinit var bioField: InputFormItemView
+    private lateinit var nameField: InputFormItemView
+    private lateinit var occupationField: InputFormItemView
+    private lateinit var educationField: InputFormItemView
+    private lateinit var ageGroupSpinner: Spinner
+    private lateinit var genderSpinner: Spinner
+    private lateinit var createProfileButton: Button
+    private lateinit var progressBar: FrameLayout
 
     private var avatarImage: Bitmap? = null
     private var selectedAgeGroup: Int? = IGNORE
@@ -83,6 +83,12 @@ class ProfileFragment : BaseFragment() {
         initViews()
         if (!createMode) {
             populateFields()
+        } else {
+            val fbUser = UserHelper.getFirebaseUser()
+            val displayName = fbUser?.displayName ?: ""
+            if (fbUser != null) {
+                nameField.setText(displayName)
+            }
         }
         addAvatar.setOnClickListener {
             GetImageFromDialog().show(activity!!.supportFragmentManager, GetImageFromDialog.TAG)
@@ -307,12 +313,12 @@ class ProfileFragment : BaseFragment() {
     private fun buildUserModel(userId: String, avatar: String): UserModel {
         return UserModel(
             userId,
-            usernameField.getText(),
+            usernameField.getText().trim(),
             avatar,
-            nameField.getText(),
-            occupationField.getText(),
-            educationField.getText(),
-            bioField.getText(),
+            nameField.getText().trim(),
+            occupationField.getText().trim(),
+            educationField.getText().trim(),
+            bioField.getText().trim(),
             selectedAgeGroup!!,
             selectedGender!!,
             0, 0, 0

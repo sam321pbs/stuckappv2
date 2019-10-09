@@ -13,7 +13,6 @@ import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.utils.StringUtils
-import com.sammengistu.stuckapp.views.HorizontalIconToTextView
 import com.sammengistu.stuckapp.views.VotableImageView
 import com.sammengistu.stuckapp.views.VotableTextChoiceView
 import com.sammengistu.stuckfirebase.ErrorNotifier
@@ -89,9 +88,9 @@ class PostViewFragment : BaseFragment() {
 
         val userVote = UserVotesCollection.getVoteForPost(post.ref)
         if (post.type == PostType.TEXT.toString()) {
-            buildTextChoices(choiceContainer, voteTotalView, post, userVote)
+            buildTextChoices(choiceContainer, post, userVote)
         } else if (post.type == PostType.LANDSCAPE.toString()) {
-            buildImageChoices(choiceContainer, voteTotalView, post, userVote)
+            buildImageChoices(choiceContainer, post, userVote)
         }
 
         updateStarIcon(post, starIcon)
@@ -115,12 +114,10 @@ class PostViewFragment : BaseFragment() {
 
     private fun buildTextChoices(
         choiceContainer: LinearLayout,
-        voteTotalView: HorizontalIconToTextView,
         post: PostModel,
         userVote: UserVoteModel?
     ) {
         choiceContainer.removeAllViews()
-        voteTotalView.setText((post.getTotalVotes() + 1).toString())
         for (tripleItem in post.getChoicesToVoteList()) {
             choiceContainer.addView(
                 VotableTextChoiceView(activity!!, post, tripleItem, userVote, null)
@@ -129,13 +126,9 @@ class PostViewFragment : BaseFragment() {
     }
 
     private fun buildImageChoices(
-        choiceContainer: LinearLayout,
-        voteTotalView: HorizontalIconToTextView,
-        post: PostModel,
-        userVote: UserVoteModel?
+        choiceContainer: LinearLayout, post: PostModel, userVote: UserVoteModel?
     ) {
         choiceContainer.removeAllViews()
-        voteTotalView.setText((post.getTotalVotes() + 1).toString())
         for (tripleItem in post.getImagesToVoteList()) {
             choiceContainer.addView(
                 VotableImageView(context!!, post, tripleItem, userVote, null)

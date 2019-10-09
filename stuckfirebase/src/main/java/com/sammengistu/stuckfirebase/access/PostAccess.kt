@@ -14,10 +14,6 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         incrementField(ref, "votes.$key")
     }
 
-    fun incrementStarTotal(ref: String) {
-        incrementField(ref, "totalStars")
-    }
-
     fun getRecentPosts(listener: OnItemsRetrieved<PostModel>) {
         getItems(listener)
     }
