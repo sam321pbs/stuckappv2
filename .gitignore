@@ -13,3 +13,5 @@
 .externalNativeBuild
 
 id_strings.xml
+build.gradle
+app-release.aab

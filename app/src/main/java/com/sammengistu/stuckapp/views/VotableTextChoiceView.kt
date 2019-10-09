@@ -31,6 +31,9 @@ class VotableTextChoiceView(
     override fun onItemVotedOn(userVote: UserVoteModel?) {
         // Todo: start animation to show votes
         handleVotedItem(userVote, true)
+        if(userVote != null && post.votes[userVote.voteItem] != null) {
+            post.votes[userVote.voteItem]?.plus(1)
+        }
     }
 
     fun setChoiceText(choiceText: String) {

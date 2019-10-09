@@ -5,6 +5,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file(rootProject.storeFile)
+            storePassword rootProject.storePassword
+            keyAlias = rootProject.keyAlias
+            keyPassword rootProject.keyPassword
+        }
+    }
     compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
         applicationId "com.sammengistu.stuckapp"
@@ -18,6 +26,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
