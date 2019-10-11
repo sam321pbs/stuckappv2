@@ -82,14 +82,14 @@ class NewImagePostFragment : BaseNewPostFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-//            REQUEST_LOAD_IMG_1 -> { mBitmap1 =
-//                LoadImageFromGalleryHelper.addImageToView(activity, image_1, data)
-//                updateSelectImageText()
-//            }
-//            REQUEST_LOAD_IMG_2 -> { mBitmap2 =
-//                LoadImageFromGalleryHelper.addImageToView(activity, image_2, data)
-//                updateSelectImageText()
-//            }
+            REQUEST_LOAD_IMG_1 -> { mBitmap1 =
+                LoadImageFromGalleryHelper.addImageToView(activity, image_1, data)
+                updateSelectImageText()
+            }
+            REQUEST_LOAD_IMG_2 -> { mBitmap2 =
+                LoadImageFromGalleryHelper.addImageToView(activity, image_2, data)
+                updateSelectImageText()
+            }
         }
     }
 
