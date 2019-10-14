@@ -19,6 +19,7 @@ import com.sammengistu.stuckapp.dialog.GetImageFromDialog
 import com.sammengistu.stuckapp.events.GetPhotoFromEvent
 import com.sammengistu.stuckapp.events.OnAvatarSelected
 import com.sammengistu.stuckapp.events.UserUpdatedEvent
+import com.sammengistu.stuckapp.helpers.KeyboardStateHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper.Companion.loadImageFromGallery
 import com.sammengistu.stuckapp.views.AvatarView
@@ -31,6 +32,8 @@ import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ProfileFragment : BaseFragment() {
 
@@ -98,6 +101,24 @@ class ProfileFragment : BaseFragment() {
                 createProfile()
             } else {
                 handleProfileUpdate()
+            }
+        }
+
+        KeyboardStateHelper(view) { open ->
+            if (open) {
+                createProfileButton.visibility = View.GONE
+            } else {
+                Timer().schedule(object: TimerTask(){
+                    override fun run() {
+                        if (activity != null) {
+                            activity!!.runOnUiThread {
+                                if (createProfileButton != null) {
+                                    createProfileButton.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    }
+                } , 200)
             }
         }
     }

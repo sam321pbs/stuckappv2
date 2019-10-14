@@ -3,6 +3,7 @@
     <declare-styleable name="HorizontalIconToTextView">
         <attr name="iconSrc" format="integer" />
         <attr name="iconText" format="string" />
+        <attr name="textColor" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="ChoiceCardView">

@@ -2,16 +2,20 @@ package com.sammengistu.stuckapp.views
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
+import android.widget.TextView
 import com.sammengistu.stuckapp.R
 
 class InputFormItemView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     var titleView: TextView = TextView(context)
     var itemEditText: EditText = EditText(context)
     var containerForm: LinearLayout = LinearLayout(context)
-    var addFieldButton: Button = Button(context)
+    var addFieldButton: TextView = TextView(context)
 
     init {
         containerForm.orientation = VERTICAL
@@ -68,7 +72,16 @@ class InputFormItemView(context: Context, attrs: AttributeSet) : FrameLayout(con
         titleView.layoutParams = params
         itemEditText.layoutParams = params
         containerForm.layoutParams = params
-        addFieldButton.layoutParams = params
+
+        val paramsButton = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        paramsButton.marginEnd = 10
+        paramsButton.marginStart = 10
+        paramsButton.gravity = Gravity.CENTER
+
+        addFieldButton.gravity = Gravity.CENTER
+        addFieldButton.setPadding(20,20,20,20)
+        addFieldButton.setTextColor(context.resources.getColor(android.R.color.holo_blue_dark))
+        addFieldButton.layoutParams = paramsButton
 
         addFieldButton.setOnClickListener { showField(false) }
         containerForm.addView(titleView)

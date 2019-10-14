@@ -22,10 +22,13 @@ class HorizontalIconToTextView(context: Context, attrs: AttributeSet) : LinearLa
             try {
                 val iconId = getResourceId(R.styleable.HorizontalIconToTextView_iconSrc, 0)
                 val iconText = getString(R.styleable.HorizontalIconToTextView_iconText)
+                val textColor = getResourceId(R.styleable.HorizontalIconToTextView_textColor,
+                    context.resources.getColor(R.color.colorDefault))
                 if (iconId != 0) {
                     iconView.setImageDrawable(context.getDrawable(iconId))
                 }
                 countView.text = iconText
+                countView.setTextColor(context.resources.getColor(textColor))
             } finally {
                 recycle()
             }

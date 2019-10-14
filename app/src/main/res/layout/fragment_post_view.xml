@@ -30,6 +30,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_done"
+        android:textColor="@color/white"
         android:text="Show comments"
         android:id="@+id/show_comments"
         android:layout_alignParentBottom="true"/>

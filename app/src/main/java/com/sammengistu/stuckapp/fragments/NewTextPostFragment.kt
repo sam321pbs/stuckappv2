@@ -21,6 +21,7 @@ import com.sammengistu.stuckfirebase.database.InjectorUtils
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.Subscribe
+import java.util.*
 
 
 class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked {
@@ -33,6 +34,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
     lateinit var submitButton: Button
     lateinit var keyboardHelper: KeyboardStateHelper
     private var selectedChoice: Int = 0
+    private var isKeyboardOpen = false
 
     @Subscribe
     fun onSaveDraft(event: SaveDraftEvent) {
@@ -99,15 +101,28 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         }
 
         keyboardHelper = KeyboardStateHelper(view) { open ->
+            isKeyboardOpen = open
             if (open) {
                 submitButton.visibility = View.GONE
             } else {
-                updateSubmitButton()
+                Timer().schedule(object: TimerTask(){
+                    override fun run() {
+                        if (activity != null) {
+                            activity!!.runOnUiThread {
+                                updateSubmitButton()
+                            }
+                        }
+                    }
+                } , 200)
             }
         }
     }
 
     private fun updateSubmitButton() {
+        if (isKeyboardOpen) {
+            submitButton.visibility = View.GONE
+            return
+        }
         if (!fieldsValidated(false)){
             submitButton.visibility = View.GONE
             return
@@ -126,6 +141,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
             return
         }
         submitButton.visibility = View.VISIBLE
+        composeAreaContainer.visibility = View.GONE
     }
 
     private fun setChoice() {

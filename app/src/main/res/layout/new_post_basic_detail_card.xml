@@ -52,7 +52,8 @@
                     <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                         android:id="@+id/privacy_choice"
                         style="@style/icon_to_text_style"
-                        android:background="@drawable/round_rectangle_shape_gray"
+                        android:background="@drawable/button_done"
+                        custom:textColor="@color/white"
                         custom:iconSrc="@drawable/ic_group_white_24dp"
                         custom:iconText="Public" />
 
@@ -60,7 +61,8 @@
                         android:id="@+id/category_choice"
                         style="@style/icon_to_text_style"
                         android:layout_marginStart="10dp"
-                        android:background="@drawable/round_rectangle_shape_gray"
+                        android:background="@drawable/button_done"
+                        custom:textColor="@color/white"
                         custom:iconSrc="@drawable/ic_subject_white_24dp"
                         custom:iconText="Category" />
                 </LinearLayout>

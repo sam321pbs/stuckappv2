@@ -112,6 +112,7 @@
             android:id="@+id/votesTotal"
             style="@style/icon_to_text_style"
             android:layout_weight="1"
+            custom:textColor="@color/colorDefault"
             custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
             custom:iconText="100" />
 
@@ -119,6 +120,7 @@
             android:id="@+id/commentsTotal"
             style="@style/icon_to_text_style"
             android:layout_weight="1"
+            custom:textColor="@color/colorDefault"
             custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
             custom:iconText="100" />
 
@@ -126,6 +128,7 @@
             android:id="@+id/starsTotal"
             style="@style/icon_to_text_style"
             android:layout_weight="1"
+            custom:textColor="@color/colorDefault"
             custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
             custom:iconText="100" />
 
@@ -133,6 +136,7 @@
             android:id="@+id/category"
             style="@style/icon_to_text_style"
             android:layout_weight="1"
+            custom:textColor="@color/colorDefault"
             custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
             custom:iconText="Sports" />
     </LinearLayout>
