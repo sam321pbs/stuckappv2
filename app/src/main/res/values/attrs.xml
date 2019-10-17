@@ -1,8 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="IconToCountView">
+    <declare-styleable name="HorizontalIconToTextView">
         <attr name="iconSrc" format="integer" />
         <attr name="iconText" format="string" />
-        <attr name="iconTag" format="string" />
+        <attr name="textColor" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="ChoiceCardView">
+        <attr name="hintText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="VotableTextChoiceView">
+        <attr name="choiceText" format="string" />
+        <attr name="voteTotal" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="VerticalIconToTextView">
+        <attr name="verticalIconSrc" format="integer" />
+        <attr name="verticalIconText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="InputFormItemView">
+        <attr name="formItemTitle" format="string" />
+        <attr name="formItemHint" format="string" />
+        <attr name="formItemOptional" format="boolean" />
+        <attr name="formItemTag" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="DisplayFormItemView">
+        <attr name="displayTitle" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="AvatarView">
+        <attr name="avatarSrc" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="StatCardView">
+        <attr name="statTotal" format="string" />
+        <attr name="statTitle" format="string" />
     </declare-styleable>
 </resources>

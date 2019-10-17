@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="80dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/bottom_sheet_title"
+            style="@style/bottomsheet_menu_item"
+            android:text="Post Options" />
+
+        <ImageView
+            android:id="@+id/close_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:padding="6dp"
+            android:src="@drawable/ic_clear_blue_400_24dp" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_favorite_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/menu_favorite"
+            style="@style/bottomsheet_menu_item"
+            android:text="Favorite" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_comments_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/menu_comments"
+            style="@style/bottomsheet_menu_item"
+            android:text="Comments" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_hide_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/menu_hide"
+            style="@style/bottomsheet_menu_item"
+            android:text="Hide" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_delete_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/menu_delete_post"
+            style="@style/bottomsheet_menu_item"
+            android:text="Delete" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_report_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/menu_report"
+            style="@style/bottomsheet_menu_item"
+            android:text="Report" />
+    </LinearLayout>
+</LinearLayout>
