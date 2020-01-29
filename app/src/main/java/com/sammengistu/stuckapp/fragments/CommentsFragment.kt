@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
@@ -18,25 +20,29 @@ import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.CommentAccess
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
-import com.sammengistu.stuckfirebase.models.CommentVoteModel
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.repositories.CommentsRepository
+import com.sammengistu.stuckfirebase.viewmodels.CommentsViewModel
 import kotlinx.android.synthetic.main.compose_area.*
 import kotlinx.android.synthetic.main.fragment_comments.*
 
+
+private val TAG = CommentsFragment::class.java.simpleName
+private const val TITLE = "Comments"
+
 class CommentsFragment : BaseFragment() {
 
-    lateinit var commentET: EditText
-    lateinit var sendButton: ImageView
-    lateinit var commentsAdapter: CommentsAdapter
-    lateinit var emptyListMessage: VerticalIconToTextView
-    lateinit var progressBar: ProgressBar
+    private lateinit var commentET: EditText
+    private lateinit var sendButton: ImageView
+    private lateinit var commentsAdapter: CommentsAdapter
+    private lateinit var emptyListMessage: VerticalIconToTextView
+    private lateinit var progressBar: ProgressBar
 
-    private var postRef: String = ""
+    private lateinit var postRef: String
+    private lateinit var commentsViewModel: CommentsViewModel
+
     private var choicePos: Int = 0
-    private var listComments = ArrayList<CommentModel>()
-    private var commentVotesMap = HashMap<String, CommentVoteModel>()
 
     override fun getFragmentTag(): String = TAG
     override fun getLayoutId(): Int = R.layout.fragment_comments
@@ -61,62 +67,45 @@ class CommentsFragment : BaseFragment() {
                 activity!!, recycler_view,
                 commentsAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>
             )
-            reloadAdapter()
+            UserHelper.getCurrentUser {
+                if (it != null) {
+                    commentsViewModel = CommentsViewModel(
+                        CommentsRepository(CommentAccess(),
+                            CommentsVoteAccess()
+                        ), it.ref, postRef)
+                    loadComments()
+                }
+            }
             setupComposeArea()
         }
     }
 
-    private fun reloadAdapter() {
+    private fun loadComments() {
         progressBar.visibility = View.VISIBLE
-        UserHelper.getCurrentUser { user ->
-            if (user != null) {
-                CommentsVoteAccess().getCommentVotesForPost(user.ref, postRef, object :
-                    FirebaseItemAccess.OnItemsRetrieved<CommentVoteModel> {
-                    override fun onSuccess(list: List<CommentVoteModel>) {
-                        val map = HashMap<String, CommentVoteModel>()
-                        for (commentVote in list) {
-                            map[commentVote.commentRef] = commentVote
-                        }
-                        commentVotesMap = map
-                        getComments()
-                    }
-
-                    override fun onFailed(e: Exception) {
-                        progressBar.visibility = View.GONE
-                        ErrorNotifier.notifyError(context!!, TAG, "Error getting comments", e)
-                    }
-                })
+        commentsViewModel.commentsLiveData.removeObservers(viewLifecycleOwner)
+        commentsViewModel.commentVotesLiveData.removeObservers(viewLifecycleOwner)
+        commentsViewModel.commentVotesLiveData.observe(viewLifecycleOwner) { map ->
+            if (map == null) {
+                Toast.makeText(context, "Error getting votes", Toast.LENGTH_SHORT).show()
+            } else {
+                commentsAdapter.updateCommentVoteMap(map)
             }
         }
-    }
-
-    private fun getComments() {
-        CommentAccess().getItemsWhereEqual(
-            "postRef",
-            postRef,
-            object : FirebaseItemAccess.OnItemsRetrieved<CommentModel> {
-                override fun onSuccess(list: List<CommentModel>) {
-                    progressBar.visibility = View.GONE
-                    if (list.isEmpty()) {
-                        emptyListMessage.visibility = View.VISIBLE
-                    } else {
-                        emptyListMessage.visibility = View.GONE
-                    }
-                    listComments = if (list.isEmpty()) {
-                        ArrayList()
-                    } else {
-                        ArrayList(list.reversed())
-                    }
-                    commentsAdapter.swapData(listComments)
-                    commentsAdapter.updateCommentVoteMap(commentVotesMap)
+        commentsViewModel.commentsLiveData.observe(viewLifecycleOwner) { list ->
+            progressBar.visibility = View.GONE
+            when {
+                list == null -> {
+                    Toast.makeText(context, "Error getting comments", Toast.LENGTH_SHORT).show()
                 }
-
-                override fun onFailed(e: Exception) {
-                    progressBar.visibility = View.GONE
-                    ErrorNotifier.notifyError(context!!, "Error getting comments", TAG, e)
+                list.isEmpty() -> {
+                    emptyListMessage.visibility = View.VISIBLE
+                }
+                else -> {
+                    emptyListMessage.visibility = View.GONE
+                    commentsAdapter.swapData(list)
                 }
             }
-        )
+        }
     }
 
     private fun setupComposeArea() {
@@ -140,19 +129,13 @@ class CommentsFragment : BaseFragment() {
                 commentET.text.toString(),
                 choicePos
             )
-            CommentAccess().createItemInFB(commentModel)
-            // Todo: check that view still exists
-            listComments.add(commentModel)
-            commentsAdapter.swapData(listComments)
+            commentsViewModel.createComment(commentModel)
             commentET.setText("")
             emptyListMessage.visibility = View.GONE
         }
     }
 
     companion object {
-        val TAG = CommentsFragment::class.java.simpleName
-        const val TITLE = "Comments"
-
         fun newInstance(
             postId: String,
             postOwnerId: String,

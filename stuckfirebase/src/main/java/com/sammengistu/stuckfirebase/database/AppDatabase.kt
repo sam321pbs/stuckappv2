@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sammengistu.stuckfirebase.constants.DATABASE_NAME
-import com.sammengistu.stuckfirebase.database.DraftPostModel
-import com.sammengistu.stuckfirebase.database.HiddenItemModel
+import com.sammengistu.stuckfirebase.database.model.DraftPostModel
+import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
 import com.sammengistu.stuckfirebase.database.HiddenItemsDao
 import com.sammengistu.stuckfirebase.database.PostDao
 

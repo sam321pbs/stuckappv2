@@ -2,8 +2,10 @@ package com.sammengistu.stuckfirebase.database
 
 import android.content.Context
 import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckfirebase.database.viewmodels.HiddenItemsViewModelFactory
-import com.sammengistu.stuckfirebase.database.viewmodels.PostListViewModelFactory
+import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
+import com.sammengistu.stuckfirebase.repositories.PostRepository
+import com.sammengistu.stuckfirebase.viewmodels.HiddenItemsViewModelFactory
+import com.sammengistu.stuckfirebase.viewmodels.PostListViewModelFactory
 
 object InjectorUtils {
     fun getDraftPostRepository(context: Context): PostRepository {

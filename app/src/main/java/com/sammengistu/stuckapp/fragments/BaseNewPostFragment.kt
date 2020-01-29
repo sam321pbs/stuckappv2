@@ -24,8 +24,8 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.database.DraftPostModel
 import com.sammengistu.stuckfirebase.database.access.DraftPostAccess
+import com.sammengistu.stuckfirebase.database.model.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.android.synthetic.main.fragment_new_image_post.*

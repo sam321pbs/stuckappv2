@@ -190,6 +190,7 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
 
     fun updateCommentVoteMap(map: HashMap<String, CommentVoteModel>) {
         commentVotesMap = map
+        notifyDataSetChanged()
     }
 
     open class CommentsViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {

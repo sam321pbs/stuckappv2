@@ -1,9 +1,9 @@
-package com.sammengistu.stuckfirebase.database.viewmodels
+package com.sammengistu.stuckfirebase.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.sammengistu.stuckfirebase.database.HiddenItemModel
-import com.sammengistu.stuckfirebase.database.HiddenItemsRepository
+import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
+import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 
 class HiddenItemsViewModel internal constructor(
     hiddenItemsRepository: HiddenItemsRepository,
