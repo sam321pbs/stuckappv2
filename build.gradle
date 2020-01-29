@@ -7,9 +7,6 @@ buildscript {
         minSdkVersion = 21
         targetSdkVersion = 28
 
-
-     
-
         // App dependencies
         appCompatVersion = '1.2.0-alpha01'
         ankoVersion = '0.10.8'

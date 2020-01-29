@@ -5,14 +5,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 android {
-    signingConfigs {
-        release {
-            storeFile file(rootProject.storeFile)
-            storePassword rootProject.storePassword
-            keyAlias = rootProject.keyAlias
-            keyPassword rootProject.keyPassword
-        }
-    }
+//    signingConfigs {
+//        release {
+//            storeFile file(rootProject.storeFile)
+//            storePassword rootProject.storePassword
+//            keyAlias = rootProject.keyAlias
+//            keyPassword rootProject.keyPassword
+//        }
+//    }
     compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
         applicationId "com.sammengistu.stuckapp"
@@ -23,11 +23,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+//        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
