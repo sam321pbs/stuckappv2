@@ -2,8 +2,8 @@ package com.sammengistu.stuckfirebase.database.access
 
 import android.content.Context
 import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckfirebase.database.HiddenItemModel
-import com.sammengistu.stuckfirebase.database.HiddenItemsRepository
+import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
+import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 
 class HiddenItemsAccess(private val context: Context) {
     fun insertItem(item: HiddenItemModel) {

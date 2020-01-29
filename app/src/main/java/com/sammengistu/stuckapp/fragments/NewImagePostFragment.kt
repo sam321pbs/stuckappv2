@@ -15,7 +15,7 @@ import com.sammengistu.stuckapp.activities.NewPostActivity.Companion.EXTRA_POST_
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.database.DraftPostModel
+import com.sammengistu.stuckfirebase.database.model.DraftPostModel
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
@@ -67,7 +67,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
 
         if (arguments != null) {
             val postId = arguments!!.getLong(EXTRA_POST_ID)
-            val liveDraftPost = InjectorUtils.getDraftPostRepository(activity as Context).getPost(postId)
+            val liveDraftPost = InjectorUtils.getDraftPostRepository(activity as Context).getDraftPost(postId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
                 if (draftList.isNotEmpty()) {

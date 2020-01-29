@@ -19,12 +19,12 @@ import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.database.DraftPostModel
 import com.sammengistu.stuckfirebase.database.InjectorUtils
-import com.sammengistu.stuckfirebase.database.viewmodels.PostListViewModel
+import com.sammengistu.stuckfirebase.database.model.DraftPostModel
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
+import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -174,10 +174,15 @@ abstract class PostsListFragment : BaseFragment() {
         UserHelper.getCurrentUser { user ->
             if (user != null) {
                 when (getType()) {
-                    TYPE_FAVORITE -> StarPostAccess().getUsersStarredPosts(
-                        user.ref,
-                        getOnStarPostRetrievedListener(adapter)
-                    )
+                    TYPE_FAVORITE -> {
+//                        StarPostAccess().getUsersStarredPosts(
+//                            user.ref,
+//                            getOnStarPostRetrievedListener(adapter)
+//                        )
+                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
+                            updateAdapter(convertDraftToPost(draftList), adapter, false)
+                        }
+                    }
                     TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
                         getPostCategory(),
                         getOnPostRetrievedListener(adapter)

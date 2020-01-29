@@ -1,4 +1,7 @@
-package com.sammengistu.stuckfirebase.database
+package com.sammengistu.stuckfirebase.repositories
+
+import com.sammengistu.stuckfirebase.database.HiddenItemsDao
+import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
 
 class HiddenItemsRepository(val dao: HiddenItemsDao) {
 
@@ -17,9 +20,12 @@ class HiddenItemsRepository(val dao: HiddenItemsDao) {
         private var instance: HiddenItemsRepository? = null
 
         fun getInstance(hiddenItemsDao: HiddenItemsDao) =
-            instance ?: synchronized(this) {
+            instance
+                ?: synchronized(this) {
                 instance
-                    ?: HiddenItemsRepository(hiddenItemsDao).also { instance = it }
+                    ?: HiddenItemsRepository(
+                        hiddenItemsDao
+                    ).also { instance = it }
             }
     }
 }

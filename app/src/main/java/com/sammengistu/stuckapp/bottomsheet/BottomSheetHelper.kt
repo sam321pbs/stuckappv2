@@ -18,10 +18,10 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.ReportAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.database.HiddenItemModel
-import com.sammengistu.stuckfirebase.database.HiddenItemModel.Companion.TYPE_POST
 import com.sammengistu.stuckfirebase.database.access.DraftPostAccess
 import com.sammengistu.stuckfirebase.database.access.HiddenItemsAccess
+import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
+import com.sammengistu.stuckfirebase.database.model.HiddenItemModel.Companion.TYPE_POST
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.ReportModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
@@ -151,7 +151,13 @@ class BottomSheetHelper(
         doAsync {
             UserHelper.getCurrentUser { user ->
                 if (user != null) {
-                    val item = HiddenItemModel(user.userId, user.ref, post!!.ref, TYPE_POST)
+                    val item =
+                        HiddenItemModel(
+                            user.userId,
+                            user.ref,
+                            post!!.ref,
+                            TYPE_POST
+                        )
                     HiddenItemsAccess(context).insertItem(item)
                 }
             }

@@ -1,7 +1,7 @@
 package com.sammengistu.stuckfirebase.models
 
 import com.google.firebase.firestore.Exclude
-import com.sammengistu.stuckfirebase.database.DraftPostModel
+import com.sammengistu.stuckfirebase.database.model.DraftPostModel
 
 @Exclude
 const val MAX_NUMBER_OF_CHOICES = 4

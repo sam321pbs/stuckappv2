@@ -1,8 +1,8 @@
-package com.sammengistu.stuckfirebase.database.viewmodels
+package com.sammengistu.stuckfirebase.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.sammengistu.stuckfirebase.database.HiddenItemsRepository
+import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 
 class HiddenItemsViewModelFactory(
     private val repository: HiddenItemsRepository,

@@ -1,8 +1,8 @@
-package com.sammengistu.stuckfirebase.database.viewmodels
+package com.sammengistu.stuckfirebase.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.sammengistu.stuckfirebase.database.PostRepository
+import com.sammengistu.stuckfirebase.repositories.PostRepository
 
 class PostListViewModelFactory(private val repository: PostRepository, private val ownerId: String) : ViewModelProvider.NewInstanceFactory() {
 

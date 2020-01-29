@@ -1,6 +1,6 @@
 package com.sammengistu.stuckfirebase.models
 
-class ReportModel(
+data class ReportModel(
     val reason: String,
     val postRef: String,
     // Link to

@@ -5,9 +5,9 @@ import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckfirebase.database.HiddenItemModel
+import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
 import com.sammengistu.stuckfirebase.database.InjectorUtils
-import com.sammengistu.stuckfirebase.database.viewmodels.HiddenItemsViewModel
+import com.sammengistu.stuckfirebase.viewmodels.HiddenItemsViewModel
 import org.greenrobot.eventbus.EventBus
 
 class HiddenItemsHelper(lifeCycleOwner: ComponentActivity) {
