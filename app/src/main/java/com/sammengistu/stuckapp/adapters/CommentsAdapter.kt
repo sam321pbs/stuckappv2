@@ -12,11 +12,11 @@ import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.AvatarView
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.models.CommentVoteModel
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.jetbrains.anko.find
 
 
@@ -136,7 +136,7 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
     }
 
     private fun updateCommentVote(comment: CommentModel, commentVoteType: Int) {
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context) { user ->
             if (user != null) {
                 val oldCommentVote = commentVotesMap[comment.ref]
                 if (oldCommentVote == null) {

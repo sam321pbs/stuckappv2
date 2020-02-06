@@ -9,9 +9,11 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.AlarmHelper
@@ -23,7 +25,6 @@ import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.*
 import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
-import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.notification.StuckNotificationFactory
@@ -31,11 +32,13 @@ import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.StuckNavigationBar
 import com.sammengistu.stuckapp.views.VerticalIconToTextView
 import com.sammengistu.stuckfirebase.AnalyticsHelper
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
+import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 import kotlinx.android.synthetic.main.toolbar_layout.*
@@ -51,9 +54,8 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     private lateinit var bottomSheetHelper: BottomSheetHelper
     private lateinit var invisibleCover: View
 
-    @Subscribe
-    fun onUserProfileUpdated(event: UserUpdatedEvent) {
-        UserHelper.getCurrentUser{setupNavHeader(it)}
+    private val userViewModel: UserViewModel by viewModels {
+        InjectorUtils.provideUserFactory(this)
     }
 
     @Subscribe
@@ -75,13 +77,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         navigationBar = stuck_navigation_bar
         navigationBar.onItemClicked = getOnNavItemClicked()
         setupDrawer()
-        UserHelper.getCurrentUser { user ->
-            if (user != null) {
-                UserStarredCollection.loadUserStars(user.ref)
-                UserVotesCollection.loadUserVotes(user.userId)
-                DeviceTokenAccess(user.ref).checkTokenExists(this)
-            }
-        }
+        UserRepository.getUserInstance(this) { onUserLoaded(it) }
 
         bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
         invisibleCover = invisible_view
@@ -106,8 +102,8 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onResume() {
         super.onResume()
-        UserStarredCollection.reloadStars()
-        UserVotesCollection.reloadVotes()
+        UserStarredCollection.reloadStars(this)
+        UserVotesCollection.reloadVotes(this)
         handleStarterIntent()
         AlarmHelper.cancelDailyNotifier(this)
     }
@@ -175,6 +171,23 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
+    private fun onUserLoaded(user: UserModel?) {
+        if (user != null) {
+            UserStarredCollection.loadUserStars(user.ref)
+            UserVotesCollection.loadUserVotes(user.userId)
+            DeviceTokenAccess(user.ref).checkTokenExists(this)
+
+            userViewModel.userLiveData.observe(this) { users ->
+                Log.d(TAG, "Received user db changes")
+                if (!users.isNullOrEmpty()) {
+                    UserRepository.currentUser = users[0]
+                    setupNavHeader(users[0])
+                }
+            }
+            userViewModel.setUserId(user.userId)
+        }
+    }
+
     private fun handleStarterIntent() {
         if (intent != null &&
             intent.extras != null &&
@@ -223,8 +236,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
         navigationView = nav_view
         navigationView.setNavigationItemSelectedListener(this)
-
-        UserHelper.getCurrentUser{setupNavHeader(it)}
     }
 
     private fun setupNavHeader(user: UserModel?) {

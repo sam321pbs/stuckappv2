@@ -4,10 +4,10 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.sammengistu.stuckfirebase.NotificationFactory
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.constants.KEY_TARGET_REF
 import com.sammengistu.stuckfirebase.models.DeviceTokenModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 class FbMessagingService : FirebaseMessagingService() {
 
@@ -15,7 +15,7 @@ class FbMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Log.d(TAG, "New token - $token")
 
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(this) { user ->
             if (user != null) {
                 val deviceToken = DeviceTokenModel(user.userId, user.ref, token)
                 DeviceTokenAccess(user.userId).createItemInFB(deviceToken)
@@ -26,7 +26,7 @@ class FbMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         val targetRef = message.data.getValue(KEY_TARGET_REF)
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(this) { user ->
             if (user != null && user.ref == targetRef && NotificationFactory.instance != null) {
                 Log.d(TAG, "Notifying user")
                 NotificationFactory.instance!!.createNotification(this, message.data)

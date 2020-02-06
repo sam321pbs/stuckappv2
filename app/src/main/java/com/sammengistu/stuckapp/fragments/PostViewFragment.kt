@@ -86,7 +86,7 @@ class PostViewFragment : BaseFragment() {
         categoriesView.setText(StringUtils.capitilizeFirstLetter(post.category))
         menuIcon.visibility = View.INVISIBLE
 
-        val userVote = UserVotesCollection.getVoteForPost(post.ref)
+        val userVote = UserVotesCollection.getVoteForPost(context, post.ref)
         if (post.type == PostType.TEXT.toString()) {
             buildTextChoices(choiceContainer, post, userVote)
         } else if (post.type == PostType.LANDSCAPE.toString()) {
@@ -104,7 +104,7 @@ class PostViewFragment : BaseFragment() {
         post: PostModel,
         starIcon: ImageView
     ) {
-        val userStar = UserStarredCollection.getStarPost(post)
+        val userStar = UserStarredCollection.getStarPost(context!!, post)
         if (userStar == null) {
             starIcon.visibility = View.GONE
         } else {

@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemsRetrieved
 import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.database.PostDao
-import com.sammengistu.stuckfirebase.database.model.DraftPostModel
+import com.sammengistu.stuckfirebase.database.dao.PostDao
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
 import java.util.*
 

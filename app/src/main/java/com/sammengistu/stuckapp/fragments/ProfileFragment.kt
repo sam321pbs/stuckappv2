@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
@@ -18,17 +20,18 @@ import com.sammengistu.stuckapp.constants.Gender.Companion.MALE
 import com.sammengistu.stuckapp.dialog.GetImageFromDialog
 import com.sammengistu.stuckapp.events.GetPhotoFromEvent
 import com.sammengistu.stuckapp.events.OnAvatarSelected
-import com.sammengistu.stuckapp.events.UserUpdatedEvent
 import com.sammengistu.stuckapp.helpers.KeyboardStateHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper.Companion.loadImageFromGallery
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.InputFormItemView
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
+import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -57,6 +60,10 @@ class ProfileFragment : BaseFragment() {
     private lateinit var arrayAgeGroup: Array<CharSequence>
     private lateinit var arrayGender: Array<CharSequence>
 
+    val userViewModel: UserViewModel by viewModels {
+        InjectorUtils.provideUserFactory(requireContext())
+    }
+
     @Subscribe
     fun onAvatarSelected(event: OnAvatarSelected) {
         avatarImage = event.bitmap
@@ -84,13 +91,23 @@ class ProfileFragment : BaseFragment() {
         arrayAgeGroup = activity!!.resources.getTextArray(R.array.age_group_array)
         arrayGender = activity!!.resources.getTextArray(R.array.gender_array)
         initViews()
-        if (!createMode) {
-            populateFields()
-        } else {
-            val fbUser = UserHelper.getFirebaseUser()
+
+        if (createMode) {
+            val fbUser = FirebaseAuth.getInstance().currentUser
             val displayName = fbUser?.displayName ?: ""
             if (fbUser != null) {
                 nameField.setText(displayName)
+            }
+        } else {
+            UserRepository.getUserInstance(context!!) {
+                if (it != null) {
+                    userViewModel.userLiveData.observe(viewLifecycleOwner) { users ->
+                        if (!users.isNullOrEmpty()) {
+                            populateFields(users[0])
+                        }
+                    }
+                    userViewModel.setUserId(it.userId)
+                }
             }
         }
         addAvatar.setOnClickListener {
@@ -108,7 +125,7 @@ class ProfileFragment : BaseFragment() {
             if (open) {
                 createProfileButton.visibility = View.GONE
             } else {
-                Timer().schedule(object: TimerTask(){
+                Timer().schedule(object : TimerTask() {
                     override fun run() {
                         if (activity != null) {
                             activity!!.runOnUiThread {
@@ -118,7 +135,7 @@ class ProfileFragment : BaseFragment() {
                             }
                         }
                     }
-                } , 200)
+                }, 200)
             }
         }
     }
@@ -168,33 +185,31 @@ class ProfileFragment : BaseFragment() {
         return true
     }
 
-    private fun populateFields() {
-        UserHelper.getCurrentUser { user ->
-            if (user != null) {
-                if (user.avatar.isNotBlank()) {
-                    avatarView.loadImage(user.avatar)
-                    addAvatar.text = "Change Avatar"
-                }
-                usernameField.setText(user.username)
-                bioField.setText(user.bio)
-                nameField.setText(user.name)
-                occupationField.setText(user.occupation)
-                educationField.setText(user.education)
-                ageGroupSpinner.setSelection(convertAgeGroupToPos(user.ageGroup))
-                genderSpinner.setSelection(convertGenderToPos(user.gender))
-                createProfileButton.text = "Update Profile"
+    private fun populateFields(user: UserModel?) {
+        if (user != null) {
+            if (user.avatar.isNotBlank()) {
+                avatarView.loadImage(user.avatar)
+                addAvatar.text = "Change Avatar"
             }
+            usernameField.setText(user.username)
+            bioField.setText(user.bio)
+            nameField.setText(user.name)
+            occupationField.setText(user.occupation)
+            educationField.setText(user.education)
+            ageGroupSpinner.setSelection(convertAgeGroupToPos(user.ageGroup))
+            genderSpinner.setSelection(convertGenderToPos(user.gender))
+            createProfileButton.text = "Update Profile"
         }
     }
 
     private fun handleProfileUpdate() {
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
                 progressBar.visibility = View.VISIBLE
-                val updateUser = buildUserModel(user.userId, user.avatar)
+                val updateUser = buildUserModel(user)
                 if (!user.isEqualTo(updateUser) || avatarImage != null) {
                     checkUsernameBeforeUpdating(updateUser) {
-                        updateUserAccount(user, updateUser)
+                        updateUserAccount(updateUser)
                     }
                 } else {
                     progressBar.visibility = View.GONE
@@ -204,19 +219,14 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    private fun updateUserAccount(
-        user: UserModel,
-        updateUser: UserModel
-    ) {
-        updateUser.ref = user.ref
+    private fun updateUserAccount(updateUser: UserModel) {
         if (avatarImage != null) {
             UserAccess().updateUserAndAvatar(avatarImage!!, updateUser,
                 object : FirebaseItemAccess.OnItemUpdated {
                     override fun onSuccess() {
                         if (activity != null) {
                             progressBar.visibility = View.GONE
-                            UserHelper.currentUser = updateUser
-                            EventBus.getDefault().post(UserUpdatedEvent())
+                            userViewModel.updateUser(updateUser)
                             Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT)
                                 .show()
                             activity!!.supportFragmentManager.popBackStack()
@@ -236,7 +246,7 @@ class ProfileFragment : BaseFragment() {
                     }
                 })
         } else {
-            sendUpdates(user, updateUser)
+            sendUpdates(updateUser)
         }
     }
 
@@ -267,20 +277,15 @@ class ProfileFragment : BaseFragment() {
             })
     }
 
-    private fun sendUpdates(
-        user: UserModel,
-        updatedUser: UserModel
-    ) {
+    private fun sendUpdates(updatedUser: UserModel) {
         UserAccess().updateItemInFB(
-            user.ref,
+            updatedUser.ref,
             updatedUser.convertUserToMap(),
             object : FirebaseItemAccess.OnItemUpdated {
                 override fun onSuccess() {
                     if (activity != null) {
                         progressBar.visibility = View.GONE
-                        updatedUser.ref = user.ref
-                        UserHelper.currentUser = updatedUser
-                        EventBus.getDefault().post(UserUpdatedEvent())
+                        userViewModel.updateUser(updatedUser)
                         Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT)
                             .show()
                         activity!!.supportFragmentManager.popBackStack()
@@ -306,13 +311,12 @@ class ProfileFragment : BaseFragment() {
             progressBar.visibility = View.VISIBLE
             val firebaseUser = FirebaseAuth.getInstance().currentUser
             if (firebaseUser != null) {
-                val userModel = buildUserModel(firebaseUser.uid, "")
+                val userModel = buildUserModel(UserModel())
                 checkUsernameBeforeUpdating(userModel) {
                     UserAccess().createUser(avatarImage!!, userModel,
                         object : FirebaseItemAccess.OnItemCreated<UserModel> {
                             override fun onSuccess(item: UserModel) {
                                 progressBar.visibility = View.GONE
-                                UserHelper.currentUser = item
                                 launchMainActivity()
                             }
 
@@ -331,11 +335,12 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    private fun buildUserModel(userId: String, avatar: String): UserModel {
-        return UserModel(
-            userId,
+    private fun buildUserModel(currentUser: UserModel): UserModel {
+        val updatedUser = UserModel(
+            currentUser._id,
+            currentUser.userId,
             usernameField.getText().trim(),
-            avatar,
+            currentUser.avatar,
             nameField.getText().trim(),
             occupationField.getText().trim(),
             educationField.getText().trim(),
@@ -344,6 +349,8 @@ class ProfileFragment : BaseFragment() {
             selectedGender!!,
             0, 0, 0
         )
+        updatedUser.ref = currentUser.ref
+        return updatedUser
     }
 
     private fun initViews() {

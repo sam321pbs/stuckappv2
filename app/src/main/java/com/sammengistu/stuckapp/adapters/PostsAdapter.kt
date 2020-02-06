@@ -32,7 +32,7 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.database.access.HiddenItemsAccess
+import com.sammengistu.stuckfirebase.access.HiddenItemsAccess
 import com.sammengistu.stuckfirebase.exceptions.DocNotExistException
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
@@ -85,7 +85,7 @@ class PostsAdapter(
             EventBus.getDefault().post(ChangeBottomSheetStateEvent(true, post))
         }
 
-        val userVote = UserVotesCollection.getVoteForPost(post.ref)
+        val userVote = UserVotesCollection.getVoteForPost(context, post.ref)
         if (holder is PostTextViewHolder) {
             buildTextChoices(holder, post, userVote)
         } else if (holder is PostImageViewHolder) {
@@ -140,7 +140,7 @@ class PostsAdapter(
         post: PostModel,
         holder: PostViewHolder
     ) {
-        val userStar = UserStarredCollection.getStarPost(post)
+        val userStar = UserStarredCollection.getStarPost(context, post)
         if (userStar == null) {
             holder.starIcon.visibility = View.GONE
         } else {
@@ -177,7 +177,9 @@ class PostsAdapter(
                 doAsync {
                     val itemId = HiddenItemsHelper.getItem(post.ref)?._id
                     if (itemId != null)
-                        HiddenItemsAccess(context).deleteItem(itemId)
+                        HiddenItemsAccess(
+                            context
+                        ).deleteItem(itemId)
                 }
             }
         } else {

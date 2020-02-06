@@ -15,8 +15,8 @@ import com.sammengistu.stuckapp.activities.SplashScreenActivity
 import com.sammengistu.stuckapp.constants.PendingIntentRequestCodes.Companion.REQUEST_SHOW_POST
 import com.sammengistu.stuckapp.helpers.UserPrefHelper
 import com.sammengistu.stuckfirebase.NotificationFactory
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.constants.*
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import java.util.*
 
 class StuckNotificationFactory(context: Context) : NotificationFactory() {
@@ -86,7 +86,7 @@ class StuckNotificationFactory(context: Context) : NotificationFactory() {
             else -> return
         }
 
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context) { user ->
             if (user != null) {
                 // Todo: add daily notify to pref
                 if (data[KEY_TAG] == "comment" && UserPrefHelper.getCommentsPref(context, user) ||

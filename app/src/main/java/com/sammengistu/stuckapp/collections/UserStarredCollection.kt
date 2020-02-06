@@ -1,12 +1,13 @@
 package com.sammengistu.stuckapp.collections
 
+import android.content.Context
 import android.util.Log
 import com.sammengistu.stuckapp.events.DataChangedEvent
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.greenrobot.eventbus.EventBus
 
 class UserStarredCollection {
@@ -48,17 +49,17 @@ class UserStarredCollection {
             EventBus.getDefault().post(DataChangedEvent())
         }
 
-        fun getStarPost(post: PostModel): StarPostModel? {
-            reloadStars()
+        fun getStarPost(context: Context, post: PostModel): StarPostModel? {
+            reloadStars(context)
             return starMap[getRef(post)]
         }
 
         fun clearList() { starMap.clear() }
 
-        fun reloadStars() {
+        fun reloadStars(context: Context) {
             if (state == UNLOADED) {
                 Log.d(TAG, "Reloading stars")
-                UserHelper.getCurrentUser {
+                UserRepository.getUserInstance(context) {
                     if (it != null) {
                         loadUserStars(it.ref)
                     }

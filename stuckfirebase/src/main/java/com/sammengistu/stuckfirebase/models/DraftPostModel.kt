@@ -1,4 +1,4 @@
-package com.sammengistu.stuckfirebase.database.model
+package com.sammengistu.stuckfirebase.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -15,7 +15,7 @@ import com.sammengistu.stuckapp.activities.NewPostActivity.Companion.EXTRA_POST_
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.database.model.DraftPostModel
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*

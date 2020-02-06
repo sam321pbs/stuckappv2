@@ -1,8 +1,8 @@
 package com.sammengistu.stuckapp.helpers
 
 import android.content.Context
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 class UserPrefHelper {
     companion object {
@@ -11,7 +11,7 @@ class UserPrefHelper {
         const val KEY_NOTIFICATION_COMMENTS = "_notification_comments"
 
         fun addVotesPref(context: Context, enabled: Boolean) {
-            UserHelper.getCurrentUser { user ->
+            UserRepository.getUserInstance(context!!) { user ->
                 if (user != null) {
                     val pref = context.getSharedPreferences(NOTIFICATION_PREF, Context.MODE_PRIVATE)
                     pref.edit().putBoolean("${user.ref}$KEY_NOTIFICATION_VOTES", enabled).apply()
@@ -25,7 +25,7 @@ class UserPrefHelper {
         }
 
         fun addCommentsPref(context: Context, enabled: Boolean) {
-            UserHelper.getCurrentUser { user ->
+            UserRepository.getUserInstance(context!!) { user ->
                 if (user != null) {
                     val pref = context.getSharedPreferences(NOTIFICATION_PREF, Context.MODE_PRIVATE)
                     pref.edit().putBoolean("${user.ref}$KEY_NOTIFICATION_COMMENTS", enabled).apply()

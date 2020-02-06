@@ -7,9 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.helpers.ViewHelper
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.jetbrains.anko.centerVertically
 
 class VotableTextChoiceView(
@@ -109,7 +109,7 @@ class VotableTextChoiceView(
     }
 
     private fun isUsersPost() =
-        UserHelper.currentUser != null && UserHelper.currentUser!!.ref == post.ownerRef
+        UserRepository.currentUser != null && UserRepository.currentUser!!.ref == post.ownerRef
 
     companion object {
         val TAG = VotableTextChoiceView::class.java.simpleName

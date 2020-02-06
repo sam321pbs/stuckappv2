@@ -1,11 +1,12 @@
 package com.sammengistu.stuckapp.collections
 
+import android.content.Context
 import android.util.Log
 import com.sammengistu.stuckapp.events.DataChangedEvent
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.greenrobot.eventbus.EventBus
 
 class UserVotesCollection {
@@ -38,15 +39,15 @@ class UserVotesCollection {
 
         fun addVoteToMap(vote: UserVoteModel) { voteMap[vote.postRef] = vote }
 
-        fun getVoteForPost(postId: String): UserVoteModel? {
-            reloadVotes()
+        fun getVoteForPost(context: Context?, postId: String): UserVoteModel? {
+            reloadVotes(context)
             return voteMap[postId]
         }
 
-        fun reloadVotes() {
+        fun reloadVotes(context: Context?) {
             if (state == UNLOADED) {
                 Log.d(TAG, "Reloading votes")
-                UserHelper.getCurrentUser {
+                UserRepository.getUserInstance(context!!) {
                     if (it != null)
                         loadUserVotes(it.userId)
                 }

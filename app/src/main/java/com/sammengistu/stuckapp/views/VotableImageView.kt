@@ -12,9 +12,9 @@ import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.helpers.ViewHelper
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.squareup.picasso.Picasso
 import java.io.File
 
@@ -74,7 +74,7 @@ class VotableImageView(
     }
 
     private fun isUsersPost() =
-        UserHelper.currentUser != null && UserHelper.currentUser!!.ref == post.ownerRef
+        UserRepository.currentUser != null && UserRepository.currentUser!!.ref == post.ownerRef
 
     private fun buildView() {
         val params = getParams()
@@ -93,7 +93,7 @@ class VotableImageView(
 //                    ViewHelper.convertDrawableToBitmap(bitmap))
 //        }
 
-        val userVote = UserVotesCollection.getVoteForPost(post.ref)
+        val userVote = UserVotesCollection.getVoteForPost(context, post.ref)
         if (userVote == null) {
             votesTextView.visibility = View.GONE
         } else {

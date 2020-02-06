@@ -1,8 +1,8 @@
-package com.sammengistu.stuckfirebase.database.access
+package com.sammengistu.stuckfirebase.access
 
 import android.content.Context
-import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
+import com.sammengistu.stuckfirebase.database.AppDatabase
+import com.sammengistu.stuckfirebase.models.HiddenItemModel
 import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 
 class HiddenItemsAccess(private val context: Context) {

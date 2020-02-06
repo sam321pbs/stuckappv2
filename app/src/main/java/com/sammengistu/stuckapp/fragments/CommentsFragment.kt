@@ -17,12 +17,12 @@ import com.sammengistu.stuckapp.adapters.CommentsAdapter
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.views.VerticalIconToTextView
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.CommentAccess
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.repositories.CommentsRepository
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.viewmodels.CommentsViewModel
 import kotlinx.android.synthetic.main.compose_area.*
 import kotlinx.android.synthetic.main.fragment_comments.*
@@ -67,7 +67,7 @@ class CommentsFragment : BaseFragment() {
                 activity!!, recycler_view,
                 commentsAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>
             )
-            UserHelper.getCurrentUser {
+            UserRepository.getUserInstance(context!!) {
                 if (it != null) {
                     commentsViewModel = CommentsViewModel(
                         CommentsRepository(CommentAccess(),
@@ -110,7 +110,7 @@ class CommentsFragment : BaseFragment() {
 
     private fun setupComposeArea() {
         send_button.setOnClickListener {
-            UserHelper.getCurrentUser { createComment(it) }
+            UserRepository.getUserInstance(context!!) { createComment(it) }
         }
     }
 
