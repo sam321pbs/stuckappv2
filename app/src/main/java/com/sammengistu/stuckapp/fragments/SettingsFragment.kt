@@ -7,7 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
-import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : BaseFragment() {
@@ -25,12 +25,12 @@ class SettingsFragment : BaseFragment() {
         notificationItem = notifications_setting
         deleteAccountItem = delete_account
         logoutItem = logout
-        notificationItem.setOnClickListener { addFragment(NotificationSettings()) }
+        notificationItem.setOnClickListener { addFragment(NotificationSettingsFragment()) }
         deleteAccountItem.setOnClickListener { showDeleteAccountAlertDialog() }
         logoutItem.setOnClickListener {
             UserVotesCollection.clearList()
             UserStarredCollection.clearList()
-            UserHelper.logUserOut()
+            UserRepository.logUserOut()
         }
     }
 
@@ -40,7 +40,7 @@ class SettingsFragment : BaseFragment() {
             .setMessage("Are you sure you want to delete your account?")
             .setNegativeButton("Delete") { _, _ ->
                 progress_bar.visibility = View.VISIBLE
-                UserHelper.deleteUserAccount(activity!!)
+                UserRepository.deleteUserAccount(activity!!)
             }
             .setPositiveButton("Cancel", null)
             .show()

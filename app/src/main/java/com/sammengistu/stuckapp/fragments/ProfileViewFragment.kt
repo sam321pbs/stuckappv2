@@ -3,16 +3,22 @@ package com.sammengistu.stuckapp.fragments
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckapp.views.DisplayFormItemView
 import com.sammengistu.stuckapp.views.StatCardView
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.access.UserAccess
+import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.fragment_profile_view.*
 import kotlinx.android.synthetic.main.fragment_stats.*
+
+private val TAG = ProfileViewFragment::class.java.simpleName
+private const val TITLE = "Profile"
+private const val EXTRA_USER_ID = "extra_user_id"
 
 class ProfileViewFragment : BaseFragment() {
 
@@ -26,17 +32,15 @@ class ProfileViewFragment : BaseFragment() {
     lateinit var statVoteMade: StatCardView
     lateinit var statCollectedStars: StatCardView
     lateinit var statTotalPoints: StatCardView
-    
+
     override fun getLayoutId() = R.layout.fragment_profile_view
-
     override fun getFragmentTag() = TAG
-
     override fun getFragmentTitle() = TITLE
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        populateFields()
+        loadUser()
     }
 
     private fun initViews() {
@@ -57,44 +61,46 @@ class ProfileViewFragment : BaseFragment() {
         statTotalPoints.setStat(0)
     }
 
-    private fun populateFields() {
+    private fun loadUser() {
         val userId = arguments?.getString(EXTRA_USER_ID)
         if (userId != null) {
-            UserAccess().getItemsWhereEqual("userId", userId,
-                object : FirebaseItemAccess.OnItemsRetrieved<UserModel> {
-                    override fun onSuccess(list: List<UserModel>) {
-                        if (list.isNotEmpty()) {
-                            val user = list[0]
-                            if (user.avatar.isNotBlank()) {
-                                avatarView.loadImage(user.avatar)
-                            }
-                            usernameField.setText(user.username)
-                            descriptionField.setText(user.bio)
-                            nameField.setText(user.name)
-                            occupationField.setText(user.occupation)
-                            educationField.setText(user.education)
-                            statCollectedStars.setStat(user.totalReceivedStars)
-                            statVoteCollected.setStat(user.totalReceivedVotes)
-                            statVoteMade.setStat(user.totalMadeVotes)
-                            statTotalPoints.setStat(user.totalReceivedStars + user.totalReceivedVotes + user.totalMadeVotes)
-                        } else {
-                            activity!!.supportFragmentManager.popBackStack()
-                            ErrorNotifier.notifyError(activity, "Error loading user")
-                        }
+            val userViewModel: UserViewModel by viewModels {
+                InjectorUtils.provideUserFactory(requireContext())
+            }
+            userViewModel.userLiveData.observe(viewLifecycleOwner) { users ->
+                when {
+                    users == null -> {
+                        activity!!.supportFragmentManager.popBackStack()
+                        ErrorNotifier.notifyError(activity, "Error loading user")
                     }
-
-                    override fun onFailed(e: Exception) {
-                        ErrorNotifier.notifyError(activity!!, TAG, "Error loading profile", e)
+                    users.isEmpty() -> {
+                        activity!!.supportFragmentManager.popBackStack()
+                        ErrorNotifier.notifyError(activity, "Can't find user")
                     }
-                })
+                    else -> {
+                        populateFields(users[0])
+                    }
+                }
+            }
         }
     }
 
-    companion object {
-        val TAG = ProfileViewFragment::class.java.simpleName
-        const val TITLE = "Profile"
-        const val EXTRA_USER_ID = "extra_user_id"
+    private fun populateFields(user: UserModel) {
+        if (user.avatar.isNotBlank()) {
+            avatarView.loadImage(user.avatar)
+        }
+        usernameField.text = user.username
+        descriptionField.text = user.bio
+        nameField.text = user.name
+        occupationField.setText(user.occupation)
+        educationField.setText(user.education)
+        statCollectedStars.setStat(user.totalReceivedStars)
+        statVoteCollected.setStat(user.totalReceivedVotes)
+        statVoteMade.setStat(user.totalMadeVotes)
+        statTotalPoints.setStat(user.totalReceivedStars + user.totalReceivedVotes + user.totalMadeVotes)
+    }
 
+    companion object {
         fun newInstance(userId : String): ProfileViewFragment {
             val bundle = Bundle()
             bundle.putString(EXTRA_USER_ID, userId)

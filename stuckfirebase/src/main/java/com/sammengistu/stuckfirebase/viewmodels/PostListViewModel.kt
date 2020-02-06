@@ -2,7 +2,7 @@ package com.sammengistu.stuckfirebase.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.sammengistu.stuckfirebase.database.model.DraftPostModel
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.repositories.PostRepository
 
 class PostListViewModel internal constructor(postRepository: PostRepository, ownerId: String) : ViewModel() {

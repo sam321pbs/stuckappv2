@@ -1,8 +1,8 @@
-package com.sammengistu.stuckfirebase.database.access
+package com.sammengistu.stuckfirebase.access
 
 import android.content.Context
-import com.sammengistu.stuckapp.data.AppDatabase
-import com.sammengistu.stuckfirebase.database.model.DraftPostModel
+import com.sammengistu.stuckfirebase.database.AppDatabase
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.repositories.PostRepository
 
 class DraftPostAccess(private val context: Context) {

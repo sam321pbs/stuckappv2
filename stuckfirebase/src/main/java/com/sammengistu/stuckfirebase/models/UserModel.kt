@@ -1,6 +1,14 @@
 package com.sammengistu.stuckfirebase.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
+
+@Entity(tableName = "users")
 data class UserModel(
+    // Db id
+    @Exclude
+    @PrimaryKey(autoGenerate = true) val _id: Long,
     var userId: String,
     var username: String,
     var avatar: String,
@@ -14,7 +22,7 @@ data class UserModel(
     var totalReceivedVotes: Int,
     var totalReceivedStars: Int
 ) : FirebaseItem(userId, "") {
-    constructor() : this(  "", "", "", "", "", "", "", -1, -1, 0,0,0)
+    constructor() : this(  0,"", "", "", "", "", "", "", -1, -1, 0,0,0)
 
     fun convertUserToMap(): Map<String, Any> {
         return mapOf(

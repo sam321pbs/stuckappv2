@@ -15,15 +15,15 @@ import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.database.InjectorUtils
-import com.sammengistu.stuckfirebase.database.model.DraftPostModel
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
@@ -39,7 +39,7 @@ abstract class PostsListFragment : BaseFragment() {
     private var lastCreatedAt: Any? = 0L
 
     private val listViewModel: PostListViewModel by viewModels {
-        val ownerId = UserHelper.getFirebaseUserId()
+        val ownerId = UserRepository.firebaseUserId
         InjectorUtils.provideDraftPostListFactory(requireContext(), ownerId)
     }
 
@@ -142,7 +142,7 @@ abstract class PostsListFragment : BaseFragment() {
     private fun loadMoreItems(adapter: PostsAdapter) {
         Log.d(TAG, "Loading more items")
         swipeToRefreshLayout.isRefreshing = true
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
                 when (getType()) {
                     TYPE_FAVORITE -> StarPostAccess().getUsersStarredPostsBefore(
@@ -171,7 +171,7 @@ abstract class PostsListFragment : BaseFragment() {
 
     private fun refreshAdapter(adapter: PostsAdapter) {
         swipeToRefreshLayout.isRefreshing = true
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
                 when (getType()) {
                     TYPE_FAVORITE -> {

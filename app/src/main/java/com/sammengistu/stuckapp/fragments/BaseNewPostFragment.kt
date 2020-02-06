@@ -19,15 +19,15 @@ import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckfirebase.access.DraftPostAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.database.access.DraftPostAccess
-import com.sammengistu.stuckfirebase.database.model.DraftPostModel
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.EventBus
@@ -68,7 +68,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
             }
             username.text = "Anonymous"
         } else {
-            UserHelper.getCurrentUser { user ->
+            UserRepository.getUserInstance(context!!)
+             { user ->
                 if (user != null) {
                     avatar_view.loadImage(user.avatar)
                     username.text = user.username
@@ -95,7 +96,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
 
         username.text = "username"
 
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
                 avatar_view.loadImage(user.avatar)
                 username.text = user.username
@@ -147,7 +148,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
         }
         if (fieldsValidated()) {
             isPostGettingCreated = true
-            UserHelper.getCurrentUser { user ->
+            UserRepository.getUserInstance(context!!) { user ->
                 progress_bar.visibility = View.VISIBLE
                 if (user != null) {
                     try {
@@ -183,7 +184,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
     }
 
     private fun saveAsDraft(type: PostType, data: Map<String, Any?>) {
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             val post = buildPost(user, type)
 
             if (data.containsKey(CHOICES_VIEW)) {
@@ -308,7 +309,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
         if (draft != null) {
             doAsync {
                 try {
-                    DraftPostAccess(activity!!).deletePost(draft!!.postId)
+                    DraftPostAccess(activity!!)
+                        .deletePost(draft!!.postId)
                 } catch (e: Exception) {
                     ErrorNotifier.notifyError(context!!, TAG, "Error deleting post", e)
                 }

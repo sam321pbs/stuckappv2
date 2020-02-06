@@ -1,5 +1,6 @@
 package com.sammengistu.stuckfirebase.models
 
+import androidx.room.Ignore
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FieldValue
@@ -12,6 +13,9 @@ abstract class FirebaseItem(
     ownerRef: String
 ) {
     var ref: String = ""
+
+    // Todo: fix this
+    @Ignore
     var createdAt: Any? = FieldValue.serverTimestamp()
 
     @Exclude

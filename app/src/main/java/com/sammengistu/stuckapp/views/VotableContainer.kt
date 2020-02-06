@@ -7,11 +7,11 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserVotesCollection
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 abstract class VotableContainer(
     context: Context,
@@ -38,7 +38,7 @@ abstract class VotableContainer(
     }
 
     override fun onDoubleTapped() {
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (allowUserToVote(user)) {
                 val userVote = UserVoteModel(
                     user!!.userId,

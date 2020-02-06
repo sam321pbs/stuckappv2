@@ -1,8 +1,8 @@
-package com.sammengistu.stuckfirebase.database
+package com.sammengistu.stuckfirebase.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
+import com.sammengistu.stuckfirebase.models.HiddenItemModel
 
 @Dao
 interface HiddenItemsDao {

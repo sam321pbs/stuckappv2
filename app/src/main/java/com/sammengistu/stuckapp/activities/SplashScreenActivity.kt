@@ -7,10 +7,11 @@ import android.util.Log
 import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.notification.StuckNotificationFactory
 import com.sammengistu.stuckfirebase.ErrorNotifier.Companion.notifyError
-import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 
 class SplashScreenActivity : BaseActivity() {
@@ -51,11 +52,11 @@ class SplashScreenActivity : BaseActivity() {
     }
 
     private fun launchNextActivity() {
-        if (UserHelper.getFirebaseUser() == null) {
+        if (FirebaseAuth.getInstance().currentUser == null) {
             Log.e(TAG, "User is not signed in")
             launchSignInActivity()
         } else {
-            UserHelper.getCurrentUser {
+            UserRepository.getUserInstance(this) {
                 if (it == null) {
                     launchProfileActivity()
                 } else {

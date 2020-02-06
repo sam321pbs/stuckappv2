@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.views.StatCardView
-import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import kotlinx.android.synthetic.main.fragment_stats.*
 
 class StatsFragment: BaseFragment() {
@@ -23,7 +23,7 @@ class StatsFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        UserHelper.reloadUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
                 votesCollectedCard.setStat(user.totalReceivedVotes)
                 votesMadeCard.setStat(user.totalMadeVotes)

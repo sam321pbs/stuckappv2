@@ -1,9 +1,9 @@
 package com.sammengistu.stuckfirebase.repositories
 
-import com.sammengistu.stuckfirebase.database.HiddenItemsDao
-import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
+import com.sammengistu.stuckfirebase.database.dao.HiddenItemsDao
+import com.sammengistu.stuckfirebase.models.HiddenItemModel
 
-class HiddenItemsRepository(val dao: HiddenItemsDao) {
+class HiddenItemsRepository private constructor(val dao: HiddenItemsDao) {
 
     fun getAllHiddenItems(ownerId: String) = dao.getAllItems(ownerId)
 

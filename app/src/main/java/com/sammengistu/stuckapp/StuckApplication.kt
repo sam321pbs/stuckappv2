@@ -10,7 +10,7 @@ class StuckApplication: Application() {
         super.onCreate()
         setAutoLogAppEventsEnabled(false)
         if (BuildConfig.DEBUG) {
-            Stetho.initializeWithDefaults(this);
+            Stetho.initializeWithDefaults(this)
         }
         StuckNotificationFactory(this)
     }

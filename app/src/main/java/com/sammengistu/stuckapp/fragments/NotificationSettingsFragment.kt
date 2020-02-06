@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.View
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.helpers.UserPrefHelper
-import com.sammengistu.stuckfirebase.UserHelper
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import kotlinx.android.synthetic.main.fragment_notifications.*
 
-class NotificationSettings : BaseFragment() {
+class NotificationSettingsFragment : BaseFragment() {
 
     override fun getLayoutId(): Int = R.layout.fragment_notifications
 
@@ -18,7 +18,7 @@ class NotificationSettings : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
                 notifications_votes_switch.isChecked = UserPrefHelper.getVotesPref(activity!!, user)
                 notifications_comments_switch.isChecked = UserPrefHelper.getCommentsPref(activity!!, user)
@@ -35,7 +35,7 @@ class NotificationSettings : BaseFragment() {
     }
 
     companion object {
-        val TAG = NotificationSettings::class.java.simpleName
+        val TAG = NotificationSettingsFragment::class.java.simpleName
         const val TITLE = "Notifications"
     }
 }

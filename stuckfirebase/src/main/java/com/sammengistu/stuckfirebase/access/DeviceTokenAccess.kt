@@ -3,10 +3,10 @@ package com.sammengistu.stuckfirebase.access
 import android.app.Activity
 import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId
-import com.sammengistu.stuckfirebase.UserHelper
 import com.sammengistu.stuckfirebase.constants.DEVICE_TOKENS
 import com.sammengistu.stuckfirebase.models.DeviceTokenModel
 import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 
 class DeviceTokenAccess(private val userRef: String) :
@@ -15,7 +15,7 @@ class DeviceTokenAccess(private val userRef: String) :
     override fun getModelClass() = DeviceTokenModel::class.java
 
     fun checkTokenExists(context: Activity) {
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context) { user ->
             if (user != null) {
                 getToken(context) { token ->
                     getItemsWhereEqual("ownerRef", userRef,

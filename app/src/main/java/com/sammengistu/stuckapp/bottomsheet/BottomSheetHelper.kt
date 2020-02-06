@@ -13,19 +13,10 @@ import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.UserHelper
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.access.PostAccess
-import com.sammengistu.stuckfirebase.access.ReportAccess
-import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.database.access.DraftPostAccess
-import com.sammengistu.stuckfirebase.database.access.HiddenItemsAccess
-import com.sammengistu.stuckfirebase.database.model.HiddenItemModel
-import com.sammengistu.stuckfirebase.database.model.HiddenItemModel.Companion.TYPE_POST
-import com.sammengistu.stuckfirebase.models.PostModel
-import com.sammengistu.stuckfirebase.models.ReportModel
-import com.sammengistu.stuckfirebase.models.StarPostModel
-import com.sammengistu.stuckfirebase.models.UserModel
+import com.sammengistu.stuckfirebase.access.*
+import com.sammengistu.stuckfirebase.models.*
+import com.sammengistu.stuckfirebase.models.HiddenItemModel.Companion.TYPE_POST
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
@@ -94,7 +85,7 @@ class BottomSheetHelper(
             }
 
             if (post != null) {
-                val userStar = UserStarredCollection.getStarPost(post!!)
+                val userStar = UserStarredCollection.getStarPost(context, post!!)
                 if (userStar == null) {
                     bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Favorite"
                 } else {
@@ -103,7 +94,7 @@ class BottomSheetHelper(
             }
         }
 
-        UserHelper.getCurrentUser { user ->
+        UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
                 // Handle delete option
                 if (post != null && (post!!.ownerId == user.userId || post!!.ref.isBlank())) {
@@ -138,7 +129,9 @@ class BottomSheetHelper(
                 doAsync {
                     val itemId = HiddenItemsHelper.getItem(post!!.ref)?._id
                     if (itemId != null)
-                        HiddenItemsAccess(context).deleteItem(itemId)
+                        HiddenItemsAccess(
+                            context
+                        ).deleteItem(itemId)
                 }
             } else {
                 createHiddenItem()
@@ -149,7 +142,7 @@ class BottomSheetHelper(
 
     private fun createHiddenItem() {
         doAsync {
-            UserHelper.getCurrentUser { user ->
+            UserRepository.getUserInstance(context) { user ->
                 if (user != null) {
                     val item =
                         HiddenItemModel(
@@ -158,7 +151,9 @@ class BottomSheetHelper(
                             post!!.ref,
                             TYPE_POST
                         )
-                    HiddenItemsAccess(context).insertItem(item)
+                    HiddenItemsAccess(
+                        context
+                    ).insertItem(item)
                 }
             }
         }
@@ -173,7 +168,7 @@ class BottomSheetHelper(
             .setTitle("Reason for reporting")
             .setAdapter(arrayAdapter) { _, pos ->
                 val reason = arrayAdapter.getItem(pos)
-                UserHelper.getCurrentUser { user ->
+                UserRepository.getUserInstance(context) { user ->
                     if (user != null && reason != null && post != null) {
                         ReportAccess().createItemInFB(
                             ReportModel(reason, post!!.ref, user.ref, user.userId)
@@ -196,9 +191,9 @@ class BottomSheetHelper(
 
     private fun starPost() {
         if (post != null) {
-            UserHelper.getCurrentUser { user ->
+            UserRepository.getUserInstance(context) { user ->
                 if (user != null) {
-                    val userStar = UserStarredCollection.getStarPost(post!!)
+                    val userStar = UserStarredCollection.getStarPost(context, post!!)
                     if (userStar == null) {
                         addPostToFavorites(user)
                     } else {
@@ -255,20 +250,22 @@ class BottomSheetHelper(
 
     private fun deletePost() {
         // check that it is users posts before deleting
-        val userId = UserHelper.getFirebaseUserId()
-        if (post != null && (post!!.ownerId == userId || post!!.ref.isBlank())) {
-            val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
-            builder
-                .setMessage("Are you sure you want to delete this post?")
-                .setTitle("Delete Post")
-                .setPositiveButton("Delete") { _, _ ->
-                    handleDeletePost()
-                    hideMenu()
-                }
-                ?.setNegativeButton("Cancel", null)
-            builder.show()
+        UserRepository.getUserInstance(context) {
+            if (it != null && post != null
+                && (post!!.ownerId == it.userId || post!!.ref.isBlank())) {
+                val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
+                builder
+                    .setMessage("Are you sure you want to delete this post?")
+                    .setTitle("Delete Post")
+                    .setPositiveButton("Delete") { _, _ ->
+                        handleDeletePost()
+                        hideMenu()
+                    }
+                    ?.setNegativeButton("Cancel", null)
+                builder.show()
+            }
+            hideMenu()
         }
-        hideMenu()
     }
 
     private fun handleDeletePost() {
