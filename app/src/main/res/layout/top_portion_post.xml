@@ -1,143 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
-        android:id="@+id/user_detail_and_options"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp">
+    <data>
+        <import type="com.sammengistu.stuckapp.constants.PrivacyOptions"/>
+        <import type="com.sammengistu.stuckapp.adapters.PostsAdapter"/>
+        <import type="android.view.View"/>
+        <import type="com.sammengistu.stuckapp.utils.DateUtils"/>
+        <variable name="post" type="com.sammengistu.stuckfirebase.models.PostModel" />
+        <variable name="viewMode" type="Integer" />
+        <variable name="starred" type="Boolean" />
+        <variable name="isHidden" type="Boolean" />
+        <variable name="handler" type="com.sammengistu.stuckapp.handler.PostAdapterEventHandler"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <com.sammengistu.stuckapp.views.AvatarView
             android:id="@+id/avatar_view"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="11dp"
             app:civ_border_color="@android:color/transparent"
-            app:civ_border_width="2dp" />
+            app:civ_border_width="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars"
+            android:onClick="@{handler::showProfile}" />
 
-        <LinearLayout
-            android:id="@+id/username_time_since_container"
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:layout_marginEnd="16dp"
+            android:onClick="@{handler::showProfile}"
+            android:text="@{post.userName}"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toEndOf="@+id/avatar_view"
+            app:layout_constraintTop_toTopOf="parent"
+            custom:layout_constraintEnd_toStartOf="@+id/user_star_icon" />
+
+        <TextView
+            android:id="@+id/time_since"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="2dp"
+            android:text="@{viewMode == PostsAdapter.VIEW_MODE_DRAFTS ? @string/draft : DateUtils.convertDateToTimeElapsed(post.getDate())}"
+            app:layout_constraintEnd_toStartOf="@+id/user_star_icon"
+            app:layout_constraintStart_toEndOf="@+id/avatar_view"
+            app:layout_constraintTop_toBottomOf="@+id/username"/>
+
+        <ImageView
+            android:id="@+id/refresh_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="Refresh post"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_refresh_light_blue_600_24dp"
+            tools:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/menu_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/avatar_view"
-            android:orientation="vertical">
+            android:contentDescription="Menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/refresh_icon"
+            app:srcCompat="@drawable/ic_more_vert_grey_300_24dp"
+            android:onClick="@{handler::showPostMenu}"/>
 
-            <TextView
-                android:id="@+id/username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:text="sam321pbs"
-                android:textColor="@color/black" />
+        <ImageView
+            android:id="@+id/user_star_icon"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="You starred this post"
+            app:layout_constraintEnd_toStartOf="@+id/menu_icon"
+            app:layout_constraintTop_toTopOf="@+id/menu_icon"
+            app:srcCompat="@drawable/ic_star_yellow_600_24dp"
+            tools:visibility="@{starred ? View.VISIBLE:View.GONE}" />
 
-            <TextView
-                android:id="@+id/time_since"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2 hours ago" />
+        <TextView
+            android:id="@+id/question"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@{post.question}"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.487"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/avatar_view"
+            android:visibility="@{isHidden ? View.GONE:View.VISIBLE}"/>
+
+        <LinearLayout
+            android:id="@+id/post_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/question"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/question"
+            android:visibility="@{isHidden ? View.GONE:View.VISIBLE}">
+
+            <com.sammengistu.stuckapp.views.HorizontalIconToTextView
+                android:id="@+id/votesTotal"
+                style="@style/icon_to_text_style"
+                android:layout_weight="1"
+                custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
+                app:setText="@{Integer.toString(post.totalVotes)}"
+                custom:textColor="@color/colorDefault" />
+
+            <com.sammengistu.stuckapp.views.HorizontalIconToTextView
+                android:id="@+id/commentsTotal"
+                style="@style/icon_to_text_style"
+                android:layout_weight="1"
+                custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
+                app:setText="@{Integer.toString(post.totalComments)}"
+                custom:textColor="@color/colorDefault"
+                android:onClick="@{handler::showComments}"/>
+
+            <com.sammengistu.stuckapp.views.HorizontalIconToTextView
+                android:id="@+id/starsTotal"
+                style="@style/icon_to_text_style"
+                android:layout_weight="1"
+                custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
+                app:setText="@{Integer.toString(post.totalStars)}"
+                custom:textColor="@color/colorDefault" />
+
+            <com.sammengistu.stuckapp.views.HorizontalIconToTextView
+                android:id="@+id/category"
+                style="@style/icon_to_text_style"
+                android:layout_weight="1"
+                custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
+                app:setText="@{post.category}"
+                custom:textColor="@color/colorDefault" />
         </LinearLayout>
 
         <Button
             android:id="@+id/unhide_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginEnd="18dp"
-            android:layout_toStartOf="@+id/side_post_icons"
             android:text="Show"
-            android:visibility="gone" />
+            app:layout_constraintEnd_toStartOf="@+id/menu_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="@{isHidden ? View.VISIBLE:View.GONE}"
+            android:onClick="@{handler::showPost}"/>
 
-        <LinearLayout
-            android:id="@+id/side_post_icons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_alignParentEnd="true">
-
-            <ImageView
-                android:id="@+id/refresh_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="Refresh post"
-                android:src="@drawable/ic_refresh_light_blue_600_24dp"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/user_star_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:contentDescription="You starred this post"
-                    android:src="@drawable/ic_star_yellow_600_24dp"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/menu_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="Menu"
-                    android:src="@drawable/ic_more_vert_grey_300_24dp" />
-            </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/user_detail_and_options"
-        android:layout_marginStart="5dp"
-        android:text="Who should win MVP?"
-        android:textColor="@color/black"
-        android:textSize="20sp" />
-
-    <LinearLayout
-        android:id="@+id/post_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/question"
-        android:orientation="horizontal">
-
-        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
-            android:id="@+id/votesTotal"
-            style="@style/icon_to_text_style"
-            android:layout_weight="1"
-            custom:textColor="@color/colorDefault"
-            custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
-            custom:iconText="100" />
-
-        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
-            android:id="@+id/commentsTotal"
-            style="@style/icon_to_text_style"
-            android:layout_weight="1"
-            custom:textColor="@color/colorDefault"
-            custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
-            custom:iconText="100" />
-
-        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
-            android:id="@+id/starsTotal"
-            style="@style/icon_to_text_style"
-            android:layout_weight="1"
-            custom:textColor="@color/colorDefault"
-            custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
-            custom:iconText="100" />
-
-        <com.sammengistu.stuckapp.views.HorizontalIconToTextView
-            android:id="@+id/category"
-            style="@style/icon_to_text_style"
-            android:layout_weight="1"
-            custom:textColor="@color/colorDefault"
-            custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
-            custom:iconText="Sports" />
-    </LinearLayout>
-</RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

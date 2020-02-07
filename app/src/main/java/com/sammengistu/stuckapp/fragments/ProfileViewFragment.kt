@@ -82,6 +82,7 @@ class ProfileViewFragment : BaseFragment() {
                     }
                 }
             }
+            userViewModel.setUserId(userId)
         }
     }
 
