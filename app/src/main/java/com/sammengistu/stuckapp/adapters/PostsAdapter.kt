@@ -5,40 +5,36 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.view.children
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.AssetImageUtils
+import com.sammengistu.stuckapp.BR
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
-import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
-import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
 import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
+import com.sammengistu.stuckapp.handler.PostAdapterEventHandler
 import com.sammengistu.stuckapp.helpers.AnimationHelper
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
-import com.sammengistu.stuckapp.utils.DateUtils
-import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.*
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.access.HiddenItemsAccess
 import com.sammengistu.stuckfirebase.exceptions.DocNotExistException
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 
 
@@ -49,40 +45,42 @@ class PostsAdapter(
     private var dataset = listOf<PostModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding =
+            DataBindingUtil.inflate<ViewDataBinding>(inflater, R.layout.item_post, parent, false)
         return when (viewType) {
             LANDSCAPE_VIEW_TYPE, PORTRAIT_VIEW_TYPE ->
-                PostImageViewHolder(createView(parent, R.layout.item_post))
+                PostImageViewHolder(binding)
             else ->
-                PostTextViewHolder(createView(parent, R.layout.item_post))
+                PostTextViewHolder(binding)
         }
     }
+
+    override fun getItemViewType(position: Int): Int {
+        val post = dataset[position]
+        return when (post.type) {
+            PostType.LANDSCAPE.toString() -> LANDSCAPE_VIEW_TYPE
+            PostType.PORTRAIT.toString() -> PORTRAIT_VIEW_TYPE
+            else -> TEXT_VIEW_TYPE
+        }
+    }
+
+    override fun getItemCount() = dataset.size
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
 
+        val starred = UserStarredCollection.getStarPost(context, post) != null
+        val isHidden = HiddenItemsHelper.containesRef(post.ref)
+        holder.bind(post, PostAdapterEventHandler(context, post), viewMode, starred, isHidden)
         if (PrivacyOptions.ANONYMOUS.toString() == post.privacy &&
             viewMode != VIEW_MODE_DRAFTS) {
             val avatar = AssetImageUtils.getAvatar(post.avatar)
             holder.avatarView.setImageBitmap(avatar)
-            holder.username.text = "Anonymous"
             holder.avatarView.setOnClickListener(null)
-            holder.username.setOnClickListener(null)
         } else {
             holder.avatarView.loadImage(post.avatar)
-            holder.username.text = post.userName
             holder.avatarView.setOnClickListener { showProfile(context, post) }
-            holder.username.setOnClickListener { showProfile(context, post) }
-        }
-
-        holder.questionView.text = StringUtils.capitilizeFirstLetter(post.question)
-        holder.timeSince.text =
-            if (viewMode == VIEW_MODE_DRAFTS) "Draft" else DateUtils.convertDateToTimeElapsed(post.getDate())
-        holder.commentsTotalView.setText(post.totalComments.toString())
-        holder.voteTotalView.setText(post.getTotalVotes().toString())
-        holder.starTotalView.setText(post.totalStars.toString())
-        holder.categoriesView.setText(StringUtils.capitilizeFirstLetter(post.category))
-        holder.menuIcon.setOnClickListener {
-            EventBus.getDefault().post(ChangeBottomSheetStateEvent(true, post))
         }
 
         val userVote = UserVotesCollection.getVoteForPost(context, post.ref)
@@ -92,13 +90,7 @@ class PostsAdapter(
             buildImageChoices(holder, post, userVote)
         }
 
-        holder.commentsTotalView.setOnClickListener {
-            CommentsActivity.startActivity(context, post.ref, post.ownerId, post.ownerRef, 0)
-        }
-
-        updateStarIcon(post, holder)
         handleDraftPost(holder, post)
-        handleHiddenPosts(post, holder)
         handleRefreshIcon(post, holder)
     }
 
@@ -136,18 +128,6 @@ class PostsAdapter(
         }
     }
 
-    private fun updateStarIcon(
-        post: PostModel,
-        holder: PostViewHolder
-    ) {
-        val userStar = UserStarredCollection.getStarPost(context, post)
-        if (userStar == null) {
-            holder.starIcon.visibility = View.GONE
-        } else {
-            holder.starIcon.visibility = View.VISIBLE
-        }
-    }
-
     private fun handleDraftPost(
         holder: PostViewHolder,
         post: PostModel
@@ -164,57 +144,16 @@ class PostsAdapter(
         }
     }
 
-    private fun handleHiddenPosts(
-        post: PostModel,
-        holder: PostViewHolder
-    ) {
-        if (HiddenItemsHelper.containesRef(post.ref)) {
-            holder.questionView.visibility = View.GONE
-            holder.choiceContainer.visibility = View.GONE
-            holder.postInfo.visibility = View.GONE
-            holder.unhideButton.visibility = View.VISIBLE
-            holder.unhideButton.setOnClickListener {
-                doAsync {
-                    val itemId = HiddenItemsHelper.getItem(post.ref)?._id
-                    if (itemId != null)
-                        HiddenItemsAccess(
-                            context
-                        ).deleteItem(itemId)
-                }
-            }
-        } else {
-            holder.questionView.visibility = View.VISIBLE
-            holder.choiceContainer.visibility = View.VISIBLE
-            holder.postInfo.visibility = View.VISIBLE
-            holder.unhideButton.visibility = View.GONE
-            holder.unhideButton.setOnClickListener(null)
-        }
-    }
-
     private fun showProfile(context: Context, post: PostModel) {
         if (context is BaseActivity) {
             context.addFragment(ProfileViewFragment.newInstance(post.ownerId))
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        val post = dataset[position]
-        return when (post.type) {
-            PostType.LANDSCAPE.toString() -> LANDSCAPE_VIEW_TYPE
-            PostType.PORTRAIT.toString() -> PORTRAIT_VIEW_TYPE
-            else -> TEXT_VIEW_TYPE
-        }
-    }
-
-    override fun getItemCount() = dataset.size
-
     fun swapData(dataset: List<PostModel>) {
         this.dataset = dataset
         notifyDataSetChanged()
     }
-
-    private fun createView(parent: ViewGroup, layoutId: Int) =
-        LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
 
     private fun buildTextChoices(
         holder: PostViewHolder,
@@ -269,25 +208,24 @@ class PostsAdapter(
         }
     }
 
-    class PostTextViewHolder(parentView: View) : PostViewHolder(parentView)
+    class PostTextViewHolder(binding: ViewDataBinding) : PostViewHolder(binding)
+    class PostImageViewHolder(binding: ViewDataBinding) : PostViewHolder(binding)
 
-    class PostImageViewHolder(parentView: View) : PostViewHolder(parentView)
+    open class PostViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+        val choiceContainer: LinearLayout = binding.root.find(R.id.choice_container)
+        val avatarView: AvatarView = binding.root.find(R.id.avatar_view)
+        val voteTotalView: HorizontalIconToTextView = binding.root.find(R.id.votesTotal)
+        val refreshIcon: ImageView = binding.root.find(R.id.refresh_icon)
 
-    open class PostViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {
-        val choiceContainer: LinearLayout = parentView.find(R.id.choice_container)
-        val questionView: TextView = parentView.find(R.id.question)
-        val avatarView: AvatarView = parentView.find(R.id.avatar_view)
-        val username: TextView = parentView.find(R.id.username)
-        val timeSince: TextView = parentView.find(R.id.time_since)
-        val categoriesView: HorizontalIconToTextView = parentView.find(R.id.category)
-        val commentsTotalView: HorizontalIconToTextView = parentView.find(R.id.commentsTotal)
-        val voteTotalView: HorizontalIconToTextView = parentView.find(R.id.votesTotal)
-        val starTotalView: HorizontalIconToTextView = parentView.find(R.id.starsTotal)
-        val postInfo: LinearLayout = parentView.find(R.id.post_info)
-        val unhideButton: Button = parentView.find(R.id.unhide_button)
-        val menuIcon: ImageView = parentView.find(R.id.menu_icon)
-        val starIcon: ImageView = parentView.find(R.id.user_star_icon)
-        val refreshIcon: ImageView = parentView.find(R.id.refresh_icon)
+        fun bind(result: PostModel, handler: PostAdapterEventHandler,
+                 viewMode: Int, starred: Boolean, isHidden: Boolean) {
+            binding.setVariable(BR.post, result)
+            binding.setVariable(BR.handler, handler)
+            binding.setVariable(BR.viewMode, viewMode)
+            binding.setVariable(BR.starred, starred)
+            binding.setVariable(BR.isHidden, isHidden)
+            binding.executePendingBindings()
+        }
     }
 
     companion object {

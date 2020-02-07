@@ -6,6 +6,9 @@
     <string name="text">Text</string>
     <string name="navigation_drawer_close">Close</string>
     <string name="navigation_drawer_open">Open</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="anonymousLower">anonymous</string>
+    <string name="draft">Draft</string>
 
     <string-array name="gender_array">
         <item>Select</item>

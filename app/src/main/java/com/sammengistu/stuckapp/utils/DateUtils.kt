@@ -11,7 +11,8 @@ class DateUtils {
         const val MS_ONE_MIN: Long = MS_ONE_SEC * 60
         const val MS_ONE_HOUR: Long = MS_ONE_MIN * 60
         const val MS_ONE_DAY: Long = MS_ONE_HOUR * 24
-        
+
+        @JvmStatic
         fun convertDateToTimeElapsed(date: Date?): String {
             if (date == null) {
                 return "N/A"
