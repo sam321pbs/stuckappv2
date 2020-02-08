@@ -13,7 +13,7 @@ import kotlin.collections.HashMap
 
 private val TAG = CommentsRepository::class.java.simpleName
 
-class CommentsRepository(private val commentAccess: CommentAccess,
+class CommentsRepository private constructor(private val commentAccess: CommentAccess,
                          private val commentsVoteAccess: CommentsVoteAccess) {
 
     fun getCommentVotes(userRef: String, postRef: String): LiveData<HashMap<String, CommentVoteModel>> {
@@ -61,5 +61,19 @@ class CommentsRepository(private val commentAccess: CommentAccess,
     fun createComment(commentModel: CommentModel,
                       listener: FirebaseItemAccess.OnItemCreated<CommentModel>) {
         CommentAccess().createItemInFB(commentModel, listener)
+    }
+
+    companion object {
+        @Volatile private var instance: CommentsRepository? = null
+
+        fun getInstance(commentAccess: CommentAccess, commentsVoteAccess: CommentsVoteAccess) =
+            instance
+                ?: synchronized(this) {
+                    instance
+                        ?: CommentsRepository(
+                            commentAccess,
+                            commentsVoteAccess
+                        ).also { instance = it }
+                }
     }
 }

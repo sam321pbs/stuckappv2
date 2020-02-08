@@ -9,7 +9,7 @@ import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
 import java.util.*
 
-class PostRepository(val dao: PostDao) {
+class PostRepository private constructor(val dao: PostDao) {
 
     fun getAllDraftPosts(ownerId: String) = dao.getAllPosts(ownerId)
 

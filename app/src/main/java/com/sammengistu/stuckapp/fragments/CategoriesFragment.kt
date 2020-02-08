@@ -24,7 +24,7 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
             AnalyticEventType.CLICK,
             "category_${item.toLowerCase()}"
         )
-        addFragment(CategoriesListFragment.newInstance(item))
+        addFragment(CategoriesPostsFragment.newInstance(item))
     }
 
     override fun getLayoutId() = R.layout.basic_list_view

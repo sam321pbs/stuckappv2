@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
@@ -17,11 +18,9 @@ import com.sammengistu.stuckapp.adapters.CommentsAdapter
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.views.VerticalIconToTextView
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.access.CommentAccess
-import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
+import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.models.UserModel
-import com.sammengistu.stuckfirebase.repositories.CommentsRepository
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.viewmodels.CommentsViewModel
 import kotlinx.android.synthetic.main.compose_area.*
@@ -40,7 +39,9 @@ class CommentsFragment : BaseFragment() {
     private lateinit var progressBar: ProgressBar
 
     private lateinit var postRef: String
-    private lateinit var commentsViewModel: CommentsViewModel
+    private val commentsViewModel: CommentsViewModel by viewModels {
+        InjectorUtils.provideCommentFactory()
+    }
 
     private var choicePos: Int = 0
 
@@ -69,18 +70,14 @@ class CommentsFragment : BaseFragment() {
             )
             UserRepository.getUserInstance(context!!) {
                 if (it != null) {
-                    commentsViewModel = CommentsViewModel(
-                        CommentsRepository(CommentAccess(),
-                            CommentsVoteAccess()
-                        ), it.ref, postRef)
-                    loadComments()
+                    loadComments(it)
                 }
             }
             setupComposeArea()
         }
     }
 
-    private fun loadComments() {
+    private fun loadComments(user: UserModel) {
         progressBar.visibility = View.VISIBLE
         commentsViewModel.commentsLiveData.removeObservers(viewLifecycleOwner)
         commentsViewModel.commentVotesLiveData.removeObservers(viewLifecycleOwner)
@@ -106,6 +103,8 @@ class CommentsFragment : BaseFragment() {
                 }
             }
         }
+
+        commentsViewModel.setUserAndPostRef(user.ref, postRef)
     }
 
     private fun setupComposeArea() {

@@ -2,10 +2,13 @@ package com.sammengistu.stuckfirebase.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.sammengistu.stuckfirebase.repositories.PostRepository
+import com.sammengistu.stuckfirebase.repositories.CommentsRepository
 
-class PostListViewModelFactory(private val repository: PostRepository, private val ownerId: String) : ViewModelProvider.NewInstanceFactory() {
+class CommentsViewModelFactory(
+    private val repository: CommentsRepository
+) : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>) = PostListViewModel(repository, ownerId) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>) =
+        CommentsViewModel(repository) as T
 }
