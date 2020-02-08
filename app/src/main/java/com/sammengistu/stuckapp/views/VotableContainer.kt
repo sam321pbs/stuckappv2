@@ -51,11 +51,9 @@ abstract class VotableContainer(
                     choiceItem.first
                 )
                 UserVoteAccess().createItemInFB(userVote)
-                UserVotesCollection.addVoteToMap(userVote)
+                UserVotesCollection.getInstance(context).addVoteToMap(userVote)
                 onItemVotedOn(userVote)
-                if (updateParentContainer != null) {
-                    updateParentContainer.updateContainer(userVote)
-                }
+                updateParentContainer?.updateContainer(userVote)
             }
         }
     }

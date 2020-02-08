@@ -70,7 +70,7 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = dataset[position]
 
-        val starred = UserStarredCollection.getStarPost(context, post) != null
+        val starred = UserStarredCollection.getInstance(context).getStarPost(post) != null
         val isHidden = HiddenItemsHelper.containesRef(post.ref)
         holder.bind(post, PostAdapterEventHandler(context, post), viewMode, starred, isHidden)
         if (PrivacyOptions.ANONYMOUS.toString() == post.privacy &&
@@ -83,7 +83,7 @@ class PostsAdapter(
             holder.avatarView.setOnClickListener { showProfile(context, post) }
         }
 
-        val userVote = UserVotesCollection.getVoteForPost(context, post.ref)
+        val userVote = UserVotesCollection.getInstance(context).getVoteForPost(post.ref)
         if (holder is PostTextViewHolder) {
             buildTextChoices(holder, post, userVote)
         } else if (holder is PostImageViewHolder) {

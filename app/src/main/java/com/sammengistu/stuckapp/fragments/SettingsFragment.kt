@@ -28,8 +28,8 @@ class SettingsFragment : BaseFragment() {
         notificationItem.setOnClickListener { addFragment(NotificationSettingsFragment()) }
         deleteAccountItem.setOnClickListener { showDeleteAccountAlertDialog() }
         logoutItem.setOnClickListener {
-            UserVotesCollection.clearList()
-            UserStarredCollection.clearList()
+            UserVotesCollection.getInstance(context!!).clearList()
+            UserStarredCollection.getInstance(context!!).clearList()
             UserRepository.logUserOut()
         }
     }

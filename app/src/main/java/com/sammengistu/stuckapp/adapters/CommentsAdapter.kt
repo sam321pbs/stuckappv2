@@ -104,7 +104,7 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
         holder.upVoteText.text = comment.upVotes.toString()
     }
 
-    fun addAmount(currentVote: CommentVoteModel?, prevVote: CommentVoteModel?): Int {
+    private fun addAmount(currentVote: CommentVoteModel?, prevVote: CommentVoteModel?): Int {
         val currentVoteType: Int = currentVote?.voteType ?: CommentsVoteAccess.NO_VOTE
         val prevVoteType: Int = prevVote?.voteType ?: CommentsVoteAccess.NO_VOTE
 

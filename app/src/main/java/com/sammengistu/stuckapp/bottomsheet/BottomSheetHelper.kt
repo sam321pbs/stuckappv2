@@ -32,7 +32,9 @@ class BottomSheetHelper(
 
     private var mBottomSheetBehavior: BottomSheetBehavior<LinearLayout> =
         BottomSheetBehavior.from(bottomSheetLL)
-    private var post: PostModel? = null
+
+    // Empty post
+    private var post: PostModel = PostModel()
 
     init {
         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -51,7 +53,7 @@ class BottomSheetHelper(
     }
 
     private fun updateBottomSheet() {
-        if (post != null && post!!.ref.isBlank()) {
+        if (post.ref.isBlank()) {
             // Handle Draft Post
             bottomSheetLL.find<LinearLayout>(R.id.bottom_favorite_container)
                 .visibility = View.GONE
@@ -76,28 +78,26 @@ class BottomSheetHelper(
             bottomSheetLL.find<TextView>(R.id.bottom_sheet_title)
                 .text = "Post Options"
 
-            if (post != null) {
-                if (HiddenItemsHelper.containesRef(post!!.ref)) {
-                    bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Show"
-                } else {
-                    bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Hide"
-                }
+
+            if (HiddenItemsHelper.containesRef(post.ref)) {
+                bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Show"
+            } else {
+                bottomSheetLL.find<TextView>(R.id.menu_hide).text = "Hide"
             }
 
-            if (post != null) {
-                val userStar = UserStarredCollection.getStarPost(context, post!!)
-                if (userStar == null) {
-                    bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Favorite"
-                } else {
-                    bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Remove from Favorites"
-                }
+
+            val userStar = UserStarredCollection.getInstance(context).getStarPost(post)
+            if (userStar == null) {
+                bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Favorite"
+            } else {
+                bottomSheetLL.find<TextView>(R.id.menu_favorite).text = "Remove from Favorites"
             }
         }
 
-        UserRepository.getUserInstance(context!!) { user ->
+        UserRepository.getUserInstance(context) { user ->
             if (user != null) {
                 // Handle delete option
-                if (post != null && (post!!.ownerId == user.userId || post!!.ref.isBlank())) {
+                if ((post.ownerId == user.userId || post.ref.isBlank())) {
                     bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
                         .visibility = View.VISIBLE
                 } else {
@@ -124,18 +124,16 @@ class BottomSheetHelper(
     }
 
     private fun hidePost() {
-        if (post != null) {
-            if (HiddenItemsHelper.containesRef(post!!.ref)) {
-                doAsync {
-                    val itemId = HiddenItemsHelper.getItem(post!!.ref)?._id
-                    if (itemId != null)
-                        HiddenItemsAccess(
-                            context
-                        ).deleteItem(itemId)
-                }
-            } else {
-                createHiddenItem()
+        if (HiddenItemsHelper.containesRef(post.ref)) {
+            doAsync {
+                val itemId = HiddenItemsHelper.getItem(post.ref)?._id
+                if (itemId != null)
+                    HiddenItemsAccess(
+                        context
+                    ).deleteItem(itemId)
             }
+        } else {
+            createHiddenItem()
         }
         hideMenu()
     }
@@ -148,7 +146,7 @@ class BottomSheetHelper(
                         HiddenItemModel(
                             user.userId,
                             user.ref,
-                            post!!.ref,
+                            post.ref,
                             TYPE_POST
                         )
                     HiddenItemsAccess(
@@ -169,9 +167,9 @@ class BottomSheetHelper(
             .setAdapter(arrayAdapter) { _, pos ->
                 val reason = arrayAdapter.getItem(pos)
                 UserRepository.getUserInstance(context) { user ->
-                    if (user != null && reason != null && post != null) {
+                    if (user != null && reason != null) {
                         ReportAccess().createItemInFB(
-                            ReportModel(reason, post!!.ref, user.ref, user.userId)
+                            ReportModel(reason, post.ref, user.ref, user.userId)
                         )
                         createHiddenItem()
                         EventBus.getDefault().post(DataChangedEvent())
@@ -186,38 +184,34 @@ class BottomSheetHelper(
 
     private fun showComments() {
         hideMenu()
-        CommentsActivity.startActivity(context, post!!.ref, post!!.ownerId, post!!.ownerRef, 0)
+        CommentsActivity.startActivity(context, post.ref, post.ownerId, post.ownerRef, 0)
     }
 
     private fun starPost() {
-        if (post != null) {
-            UserRepository.getUserInstance(context) { user ->
-                if (user != null) {
-                    val userStar = UserStarredCollection.getStarPost(context, post!!)
-                    if (userStar == null) {
-                        addPostToFavorites(user)
-                    } else {
-                        removePostFromFavorites(userStar.ref)
-                    }
-                    hideMenu()
+        UserRepository.getUserInstance(context) { user ->
+            if (user != null) {
+                val userStar = UserStarredCollection.getInstance(context).getStarPost(post)
+                if (userStar == null) {
+                    addPostToFavorites(user)
                 } else {
-                    ErrorNotifier.notifyError(context, TAG, "Error liking post")
+                    removePostFromFavorites(userStar.ref)
                 }
+                hideMenu()
+            } else {
+                ErrorNotifier.notifyError(context, TAG, "Error liking post")
             }
         }
     }
 
     private fun addPostToFavorites(user: UserModel) {
-        val starPost = StarPostModel(user.ref, user.userId, post!!)
+        val starPost = StarPostModel(user.ref, user.userId, post)
         StarPostAccess().createItemInFB(starPost,
             object : FirebaseItemAccess.OnItemCreated<StarPostModel> {
                 override fun onSuccess(item: StarPostModel) {
-                    if (post != null) {
-                        UserStarredCollection.addStarPostToMap(item)
-                        post!!.totalStars = post!!.totalStars + 1
-                        EventBus.getDefault().post(DataChangedEvent())
-                        Toast.makeText(context, "Added to favorites!", Toast.LENGTH_SHORT).show()
-                    }
+                    UserStarredCollection.getInstance(context).addStarPostToMap(item)
+                    post.totalStars = post.totalStars + 1
+                    EventBus.getDefault().post(DataChangedEvent())
+                    Toast.makeText(context, "Added to favorites!", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onFailed(e: Exception) {
@@ -233,13 +227,11 @@ class BottomSheetHelper(
         StarPostAccess().deleteItemInFb(starRef,
             object : FirebaseItemAccess.OnItemDeleted {
                 override fun onSuccess() {
-                    if (post != null) {
-                        UserStarredCollection.removeStarPostFromMap(post!!)
-                        post!!.totalStars = post!!.totalStars - 1
-                        EventBus.getDefault().post(DataChangedEvent())
-                        Toast.makeText(context, "Removed from favorites!", Toast.LENGTH_SHORT)
-                            .show()
-                    }
+                    UserStarredCollection.getInstance(context).removeStarPostFromMap(post)
+                    post.totalStars = post.totalStars - 1
+                    EventBus.getDefault().post(DataChangedEvent())
+                    Toast.makeText(context, "Removed from favorites!", Toast.LENGTH_SHORT)
+                        .show()
                 }
 
                 override fun onFailed(e: Exception) {
@@ -251,14 +243,13 @@ class BottomSheetHelper(
     private fun deletePost() {
         // check that it is users posts before deleting
         UserRepository.getUserInstance(context) {
-            if (it != null && post != null
-                && (post!!.ownerId == it.userId || post!!.ref.isBlank())) {
+            if (isUsersPost(it, post)) {
                 val builder: AlertDialog.Builder = context.let { AlertDialog.Builder(it) }
                 builder
                     .setMessage("Are you sure you want to delete this post?")
                     .setTitle("Delete Post")
                     .setPositiveButton("Delete") { _, _ ->
-                        handleDeletePost()
+                        handleDeletePost(post.ref)
                         hideMenu()
                     }
                     ?.setNegativeButton("Cancel", null)
@@ -268,14 +259,16 @@ class BottomSheetHelper(
         }
     }
 
-    private fun handleDeletePost() {
-        if (post!!.ref.isNotBlank()) {
-            PostAccess().deleteItemInFb(post!!.ref,
+    private fun isUsersPost(user: UserModel?, post: PostModel) =
+        user != null && post.ownerId == user.userId
+
+    private fun handleDeletePost(postRef: String) {
+        if (postRef.isNotBlank()) {
+            PostAccess().deleteItemInFb(postRef,
                 object : FirebaseItemAccess.OnItemDeleted {
                     override fun onSuccess() {
-                        EventBus.getDefault().post(DeletedPostEvent(post!!.ref))
-                        Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT)
-                            .show()
+                        EventBus.getDefault().post(DeletedPostEvent(postRef))
+                        Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onFailed(e: Exception) {
@@ -283,7 +276,7 @@ class BottomSheetHelper(
                     }
                 })
         } else {
-            deleteDraft(post!!)
+            deleteDraft(post)
         }
     }
 
