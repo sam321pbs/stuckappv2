@@ -47,7 +47,8 @@ abstract class PostsListFragment : BaseFragment() {
     abstract fun getEmptyMessage(): String
 
     @Subscribe
-    fun onDataChanged(event: DataChangedEvent) { onDataUpdated()
+    fun onDataChanged(event: DataChangedEvent) {
+        onDataUpdated()
         Log.d(TAG, "On data changed")
     }
 
@@ -98,7 +99,7 @@ abstract class PostsListFragment : BaseFragment() {
         EventBus.getDefault().unregister(this)
     }
 
-    fun onDataUpdated() {
+    private fun onDataUpdated() {
         viewAdapter.notifyDataSetChanged()
     }
 

@@ -85,9 +85,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         HiddenItemsHelper(this)
         addFragment(HomeListFragment())
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (nm != null) {
-            nm.cancelAll()
-        }
+        nm.cancelAll()
     }
 
     override fun onStart() {
@@ -102,8 +100,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onResume() {
         super.onResume()
-        UserStarredCollection.reloadStars(this)
-        UserVotesCollection.reloadVotes(this)
         handleStarterIntent()
         AlarmHelper.cancelDailyNotifier(this)
     }
@@ -173,8 +169,8 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
     private fun onUserLoaded(user: UserModel?) {
         if (user != null) {
-            UserStarredCollection.loadUserStars(user.ref)
-            UserVotesCollection.loadUserVotes(user.userId)
+            UserStarredCollection.getInstance(this)
+            UserVotesCollection.getInstance(this)
             DeviceTokenAccess(user.ref).checkTokenExists(this)
 
             userViewModel.userLiveData.observe(this) { users ->

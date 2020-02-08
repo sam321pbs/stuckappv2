@@ -93,7 +93,7 @@ class VotableImageView(
 //                    ViewHelper.convertDrawableToBitmap(bitmap))
 //        }
 
-        val userVote = UserVotesCollection.getVoteForPost(context, post.ref)
+        val userVote = UserVotesCollection.getInstance(context).getVoteForPost(post.ref)
         if (userVote == null) {
             votesTextView.visibility = View.GONE
         } else {

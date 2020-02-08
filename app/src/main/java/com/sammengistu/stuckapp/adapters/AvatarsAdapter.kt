@@ -8,8 +8,8 @@ import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.views.AvatarView
 
-class AvatarsAdapter(val context: Context,
-                     val onItemClickListener: OnItemClickListener<Bitmap>)
+class AvatarsAdapter(private val context: Context,
+                     private val onItemClickListener: OnItemClickListener<Bitmap>)
     : RecyclerView.Adapter<AvatarsAdapter.AvatarViewHolder>() {
 
     private val listOfAvatars = ArrayList(AssetImageUtils.mapOfHeadShots.values)
