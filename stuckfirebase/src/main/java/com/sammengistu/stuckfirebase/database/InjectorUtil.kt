@@ -1,10 +1,14 @@
 package com.sammengistu.stuckfirebase.database
 
 import android.content.Context
+import com.sammengistu.stuckfirebase.access.CommentAccess
+import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
+import com.sammengistu.stuckfirebase.repositories.CommentsRepository
 import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 import com.sammengistu.stuckfirebase.repositories.PostRepository
 import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.viewmodels.CommentsViewModelFactory
 import com.sammengistu.stuckfirebase.viewmodels.HiddenItemsViewModelFactory
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModelFactory
 import com.sammengistu.stuckfirebase.viewmodels.UsersViewModelFactory
@@ -37,5 +41,17 @@ object InjectorUtils {
     fun provideUserFactory(context: Context): UsersViewModelFactory {
         val repository = getUsersRepository(context)
         return UsersViewModelFactory(repository)
+    }
+
+    fun getCommentsRepository(): CommentsRepository {
+        return CommentsRepository.getInstance(
+            CommentAccess(),
+            CommentsVoteAccess()
+        )
+    }
+
+    fun provideCommentFactory(): CommentsViewModelFactory {
+        val repository = getCommentsRepository()
+        return CommentsViewModelFactory(repository)
     }
 }

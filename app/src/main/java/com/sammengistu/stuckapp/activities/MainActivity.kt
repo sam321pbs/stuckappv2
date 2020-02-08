@@ -156,7 +156,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         super.onFragmentChanged(topFragment)
         when (topFragment) {
             is HomeListFragment -> updateNavBar(navigationBar.homeView)
-            is CategoriesListFragment -> updateNavBar(navigationBar.categoriesView)
+            is CategoriesPostsFragment -> updateNavBar(navigationBar.categoriesView)
             is CategoriesFragment -> updateNavBar(navigationBar.categoriesView)
             is FavoritesListFragment -> updateNavBar(navigationBar.favView)
             is UserPostsListFragment -> updateNavBar(navigationBar.myPostsView)

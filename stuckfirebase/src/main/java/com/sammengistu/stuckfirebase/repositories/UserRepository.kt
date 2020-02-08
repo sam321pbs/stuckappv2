@@ -105,8 +105,7 @@ class UserRepository private constructor(
         var currentUser: UserModel? = null
         private val firebaseUser = FirebaseAuth.getInstance().currentUser
         val firebaseUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-        @Volatile
-        private var instance: UserRepository? = null
+        @Volatile private var instance: UserRepository? = null
 
         fun getInstance(userAccess: UserAccess, usersDao: UsersDao) =
             instance

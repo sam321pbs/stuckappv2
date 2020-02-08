@@ -3,7 +3,7 @@ package com.sammengistu.stuckapp.fragments
 import android.os.Bundle
 import com.sammengistu.stuckapp.utils.StringUtils
 
-class CategoriesListFragment : PostsListFragment() {
+class CategoriesPostsFragment : PostsListFragment() {
 
     override fun getEmptyMessage() =
             "No posts in category:" +
@@ -19,13 +19,13 @@ class CategoriesListFragment : PostsListFragment() {
 
     companion object {
         const val TITLE = "Categories"
-        val TAG: String = CategoriesListFragment::class.java.simpleName
+        val TAG: String = CategoriesPostsFragment::class.java.simpleName
 
-        fun newInstance(category: String): CategoriesListFragment {
+        fun newInstance(category: String): CategoriesPostsFragment {
             val bundle = Bundle()
             bundle.putString(EXTRA_CATEGORY, category)
 
-            val fragment = CategoriesListFragment()
+            val fragment = CategoriesPostsFragment()
             fragment.arguments = bundle
             return fragment
         }
