@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.sammengistu.stuckapp.constants.PrivacyOptions"/>
-        <import type="com.sammengistu.stuckapp.adapters.PostsAdapter"/>
-        <import type="android.view.View"/>
-        <import type="com.sammengistu.stuckapp.utils.DateUtils"/>
-        <variable name="post" type="com.sammengistu.stuckfirebase.models.PostModel" />
-        <variable name="viewMode" type="Integer" />
-        <variable name="starred" type="Boolean" />
-        <variable name="isHidden" type="Boolean" />
-        <variable name="handler" type="com.sammengistu.stuckapp.handler.PostAdapterEventHandler"/>
+
+        <import type="com.sammengistu.stuckapp.constants.PrivacyOptions" />
+
+        <import type="com.sammengistu.stuckapp.adapters.PostsAdapter" />
+
+        <import type="android.view.View" />
+
+        <import type="com.sammengistu.stuckapp.utils.DateUtils" />
+
+        <variable
+            name="post"
+            type="com.sammengistu.stuckfirebase.models.PostModel" />
+
+        <variable
+            name="viewMode"
+            type="Integer" />
+
+        <variable
+            name="starred"
+            type="Boolean" />
+
+        <variable
+            name="isHidden"
+            type="Boolean" />
+
+        <variable
+            name="handler"
+            type="com.sammengistu.stuckapp.handler.PostAdapterEventHandler" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,12 +43,12 @@
             android:id="@+id/avatar_view"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:onClick="@{handler::showProfile}"
             app:civ_border_color="@android:color/transparent"
             app:civ_border_width="2dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars"
-            android:onClick="@{handler::showProfile}" />
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/username"
@@ -53,7 +72,7 @@
             android:text="@{viewMode == PostsAdapter.VIEW_MODE_DRAFTS ? @string/draft : DateUtils.convertDateToTimeElapsed(post.getDate())}"
             app:layout_constraintEnd_toStartOf="@+id/user_star_icon"
             app:layout_constraintStart_toEndOf="@+id/avatar_view"
-            app:layout_constraintTop_toBottomOf="@+id/username"/>
+            app:layout_constraintTop_toBottomOf="@+id/username" />
 
         <ImageView
             android:id="@+id/refresh_icon"
@@ -71,10 +90,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="Menu"
+            android:onClick="@{handler::showPostMenu}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/refresh_icon"
-            app:srcCompat="@drawable/ic_more_vert_grey_300_24dp"
-            android:onClick="@{handler::showPostMenu}"/>
+            app:srcCompat="@drawable/ic_more_vert_grey_300_24dp" />
 
         <ImageView
             android:id="@+id/user_star_icon"
@@ -94,11 +113,11 @@
             android:text="@{post.question}"
             android:textColor="@color/black"
             android:textSize="20sp"
+            android:visibility="@{isHidden ? View.GONE:View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.487"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avatar_view"
-            android:visibility="@{isHidden ? View.GONE:View.VISIBLE}"/>
+            app:layout_constraintTop_toBottomOf="@+id/avatar_view" />
 
         <LinearLayout
             android:id="@+id/post_info"
@@ -106,42 +125,42 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/question"
             android:orientation="horizontal"
+            android:visibility="@{isHidden ? View.GONE:View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question"
-            android:visibility="@{isHidden ? View.GONE:View.VISIBLE}">
+            app:layout_constraintTop_toBottomOf="@+id/question">
 
             <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/votesTotal"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"
-                custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
                 app:setText="@{Integer.toString(post.totalVotes)}"
+                custom:iconSrc="@drawable/ic_arrow_upward_grey_700_24dp"
                 custom:textColor="@color/colorDefault" />
 
             <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/commentsTotal"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"
-                custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
+                android:onClick="@{handler::showComments}"
                 app:setText="@{Integer.toString(post.totalComments)}"
-                custom:textColor="@color/colorDefault"
-                android:onClick="@{handler::showComments}"/>
+                custom:iconSrc="@drawable/ic_comment_grey_700_24dp"
+                custom:textColor="@color/colorDefault" />
 
             <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/starsTotal"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"
-                custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
                 app:setText="@{Integer.toString(post.totalStars)}"
+                custom:iconSrc="@drawable/ic_star_yellow_600_24dp"
                 custom:textColor="@color/colorDefault" />
 
             <com.sammengistu.stuckapp.views.HorizontalIconToTextView
                 android:id="@+id/category"
                 style="@style/icon_to_text_style"
                 android:layout_weight="1"
-                custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
                 app:setText="@{post.category}"
+                custom:iconSrc="@drawable/ic_subject_grey_700_24dp"
                 custom:textColor="@color/colorDefault" />
         </LinearLayout>
 
@@ -150,11 +169,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="18dp"
+            android:onClick="@{handler::showPost}"
             android:text="Show"
-            app:layout_constraintEnd_toStartOf="@+id/menu_icon"
-            app:layout_constraintTop_toTopOf="parent"
             android:visibility="@{isHidden ? View.VISIBLE:View.GONE}"
-            android:onClick="@{handler::showPost}"/>
+            app:layout_constraintEnd_toStartOf="@+id/menu_icon"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

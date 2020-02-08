@@ -3,12 +3,28 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="android.view.View"/>
-        <variable name="post" type="com.sammengistu.stuckfirebase.models.PostModel" />
-        <variable name="viewMode" type="Integer" />
-        <variable name="starred" type="Boolean" />
-        <variable name="isHidden" type="Boolean" />
-        <variable name="handler" type="com.sammengistu.stuckapp.handler.PostAdapterEventHandler"/>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="post"
+            type="com.sammengistu.stuckfirebase.models.PostModel" />
+
+        <variable
+            name="viewMode"
+            type="Integer" />
+
+        <variable
+            name="starred"
+            type="Boolean" />
+
+        <variable
+            name="isHidden"
+            type="Boolean" />
+
+        <variable
+            name="handler"
+            type="com.sammengistu.stuckapp.handler.PostAdapterEventHandler" />
     </data>
 
 

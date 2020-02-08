@@ -32,7 +32,7 @@ class StatCardView(context: Context, attrSet: AttributeSet) : CardView(context, 
         }
     }
 
-    fun setStat(statTotal: Int) {
+    fun setText(statTotal: Int) {
         statTextView.text = statTotal.toString()
     }
 
