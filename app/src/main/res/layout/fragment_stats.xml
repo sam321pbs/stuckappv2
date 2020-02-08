@@ -1,58 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="user"
+            type="com.sammengistu.stuckfirebase.models.UserModel" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical">
 
-        <com.sammengistu.stuckapp.views.StatCardView
-            android:id="@+id/votes_collected"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_margin="15dp"
-            android:layout_weight="1"
-            custom:statTitle="Votes Collected"
-            custom:statTotal="0" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <com.sammengistu.stuckapp.views.StatCardView
-            android:id="@+id/votes_made"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_margin="15dp"
-            android:layout_weight="1"
-            custom:statTitle="Votes Made"
-            custom:statTotal="0" />
+            <com.sammengistu.stuckapp.views.StatCardView
+                android:id="@+id/votes_collected"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_margin="15dp"
+                android:layout_weight="1"
+                custom:statTitle="Votes Collected"
+                app:setText="@{user.totalReceivedVotes}"/>
 
+            <com.sammengistu.stuckapp.views.StatCardView
+                android:id="@+id/votes_made"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_margin="15dp"
+                android:layout_weight="1"
+                custom:statTitle="Votes Made"
+                app:setText="@{user.totalMadeVotes}" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.sammengistu.stuckapp.views.StatCardView
+                android:id="@+id/collected_stars"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_margin="15dp"
+                android:layout_weight="1"
+                custom:statTitle="Stars Collected"
+                app:setText="@{user.totalReceivedStars}" />
+
+            <com.sammengistu.stuckapp.views.StatCardView
+                android:id="@+id/total_points_view"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_margin="15dp"
+                android:layout_weight="1"
+                custom:statTitle="Points"
+                app:setText="@{user.totalMadeVotes + user.totalReceivedVotes + user.totalReceivedStars}"/>
+
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.sammengistu.stuckapp.views.StatCardView
-            android:id="@+id/collected_stars"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_margin="15dp"
-            android:layout_weight="1"
-            custom:statTitle="Stars Collected"
-            custom:statTotal="0" />
-
-        <com.sammengistu.stuckapp.views.StatCardView
-            android:id="@+id/total_points_view"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_margin="15dp"
-            android:layout_weight="1"
-            custom:statTitle="Points"
-            custom:statTotal="0" />
-
-    </LinearLayout>
-</LinearLayout>
+</layout>

@@ -1,20 +1,19 @@
 package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.views.AvatarView
-import com.sammengistu.stuckapp.views.DisplayFormItemView
-import com.sammengistu.stuckapp.views.StatCardView
+import com.sammengistu.stuckapp.databinding.FragmentProfileViewBinding
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.database.InjectorUtils
-import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.fragment_profile_view.*
-import kotlinx.android.synthetic.main.fragment_stats.*
+
 
 private val TAG = ProfileViewFragment::class.java.simpleName
 private const val TITLE = "Profile"
@@ -22,43 +21,24 @@ private const val EXTRA_USER_ID = "extra_user_id"
 
 class ProfileViewFragment : BaseFragment() {
 
-    lateinit var avatarView: AvatarView
-    lateinit var usernameField: TextView
-    lateinit var descriptionField: TextView
-    lateinit var nameField: TextView
-    lateinit var occupationField: DisplayFormItemView
-    lateinit var educationField: DisplayFormItemView
-    lateinit var statVoteCollected: StatCardView
-    lateinit var statVoteMade: StatCardView
-    lateinit var statCollectedStars: StatCardView
-    lateinit var statTotalPoints: StatCardView
+    lateinit var binding: FragmentProfileViewBinding
 
     override fun getLayoutId() = R.layout.fragment_profile_view
     override fun getFragmentTag() = TAG
     override fun getFragmentTitle() = TITLE
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initViews()
-        loadUser()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
+        return binding.root
     }
 
-    private fun initViews() {
-        avatarView = avatar_view
-        usernameField = username
-        descriptionField = description
-        nameField = name_field
-        occupationField = occupation_field
-        educationField = education_field
-        statVoteCollected = votes_collected
-        statVoteMade = votes_made
-        statCollectedStars = collected_stars
-        statTotalPoints = total_points_view
-
-        statCollectedStars.setStat(0)
-        statVoteCollected.setStat(0)
-        statVoteMade.setStat(0)
-        statTotalPoints.setStat(0)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        loadUser()
     }
 
     private fun loadUser() {
@@ -78,27 +58,16 @@ class ProfileViewFragment : BaseFragment() {
                         ErrorNotifier.notifyError(activity, "Can't find user")
                     }
                     else -> {
-                        populateFields(users[0])
+                        val user = users[0]
+                        binding.user = user
+                        if (user.avatar.isNotBlank()) {
+                            avatar_view.loadImage(user.avatar)
+                        }
                     }
                 }
             }
             userViewModel.setUserId(userId)
         }
-    }
-
-    private fun populateFields(user: UserModel) {
-        if (user.avatar.isNotBlank()) {
-            avatarView.loadImage(user.avatar)
-        }
-        usernameField.text = user.username
-        descriptionField.text = user.bio
-        nameField.text = user.name
-        occupationField.setText(user.occupation)
-        educationField.setText(user.education)
-        statCollectedStars.setStat(user.totalReceivedStars)
-        statVoteCollected.setStat(user.totalReceivedVotes)
-        statVoteMade.setStat(user.totalMadeVotes)
-        statTotalPoints.setStat(user.totalReceivedStars + user.totalReceivedVotes + user.totalMadeVotes)
     }
 
     companion object {
