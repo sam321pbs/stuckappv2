@@ -146,7 +146,7 @@ class PostsAdapter(
 
     private fun showProfile(context: Context, post: PostModel) {
         if (context is BaseActivity) {
-            context.addFragment(ProfileViewFragment.newInstance(post.ownerId))
+            context.addFragment(ProfileViewFragment.newInstance(post.ownerRef))
         }
     }
 

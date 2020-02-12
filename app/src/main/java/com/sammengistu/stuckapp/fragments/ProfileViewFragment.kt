@@ -17,11 +17,11 @@ import kotlinx.android.synthetic.main.fragment_profile_view.*
 
 private val TAG = ProfileViewFragment::class.java.simpleName
 private const val TITLE = "Profile"
-private const val EXTRA_USER_ID = "extra_user_id"
+private const val EXTRA_OWNER_REF = "extra_owner_ref"
 
 class ProfileViewFragment : BaseFragment() {
 
-    lateinit var binding: FragmentProfileViewBinding
+    private lateinit var binding: FragmentProfileViewBinding
 
     override fun getLayoutId() = R.layout.fragment_profile_view
     override fun getFragmentTag() = TAG
@@ -42,23 +42,18 @@ class ProfileViewFragment : BaseFragment() {
     }
 
     private fun loadUser() {
-        val userId = arguments?.getString(EXTRA_USER_ID)
-        if (userId != null) {
+        val ownerRef = arguments?.getString(EXTRA_OWNER_REF)
+        if (ownerRef != null) {
             val userViewModel: UserViewModel by viewModels {
                 InjectorUtils.provideUserFactory(requireContext())
             }
-            userViewModel.userLiveData.observe(viewLifecycleOwner) { users ->
-                when {
-                    users == null -> {
+            userViewModel.userLiveData.observe(viewLifecycleOwner) { user ->
+                when (user) {
+                    null -> {
                         activity!!.supportFragmentManager.popBackStack()
                         ErrorNotifier.notifyError(activity, "Error loading user")
                     }
-                    users.isEmpty() -> {
-                        activity!!.supportFragmentManager.popBackStack()
-                        ErrorNotifier.notifyError(activity, "Can't find user")
-                    }
                     else -> {
-                        val user = users[0]
                         binding.user = user
                         if (user.avatar.isNotBlank()) {
                             avatar_view.loadImage(user.avatar)
@@ -66,14 +61,14 @@ class ProfileViewFragment : BaseFragment() {
                     }
                 }
             }
-            userViewModel.setUserId(userId)
+            userViewModel.setUserRef(ownerRef)
         }
     }
 
     companion object {
-        fun newInstance(userId : String): ProfileViewFragment {
+        fun newInstance(ownerRef : String): ProfileViewFragment {
             val bundle = Bundle()
-            bundle.putString(EXTRA_USER_ID, userId)
+            bundle.putString(EXTRA_OWNER_REF, ownerRef)
 
             val frag = ProfileViewFragment()
             frag.arguments = bundle

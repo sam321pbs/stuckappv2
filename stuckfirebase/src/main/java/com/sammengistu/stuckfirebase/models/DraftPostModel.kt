@@ -7,7 +7,6 @@ import com.sammengistu.stuckfirebase.constants.PostType
 @Entity(tableName = "posts")
 data class DraftPostModel(
     @PrimaryKey(autoGenerate = true) val postId: Long,
-    val ownerId: String,
     val ownerRef: String,
     val question: String,
     val privacy: String,
@@ -25,7 +24,6 @@ data class DraftPostModel(
      * For new text posts
      */
     constructor(
-        ownerId: String,
         ownerRef: String,
         question: String,
         privacy: String,
@@ -33,7 +31,6 @@ data class DraftPostModel(
         choice1: String, choice2: String, choice3: String, choice4: String
     ) : this(
         0,
-        ownerId,
         ownerRef,
         question,
         privacy,
@@ -47,7 +44,6 @@ data class DraftPostModel(
      * For new image posts
      */
     constructor(
-        ownerId: String,
         ownerRef: String,
         question: String,
         privacy: String,
@@ -56,7 +52,6 @@ data class DraftPostModel(
         image1Loc: String, image2Loc: String
     ) : this(
         0,
-        ownerId,
         ownerRef,
         question,
         privacy,

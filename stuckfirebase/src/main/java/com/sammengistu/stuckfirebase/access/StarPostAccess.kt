@@ -19,10 +19,6 @@ class StarPostAccess : FirebaseItemAccess<StarPostModel>() {
         }
     }
 
-    fun getUsersStarredPosts(userRef: String, listener: OnItemsRetrieved<StarPostModel>) {
-        getItemsWhereEqual("starPostOwnerRef", userRef, listener)
-    }
-
     fun getUsersStarredPostsBefore(userRef: String, before: Any?, listener: OnItemsRetrieved<StarPostModel>) {
         getItemsWhereEqualAndBefore("starPostOwnerRef", userRef, before, listener)
     }

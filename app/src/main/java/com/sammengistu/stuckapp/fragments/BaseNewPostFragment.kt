@@ -294,7 +294,6 @@ abstract class BaseNewPostFragment : BaseFragment() {
             avatar = avatarKey ?: AssetImageUtils.getRandomAvatarKey() ?: ""
         }
         return PostModel(
-            user?.userId ?: "",
             user?.ref ?: "",
             user?.username ?: "",
             avatar,

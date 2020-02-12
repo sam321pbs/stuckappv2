@@ -6,7 +6,6 @@ import com.google.firebase.firestore.Exclude
 const val MAX_NUMBER_OF_CHOICES = 4
 
 open class PostModel(
-    val ownerId: String,
     val ownerRef: String,
     val userName: String,
     val avatar: String,
@@ -19,7 +18,7 @@ open class PostModel(
     var images: HashMap<String, String> = HashMap(),
     var choices: HashMap<String, String> = HashMap(),
     var votes: HashMap<String, Int> = HashMap()
-) : FirebaseItem(ownerId, ownerRef) {
+) : FirebaseItem(ownerRef) {
 
     @Exclude
     var draftId = -1L
@@ -31,11 +30,10 @@ open class PostModel(
     }
 
     constructor() :
-            this("", "", "", "", "", "", "", "")
+            this("", "", "", "", "", "", "")
 
     constructor(
         ownerId: String,
-        ownerRef: String,
         userName: String,
         avatar: String,
         question: String,
@@ -48,7 +46,7 @@ open class PostModel(
         images: HashMap<String, String>,
         choices: HashMap<String, String>,
         votes: HashMap<String, Int>
-    ) : this(ownerId, ownerRef, userName, avatar, question, privacy, category, type) {
+    ) : this(ownerId, userName, avatar, question, privacy, category, type) {
         this.createdAt = createdAt
         this.totalStars = totalStars
         this.totalComments = totalComments
@@ -59,7 +57,6 @@ open class PostModel(
 
     constructor(draftPost: DraftPostModel) :
             this(
-                "",
                 "",
                 "",
                 "",
@@ -144,7 +141,6 @@ open class PostModel(
     fun toDraft(): DraftPostModel {
         return DraftPostModel(
             draftId,
-            ownerId,
             ownerRef,
             question,
             privacy,

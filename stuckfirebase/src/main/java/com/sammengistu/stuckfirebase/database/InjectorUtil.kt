@@ -19,18 +19,18 @@ object InjectorUtils {
         return PostRepository.getInstance(AppDatabase.getInstance(context.applicationContext).postsDao())
     }
 
-    fun provideDraftPostListFactory(context: Context, ownerId: String): PostListViewModelFactory {
+    fun providePostListFactory(context: Context, loadType:String): PostListViewModelFactory {
         val repository = getDraftPostRepository(context)
-        return PostListViewModelFactory(repository, ownerId)
+        return PostListViewModelFactory(repository, loadType)
     }
 
     private fun getHiddenItemsRepository(context: Context): HiddenItemsRepository {
         return HiddenItemsRepository.getInstance(AppDatabase.getInstance(context.applicationContext).hiddenItemsDao())
     }
 
-    fun provideHiddenItemsListFactory(context: Context, ownerId: String): HiddenItemsViewModelFactory {
+    fun provideHiddenItemsListFactory(context: Context, ownerRef: String): HiddenItemsViewModelFactory {
         val repository = getHiddenItemsRepository(context)
-        return HiddenItemsViewModelFactory(repository, ownerId)
+        return HiddenItemsViewModelFactory(repository, ownerRef)
     }
 
     fun getUsersRepository(context: Context): UserRepository {

@@ -16,8 +16,8 @@ import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.helpers.KeyboardStateHelper
 import com.sammengistu.stuckapp.utils.KeyboardUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
-import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.database.InjectorUtils
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 import org.greenrobot.eventbus.Subscribe
@@ -26,13 +26,13 @@ import java.util.*
 
 class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked {
 
-    lateinit var choicesContainer: LinearLayout
-    lateinit var composeAreaContainer: LinearLayout
-    lateinit var composeHeader: TextView
-    lateinit var editText: EditText
-    lateinit var doneButton: TextView
-    lateinit var submitButton: Button
-    lateinit var keyboardHelper: KeyboardStateHelper
+    private lateinit var choicesContainer: LinearLayout
+    private lateinit var composeAreaContainer: LinearLayout
+    private lateinit var composeHeader: TextView
+    private lateinit var editText: EditText
+    private lateinit var doneButton: TextView
+    private lateinit var submitButton: Button
+    private lateinit var keyboardHelper: KeyboardStateHelper
     private var selectedChoice: Int = 0
     private var isKeyboardOpen = false
 

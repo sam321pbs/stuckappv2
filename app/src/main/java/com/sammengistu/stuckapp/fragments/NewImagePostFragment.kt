@@ -10,13 +10,12 @@ import android.widget.TextView
 import androidx.lifecycle.observe
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.activities.NewPostActivity.Companion.EXTRA_POST_ID
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.database.InjectorUtils
+import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
@@ -26,10 +25,10 @@ import java.io.File
 
 class NewImagePostFragment : BaseNewPostFragment() {
 
-    var mBitmap1: Bitmap? = null
-    var mBitmap2: Bitmap? = null
-    lateinit var image1Select: TextView
-    lateinit var image2Select: TextView
+    private var mBitmap1: Bitmap? = null
+    private var mBitmap2: Bitmap? = null
+    private lateinit var image1Select: TextView
+    private lateinit var image2Select: TextView
 
     @Subscribe
     fun onSaveDraft(event: SaveDraftEvent) {
@@ -144,7 +143,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
 
         fun newInstance(postId: Long): NewImagePostFragment {
             val bundle = Bundle()
-            bundle.putLong(NewPostActivity.EXTRA_POST_ID, postId)
+            bundle.putLong(EXTRA_POST_ID, postId)
 
             val frag = NewImagePostFragment()
             frag.arguments = bundle

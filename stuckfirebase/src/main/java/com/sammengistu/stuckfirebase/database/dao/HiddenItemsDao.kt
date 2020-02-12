@@ -6,8 +6,8 @@ import com.sammengistu.stuckfirebase.models.HiddenItemModel
 
 @Dao
 interface HiddenItemsDao {
-    @Query("SELECT * FROM hidden_items WHERE ownerId = :ownerId ORDER BY _id")
-    fun getAllItems(ownerId: String): LiveData<List<HiddenItemModel>>
+    @Query("SELECT * FROM hidden_items WHERE ownerRef = :ownerRef ORDER BY _id")
+    fun getAllItems(ownerRef: String): LiveData<List<HiddenItemModel>>
 
     @Query("SELECT * FROM hidden_items WHERE _id = :id")
     fun getItem(id: Long): LiveData<List<HiddenItemModel>>

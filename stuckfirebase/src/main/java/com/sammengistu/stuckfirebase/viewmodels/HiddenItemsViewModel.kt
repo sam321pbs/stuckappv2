@@ -7,7 +7,7 @@ import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 
 class HiddenItemsViewModel internal constructor(
     hiddenItemsRepository: HiddenItemsRepository,
-    ownerId: String
+    ownerRef: String
 ) : ViewModel() {
-    val items: LiveData<List<HiddenItemModel>> = hiddenItemsRepository.getAllHiddenItems(ownerId)
+    val items: LiveData<List<HiddenItemModel>> = hiddenItemsRepository.getAllHiddenItems(ownerRef)
 }

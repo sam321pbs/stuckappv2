@@ -12,9 +12,9 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : BaseFragment() {
 
-    lateinit var notificationItem: TextView
-    lateinit var deleteAccountItem: TextView
-    lateinit var logoutItem: TextView
+    private lateinit var notificationItem: TextView
+    private lateinit var deleteAccountItem: TextView
+    private lateinit var logoutItem: TextView
 
     override fun getLayoutId() = R.layout.fragment_settings
     override fun getFragmentTag(): String = TAG

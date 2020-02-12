@@ -6,12 +6,12 @@ import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 class UserPrefHelper {
     companion object {
-        const val NOTIFICATION_PREF = "notification_pref"
-        const val KEY_NOTIFICATION_VOTES = "_notification_votes"
-        const val KEY_NOTIFICATION_COMMENTS = "_notification_comments"
+        private const val NOTIFICATION_PREF = "notification_pref"
+        private const val KEY_NOTIFICATION_VOTES = "_notification_votes"
+        private const val KEY_NOTIFICATION_COMMENTS = "_notification_comments"
 
         fun addVotesPref(context: Context, enabled: Boolean) {
-            UserRepository.getUserInstance(context!!) { user ->
+            UserRepository.getUserInstance(context) { user ->
                 if (user != null) {
                     val pref = context.getSharedPreferences(NOTIFICATION_PREF, Context.MODE_PRIVATE)
                     pref.edit().putBoolean("${user.ref}$KEY_NOTIFICATION_VOTES", enabled).apply()
@@ -25,7 +25,7 @@ class UserPrefHelper {
         }
 
         fun addCommentsPref(context: Context, enabled: Boolean) {
-            UserRepository.getUserInstance(context!!) { user ->
+            UserRepository.getUserInstance(context) { user ->
                 if (user != null) {
                     val pref = context.getSharedPreferences(NOTIFICATION_PREF, Context.MODE_PRIVATE)
                     pref.edit().putBoolean("${user.ref}$KEY_NOTIFICATION_COMMENTS", enabled).apply()

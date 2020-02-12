@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
-import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_OWNER_ID
 import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_OWNER_REF
 import com.sammengistu.stuckapp.adapters.CommentsAdapter
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
@@ -114,15 +113,11 @@ class CommentsFragment : BaseFragment() {
     }
 
     private fun createComment(user: UserModel?) {
-        val postOwnerId = arguments?.getString(EXTRA_POST_OWNER_ID) ?: ""
         val postOwnerRef = arguments?.getString(EXTRA_POST_OWNER_REF) ?: ""
         if (user != null) {
             val commentModel = CommentModel(
                 postRef,
                 postOwnerRef,
-                postOwnerId,
-                user.userId,
-                user.ref,
                 user.username,
                 user.avatar,
                 commentET.text.toString(),
@@ -137,13 +132,11 @@ class CommentsFragment : BaseFragment() {
     companion object {
         fun newInstance(
             postId: String,
-            postOwnerId: String,
             postOwnerRef: String,
             choicePos: Int
         ): CommentsFragment {
             val bundle = Bundle()
             bundle.putString(EXTRA_POST_ID, postId)
-            bundle.putString(EXTRA_POST_OWNER_ID, postOwnerId)
             bundle.putString(EXTRA_POST_OWNER_REF, postOwnerRef)
             bundle.putInt(EXTRA_POST_CHOICE_POS, choicePos)
 

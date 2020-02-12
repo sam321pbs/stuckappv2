@@ -6,8 +6,8 @@ import com.sammengistu.stuckfirebase.models.DraftPostModel
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM posts WHERE ownerId = :ownerId ORDER BY postId")
-    fun getAllPosts(ownerId: String): LiveData<List<DraftPostModel>>
+    @Query("SELECT * FROM posts WHERE ownerRef = :ownerRef ORDER BY postId")
+    fun getAllPosts(ownerRef: String): LiveData<List<DraftPostModel>>
 
     @Query("SELECT * FROM posts WHERE postId = :id")
     fun getPost(id: Long): LiveData<List<DraftPostModel>>

@@ -14,7 +14,7 @@ private val TAG = StatsFragment::class.java.simpleName
 
 class StatsFragment: BaseFragment() {
 
-    lateinit var binding: FragmentStatsBinding
+    private lateinit var binding: FragmentStatsBinding
 
     override fun getLayoutId(): Int = R.layout.fragment_stats
     override fun getFragmentTag(): String = TAG

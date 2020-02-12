@@ -54,7 +54,7 @@ class InputFormItemView(context: Context, attrs: AttributeSet) : FrameLayout(con
         }
     }
 
-    fun showField(optional: Boolean) {
+    private fun showField(optional: Boolean) {
         if (!optional) {
             containerForm.visibility = View.VISIBLE
             addFieldButton.visibility = View.GONE
