@@ -30,12 +30,12 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
         getItemsWhereEqualAndBefore("category", filterCategory, before, listener)
     }
 
-    fun getOwnerPosts(ownerId: String, listener: OnItemsRetrieved<PostModel>) {
-        getItemsWhereEqual("ownerId", ownerId, listener)
+    fun getOwnerPosts(ownerRef: String, listener: OnItemsRetrieved<PostModel>) {
+        getItemsWhereEqual("ownerRef", ownerRef, listener)
     }
 
-    fun getOwnerPosts(ownerId: String, before: Any?, listener: OnItemsRetrieved<PostModel>) {
-        getItemsWhereEqualAndBefore("ownerId", ownerId, before, listener)
+    fun getOwnerPosts(ownerRef: String, before: Any?, listener: OnItemsRetrieved<PostModel>) {
+        getItemsWhereEqualAndBefore("ownerRef", ownerRef, before, listener)
     }
 
     fun createImagePost(post: PostModel, bitmap1: Bitmap, bitmap2: Bitmap, listener: OnItemCreated<PostModel>) {

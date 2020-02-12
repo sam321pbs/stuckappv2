@@ -11,6 +11,7 @@ import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 class DeviceTokenAccess(private val userRef: String) :
     FirebaseSubOwnerItemAccess<DeviceTokenModel>(userRef) {
+    private val TAG = DeviceTokenAccess::class.java.simpleName
     override fun getCollectionName() = DEVICE_TOKENS
     override fun getModelClass() = DeviceTokenModel::class.java
 
@@ -46,7 +47,7 @@ class DeviceTokenAccess(private val userRef: String) :
 
     private fun addDeviceToken(user: UserModel, token: String) {
         val deviceTokenModel =
-            DeviceTokenModel(user.userId, user.ref, token)
+            DeviceTokenModel(user.ref, token)
         createItemInFB(deviceTokenModel,
             object : OnItemCreated<DeviceTokenModel>{
                 override fun onSuccess(item: DeviceTokenModel) {
@@ -66,9 +67,5 @@ class DeviceTokenAccess(private val userRef: String) :
             val newToken = instanceIdResult.token
             onTokenRetrieved.invoke(newToken)
         }
-    }
-
-    companion object {
-        val TAG = DeviceTokenAccess::class.java.simpleName
     }
 }

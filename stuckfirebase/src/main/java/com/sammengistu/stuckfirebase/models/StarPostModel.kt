@@ -2,7 +2,6 @@ package com.sammengistu.stuckfirebase.models
 
 class StarPostModel(
     ownerId: String,
-    ownerRef: String,
     userName: String,
     avatar: String,
     question: String,
@@ -15,11 +14,9 @@ class StarPostModel(
     choices: HashMap<String, String> = HashMap(),
     votes: HashMap<String, Int> = HashMap(),
     val postRef: String,
-    val starPostOwnerRef: String,
-    val starPostOwnerId: String
+    val starPostOwnerRef: String
 ) : PostModel(
     ownerId,
-    ownerRef,
     userName,
     avatar,
     question,
@@ -32,9 +29,8 @@ class StarPostModel(
     choices,
     votes
 ) {
-    constructor(starPostOwnerRef: String, starPostOwnerId: String, post: PostModel) :
+    constructor(starOwnerRef: String, post: PostModel) :
             this(
-                post.ownerId,
                 post.ownerRef,
                 post.userName,
                 post.avatar,
@@ -48,13 +44,11 @@ class StarPostModel(
                 post.choices,
                 post.votes,
                 post.ref,
-                starPostOwnerRef,
-                starPostOwnerId
+                starOwnerRef
             )
 
     constructor() :
             this(
-                "",
                 "",
                 "",
                 "",
@@ -67,7 +61,6 @@ class StarPostModel(
                 HashMap<String, String>(),
                 HashMap<String, String>(),
                 HashMap<String, Int>(),
-                "",
                 "",
                 ""
             )

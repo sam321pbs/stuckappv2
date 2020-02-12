@@ -15,7 +15,7 @@ import com.sammengistu.stuckfirebase.models.HiddenItemModel
 import com.sammengistu.stuckfirebase.models.UserModel
 
 @Database(entities = [DraftPostModel::class, HiddenItemModel::class, UserModel::class],
-    version = 8, exportSchema = false)
+    version = 9, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postsDao(): PostDao
     abstract fun hiddenItemsDao(): HiddenItemsDao

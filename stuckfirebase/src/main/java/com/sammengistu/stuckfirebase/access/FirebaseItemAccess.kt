@@ -125,24 +125,10 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
-    fun getItemsWhereEqual(field: String, value: Any, listener: OnItemsRetrieved<T>) {
+    fun getItemsWhereEqual(field: String, value: Any, listener: OnItemsRetrieved<T>, limit: Long = QUERY_LIMIT) {
         getCollectionRef()
-            .limit(QUERY_LIMIT)
-            .whereEqualTo(field, value)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener(getSuccessListener(listener))
-            .addOnFailureListener {
-                Log.e(TAG, "Failed to get ${getModelClass().simpleName}", it)
-                listener.onFailed(it)
-            }
-    }
-
-    fun getItemsWhereEqual(field: String, value: Any, limit: Long, listener: OnItemsRetrieved<T>) {
-        getCollectionRef()
-            .limit(QUERY_LIMIT)
-            .whereEqualTo(field, value)
             .limit(limit)
+            .whereEqualTo(field, value)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener(getSuccessListener(listener))

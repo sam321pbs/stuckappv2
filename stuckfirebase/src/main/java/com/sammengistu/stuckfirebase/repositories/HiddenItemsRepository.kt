@@ -5,7 +5,7 @@ import com.sammengistu.stuckfirebase.models.HiddenItemModel
 
 class HiddenItemsRepository private constructor(val dao: HiddenItemsDao) {
 
-    fun getAllHiddenItems(ownerId: String) = dao.getAllItems(ownerId)
+    fun getAllHiddenItems(ownerRef: String) = dao.getAllItems(ownerRef)
 
     fun getHiddenItem(id: Long) = dao.getItem(id)
 

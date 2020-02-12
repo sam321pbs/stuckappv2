@@ -6,15 +6,13 @@ import androidx.lifecycle.observe
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.HiddenItemModel
-import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.viewmodels.HiddenItemsViewModel
 import org.greenrobot.eventbus.EventBus
 
-class HiddenItemsHelper(lifeCycleOwner: ComponentActivity) {
+class HiddenItemsHelper(userRef: String, lifeCycleOwner: ComponentActivity) {
 
     private val listViewModel: HiddenItemsViewModel by lifeCycleOwner.viewModels {
-        val ownerId = UserRepository.firebaseUserId
-        InjectorUtils.provideHiddenItemsListFactory(lifeCycleOwner, ownerId)
+        InjectorUtils.provideHiddenItemsListFactory(lifeCycleOwner, userRef)
     }
 
     init {

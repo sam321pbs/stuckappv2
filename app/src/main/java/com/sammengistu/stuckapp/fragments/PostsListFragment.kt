@@ -15,15 +15,16 @@ import com.sammengistu.stuckapp.events.AssetsLoadedEvent
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckfirebase.ErrorNotifier
-import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.access.PostAccess
-import com.sammengistu.stuckfirebase.access.StarPostAccess
+import com.sammengistu.stuckfirebase.constants.LOAD_TYPE_CATEGORIES
+import com.sammengistu.stuckfirebase.constants.LOAD_TYPE_DRAFT
+import com.sammengistu.stuckfirebase.constants.LOAD_TYPE_FAVORITE
+import com.sammengistu.stuckfirebase.constants.LOAD_TYPE_USER
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
 import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
-import com.sammengistu.stuckfirebase.models.StarPostModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.utils.DateUtils
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
@@ -36,14 +37,14 @@ abstract class PostsListFragment : BaseFragment() {
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
     private var postsList = ArrayList<PostModel>()
-    private var lastCreatedAt: Any? = 0L
+    private var lastCreatedAt: Any = 0L
+    private var addItems = false
 
     private val listViewModel: PostListViewModel by viewModels {
-        val ownerId = UserRepository.firebaseUserId
-        InjectorUtils.provideDraftPostListFactory(requireContext(), ownerId)
+        InjectorUtils.providePostListFactory(requireContext(), getLoadType())
     }
 
-    abstract fun getType(): String
+    abstract fun getLoadType(): String
     abstract fun getEmptyMessage(): String
 
     @Subscribe
@@ -53,7 +54,7 @@ abstract class PostsListFragment : BaseFragment() {
     }
 
     @Subscribe
-    fun onAssetsLoaded(event: AssetsLoadedEvent) = refreshAdapter(viewAdapter)
+    fun onAssetsLoaded(event: AssetsLoadedEvent) = refreshAdapter()
 
     @Subscribe
     fun onPostDeleted(event: DeletedPostEvent) {
@@ -90,7 +91,15 @@ abstract class PostsListFragment : BaseFragment() {
         showEmptyMessage(true)
         EventBus.getDefault().register(this)
         if (AssetImageUtils.isLoaded) {
-            refreshAdapter(viewAdapter)
+            refreshAdapter()
+        }
+
+        listViewModel.postsViewModel.observe(viewLifecycleOwner) { posts ->
+            if (posts == null) {
+                ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts")
+            } else {
+                updateAdapter(posts, viewAdapter, addItems)
+            }
         }
     }
 
@@ -109,14 +118,14 @@ abstract class PostsListFragment : BaseFragment() {
         swipeToRefreshLayout = swipe_to_refresh
         swipeToRefreshLayout.setOnRefreshListener {
             swipeToRefreshLayout.isRefreshing = true
-            refreshAdapter(viewAdapter)
+            refreshAdapter()
         }
     }
 
     private fun setupRecyclerView() {
         val viewMode = when {
-            getType() == TYPE_DRAFT -> PostsAdapter.VIEW_MODE_DRAFTS
-            getType() == TYPE_FAVORITE -> PostsAdapter.VIEW_MODE_FAVORITES
+            getLoadType() == LOAD_TYPE_DRAFT -> PostsAdapter.VIEW_MODE_DRAFTS
+            getLoadType() == LOAD_TYPE_FAVORITE -> PostsAdapter.VIEW_MODE_FAVORITES
             else -> PostsAdapter.VIEW_MODE_NORMAL
         }
 
@@ -132,72 +141,51 @@ abstract class PostsListFragment : BaseFragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1) && postsList.isNotEmpty()
-                    && postsList.size > 30) {
-                    loadMoreItems(viewAdapter)
+                    && postsList.size > 30
+                ) {
+                    loadMoreItems()
                 }
             }
         }
         recyclerView.addOnScrollListener(scrollListener)
     }
 
-    private fun loadMoreItems(adapter: PostsAdapter) {
+    private fun loadMoreItems() {
+        addItems = true
         Log.d(TAG, "Loading more items")
         swipeToRefreshLayout.isRefreshing = true
         UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
-                when (getType()) {
-                    TYPE_FAVORITE -> StarPostAccess().getUsersStarredPostsBefore(
-                        user.ref, lastCreatedAt,
-                        getOnStarPostRetrievedListener(adapter, addItems = true)
-                    )
-                    TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
-                        getPostCategory(),
-                        lastCreatedAt,
-                        getOnPostRetrievedListener(adapter, addItems = true)
-                    )
-                    TYPE_USER -> PostAccess().getOwnerPosts(
-                        user.userId,
-                        lastCreatedAt,
-                        getOnPostRetrievedListener(adapter, addItems = true)
-                    )
-                    TYPE_DRAFT -> swipeToRefreshLayout.isRefreshing = false
-                    else -> PostAccess().getRecentPosts(
-                        lastCreatedAt,
-                        getOnPostRetrievedListener(adapter, addItems = true)
-                    )
+                when (getLoadType()) {
+                    LOAD_TYPE_FAVORITE -> listViewModel.setData(user.ref, lastCreatedAt)
+                    LOAD_TYPE_CATEGORIES -> listViewModel.setData(getPostCategory(), lastCreatedAt)
+                    LOAD_TYPE_USER -> listViewModel.setData(user.ref, lastCreatedAt)
+//                    TYPE_DRAFT -> {
+//                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
+//                            updateAdapter(convertDraftToPost(draftList), adapter, false)
+//                        }
+//                    }
+                    else -> listViewModel.setData(lastCreatedAt)
                 }
             }
         }
     }
 
-    private fun refreshAdapter(adapter: PostsAdapter) {
+    private fun refreshAdapter() {
+        addItems = false
         swipeToRefreshLayout.isRefreshing = true
         UserRepository.getUserInstance(context!!) { user ->
             if (user != null) {
-                when (getType()) {
-                    TYPE_FAVORITE -> {
-//                        StarPostAccess().getUsersStarredPosts(
-//                            user.ref,
-//                            getOnStarPostRetrievedListener(adapter)
-//                        )
-                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
-                            updateAdapter(convertDraftToPost(draftList), adapter, false)
-                        }
-                    }
-                    TYPE_CATEGORIES -> PostAccess().getPostsInCategory(
-                        getPostCategory(),
-                        getOnPostRetrievedListener(adapter)
-                    )
-                    TYPE_USER -> PostAccess().getOwnerPosts(
-                        user.userId,
-                        getOnPostRetrievedListener(adapter)
-                    )
-                    TYPE_DRAFT -> {
-                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
-                            updateAdapter(convertDraftToPost(draftList), adapter, false)
-                        }
-                    }
-                    else -> PostAccess().getRecentPosts(getOnPostRetrievedListener(adapter))
+                when (getLoadType()) {
+                    LOAD_TYPE_FAVORITE -> listViewModel.setData(user.ref)
+                    LOAD_TYPE_CATEGORIES -> listViewModel.setData(getPostCategory())
+                    LOAD_TYPE_USER -> listViewModel.setData(user.ref)
+//                    TYPE_DRAFT -> {
+//                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
+//                            updateAdapter(convertDraftToPost(draftList), adapter, false)
+//                        }
+//                    }
+                    else -> listViewModel.setData()
                 }
             }
         }
@@ -213,45 +201,13 @@ abstract class PostsListFragment : BaseFragment() {
         return list
     }
 
-    private fun getOnPostRetrievedListener(
-        adapter: PostsAdapter,
-        addItems: Boolean = false
-    ): FirebaseItemAccess.OnItemsRetrieved<PostModel> {
-        return object :
-            FirebaseItemAccess.OnItemsRetrieved<PostModel> {
-            override fun onSuccess(list: List<PostModel>) {
-                updateAdapter(list, adapter, addItems)
-            }
-
-            override fun onFailed(e: Exception) {
-                swipeToRefreshLayout.isRefreshing = false
-                ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts", e)
-            }
-        }
-    }
-
-    private fun getOnStarPostRetrievedListener(adapter: PostsAdapter, addItems: Boolean = false):
-            FirebaseItemAccess.OnItemsRetrieved<StarPostModel> {
-        return object :
-            FirebaseItemAccess.OnItemsRetrieved<StarPostModel> {
-            override fun onSuccess(list: List<StarPostModel>) {
-                updateAdapter(list, adapter, addItems)
-            }
-
-            override fun onFailed(e: Exception) {
-                swipeToRefreshLayout.isRefreshing = false
-                ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts", e)
-            }
-        }
-    }
-
     private fun updateAdapter(
         list: List<PostModel>,
         adapter: PostsAdapter,
         addItems: Boolean
     ) {
         if (list.isNotEmpty()) {
-            lastCreatedAt = list[list.size - 1].createdAt ?: 0L
+            lastCreatedAt = list[list.size - 1].createdAt ?: DateUtils.getMaxDate()
         }
         if (addItems) {
             postsList.addAll(list)
@@ -277,11 +233,6 @@ abstract class PostsListFragment : BaseFragment() {
 
     companion object {
         val TAG: String = PostsListFragment::class.java.simpleName
-        const val TYPE_HOME = "home"
-        const val TYPE_FAVORITE = "favorite"
-        const val TYPE_CATEGORIES = "categories"
-        const val TYPE_USER = "user"
-        const val TYPE_DRAFT = "draft"
         const val EXTRA_CATEGORY = "extra_category"
     }
 }

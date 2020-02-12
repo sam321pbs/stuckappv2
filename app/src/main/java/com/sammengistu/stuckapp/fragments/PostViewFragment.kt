@@ -11,7 +11,7 @@ import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
-import com.sammengistu.stuckapp.utils.DateUtils
+import com.sammengistu.stuckfirebase.utils.DateUtils
 import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.VotableImageView
 import com.sammengistu.stuckapp.views.VotableTextChoiceView
@@ -55,17 +55,8 @@ class PostViewFragment : BaseFragment() {
 
     private fun bindPostDetails(post: PostModel) {
         val choiceContainer = choice_container
-        val questionView = question
         val avatarView = avatar_view
         val username = username
-        val timeSince = time_since
-        val categoriesView = category
-        val commentsTotalView = commentsTotal
-        val voteTotalView = votesTotal
-        val starTotalView = starsTotal
-        val menuIcon = menu_icon
-        val starIcon = user_star_icon
-        val showComments = show_comments
 
         if (PrivacyOptions.ANONYMOUS.toString() == post.privacy) {
             val avatar = AssetImageUtils.getAvatar(post.avatar)
@@ -78,13 +69,13 @@ class PostViewFragment : BaseFragment() {
             username.text = post.userName
         }
 
-        questionView.text = StringUtils.capitilizeFirstLetter(post.question)
-        timeSince.text = DateUtils.convertDateToTimeElapsed(post.getDate())
-        commentsTotalView.setText(post.totalComments.toString())
-        voteTotalView.setText(post.getTotalVotes().toString())
-        starTotalView.setText(post.totalStars.toString())
-        categoriesView.setText(StringUtils.capitilizeFirstLetter(post.category))
-        menuIcon.visibility = View.INVISIBLE
+        question.text = StringUtils.capitilizeFirstLetter(post.question)
+        time_since.text = DateUtils.convertDateToTimeElapsed(post.getDate())
+        commentsTotal.setText(post.totalComments.toString())
+        votesTotal.setText(post.getTotalVotes().toString())
+        starsTotal.setText(post.totalStars.toString())
+        category.setText(StringUtils.capitilizeFirstLetter(post.category))
+        menu_icon.visibility = View.INVISIBLE
 
         val userVote = UserVotesCollection.getInstance(context!!).getVoteForPost(post.ref)
         if (post.type == PostType.TEXT.toString()) {
@@ -93,10 +84,10 @@ class PostViewFragment : BaseFragment() {
             buildImageChoices(choiceContainer, post, userVote)
         }
 
-        updateStarIcon(post, starIcon)
+        updateStarIcon(post, user_star_icon)
 
-        showComments.setOnClickListener {
-            CommentsActivity.startActivity(context!!, post.ref, post.ownerId, post.ownerRef, 0)
+        show_comments.setOnClickListener {
+            CommentsActivity.startActivity(context!!, post.ref, post.ownerRef, 0)
         }
     }
 

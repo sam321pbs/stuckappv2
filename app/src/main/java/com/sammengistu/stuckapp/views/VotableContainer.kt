@@ -39,15 +39,12 @@ abstract class VotableContainer(
 
     override fun onDoubleTapped() {
         UserRepository.getUserInstance(context!!) { user ->
-            if (allowUserToVote(user)) {
+            if (user != null && allowUserToVote(user)) {
                 val userVote = UserVoteModel(
-                    user!!.userId,
                     user.ref,
                     user.username,
                     user.avatar,
                     post.ref,
-                    post.ownerRef,
-                    post.ownerId,
                     choiceItem.first
                 )
                 UserVoteAccess().createItemInFB(userVote)
@@ -59,7 +56,7 @@ abstract class VotableContainer(
     }
 
     private fun allowUserToVote(user: UserModel?) =
-        post.ref.isNotBlank() && userVote == null && user != null && post.ownerId != user.userId
+        post.ref.isNotBlank() && userVote == null && user != null && post.ownerRef != user.ref
 
     private fun applyStyleManually(context: Context) {
         val attrs =

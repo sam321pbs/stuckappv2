@@ -17,8 +17,8 @@ class FbMessagingService : FirebaseMessagingService() {
 
         UserRepository.getUserInstance(this) { user ->
             if (user != null) {
-                val deviceToken = DeviceTokenModel(user.userId, user.ref, token)
-                DeviceTokenAccess(user.userId).createItemInFB(deviceToken)
+                val deviceToken = DeviceTokenModel(user.ref, token)
+                DeviceTokenAccess(user.ref).createItemInFB(deviceToken)
             }
         }
     }

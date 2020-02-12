@@ -82,7 +82,7 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
         invisibleCover = invisible_view
         invisibleCover.setOnClickListener { hideBottomSheet() }
-        HiddenItemsHelper(this)
+
         addFragment(HomeListFragment())
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.cancelAll()
@@ -172,15 +172,16 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
             UserStarredCollection.getInstance(this)
             UserVotesCollection.getInstance(this)
             DeviceTokenAccess(user.ref).checkTokenExists(this)
+            HiddenItemsHelper(user.ref, this)
 
-            userViewModel.userLiveData.observe(this) { users ->
+            userViewModel.userLiveData.observe(this) { user ->
                 Log.d(TAG, "Received user db changes")
-                if (!users.isNullOrEmpty()) {
-                    UserRepository.currentUser = users[0]
-                    setupNavHeader(users[0])
+                if (user != null) {
+                    UserRepository.currentUser = user
+                    setupNavHeader(user)
                 }
             }
-            userViewModel.setUserId(user.userId)
+            userViewModel.setUserRef(user.ref)
         }
     }
 

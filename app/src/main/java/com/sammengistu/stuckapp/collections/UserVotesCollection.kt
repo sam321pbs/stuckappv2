@@ -38,7 +38,7 @@ class UserVotesCollection {
         private fun loadUserVotes(context: Context) {
             UserRepository.getUserInstance(context) { user ->
                 if (user != null) {
-                    UserVoteAccess().getItemsWhereEqual("ownerId", user.userId,
+                    UserVoteAccess().getItemsWhereEqual("ownerRef", user.ref,
                         object : FirebaseItemAccess.OnItemsRetrieved<UserVoteModel> {
                             override fun onSuccess(list: List<UserVoteModel>) {
                                 Log.d(TAG, "Finished votes load")

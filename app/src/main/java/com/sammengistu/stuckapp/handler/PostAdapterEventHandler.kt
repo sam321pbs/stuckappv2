@@ -15,7 +15,7 @@ import org.jetbrains.anko.doAsync
 class PostAdapterEventHandler(private val context: Context, private val post: PostModel) {
     fun showProfile(view: View) {
         if (context is BaseActivity) {
-            context.addFragment(ProfileViewFragment.newInstance(post.ownerId))
+            context.addFragment(ProfileViewFragment.newInstance(post.ownerRef))
         }
     }
 
@@ -24,7 +24,7 @@ class PostAdapterEventHandler(private val context: Context, private val post: Po
     }
 
     fun showComments(view: View) {
-        CommentsActivity.startActivity(context, post.ref, post.ownerId, post.ownerRef, 0)
+        CommentsActivity.startActivity(context, post.ref, post.ownerRef, 0)
     }
 
     fun showPost(view: View) {

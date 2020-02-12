@@ -10,14 +10,14 @@ interface UsersDao {
     @Query("SELECT * FROM users")
     fun getAll(): LiveData<List<UserModel>>
 
-    @Query("SELECT * FROM users WHERE userId = :userId")
-    fun getUser(userId: String): LiveData<List<UserModel>>
+    @Query("SELECT * FROM users WHERE ref = :ownerRef")
+    fun getUser(ownerRef: String): LiveData<List<UserModel>>
 
-    @Query("SELECT * FROM users WHERE userId = :userId")
-    fun getUserSingle(userId: String): LiveData<UserModel>
+    @Query("SELECT * FROM users WHERE ref = :ownerRef")
+    fun getUserSingle(ownerRef: String): LiveData<UserModel>
 
-    @Query("SELECT * FROM users WHERE userId = :userId")
-    suspend fun getUserAsList(userId: String): List<UserModel>
+    @Query("SELECT * FROM users WHERE ref = :ownerRef")
+    suspend fun getUserAsList(ownerRef: String): List<UserModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertItem(user: UserModel): Long
@@ -25,8 +25,8 @@ interface UsersDao {
     @Delete
     fun deleteItem(user: UserModel): Int
 
-    @Query("DELETE FROM users WHERE userId = :userId")
-    suspend fun deleteByUserId(userId: String)
+    @Query("DELETE FROM users WHERE ref = :ownerRef")
+    suspend fun deleteByUserRef(ownerRef: String)
 
     @Update
     suspend fun updateItem(user: UserModel): Int

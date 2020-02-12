@@ -24,28 +24,23 @@ class UserRepository private constructor(
 ) {
 
     fun getUserLiveData(
-        firebaseUserId: String
-    ): LiveData<List<UserModel>> {
-        val liveData = MutableLiveData<List<UserModel>>()
+        ownerRef: String
+    ): LiveData<UserModel> {
+        val liveData = MutableLiveData<UserModel>()
 
-        val users = usersDao.getUser(firebaseUserId)
-        if (UserRepository.firebaseUserId == firebaseUserId) {
+        if (UserRepository.currentUser?.ref == ownerRef) {
             // we will retrieve current user from db
-            return users
+            return usersDao.getUserSingle(ownerRef)
         } else {
-            userAccess.getItemsWhereEqual("userId", firebaseUserId,
-                object : FirebaseItemAccess.OnItemsRetrieved<UserModel> {
-                    override fun onSuccess(list: List<UserModel>) {
-                        if (list.isNullOrEmpty()) {
-                            liveData.value = null
-                        } else {
-                            liveData.value = list
-                        }
+            userAccess.getItem(ownerRef,
+                object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
+                    override fun onSuccess(item: UserModel) {
+                        liveData.value = item
                     }
 
                     override fun onFailed(e: Exception) {
-                        liveData.value = null
                         Log.e(TAG, "Failed to get user", e)
+                        liveData.value = null
                     }
                 }
             )
@@ -71,7 +66,7 @@ class UserRepository private constructor(
                             callback.invoke(list[0])
                             if (isCurrentUser) {
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    usersDao.deleteByUserId(firebaseUserId)
+                                    usersDao.deleteByUserRef(firebaseUserId)
                                     usersDao.insertItem(list[0])
                                 }
                             }
@@ -97,7 +92,7 @@ class UserRepository private constructor(
 
     suspend fun deleteUser(user: UserModel) {
         Log.d(TAG, "deleting user in db")
-        usersDao.deleteByUserId(user.userId)
+        usersDao.deleteByUserRef(user.ref)
     }
 
     companion object {

@@ -97,7 +97,7 @@ class BottomSheetHelper(
         UserRepository.getUserInstance(context) { user ->
             if (user != null) {
                 // Handle delete option
-                if ((post.ownerId == user.userId || post.ref.isBlank())) {
+                if ((post.ownerRef == user.ref || post.ref.isBlank())) {
                     bottomSheetLL.find<LinearLayout>(R.id.bottom_delete_container)
                         .visibility = View.VISIBLE
                 } else {
@@ -144,7 +144,6 @@ class BottomSheetHelper(
                 if (user != null) {
                     val item =
                         HiddenItemModel(
-                            user.userId,
                             user.ref,
                             post.ref,
                             TYPE_POST
@@ -169,7 +168,7 @@ class BottomSheetHelper(
                 UserRepository.getUserInstance(context) { user ->
                     if (user != null && reason != null) {
                         ReportAccess().createItemInFB(
-                            ReportModel(reason, post.ref, user.ref, user.userId)
+                            ReportModel(reason, post.ref, user.ref)
                         )
                         createHiddenItem()
                         EventBus.getDefault().post(DataChangedEvent())
@@ -184,7 +183,7 @@ class BottomSheetHelper(
 
     private fun showComments() {
         hideMenu()
-        CommentsActivity.startActivity(context, post.ref, post.ownerId, post.ownerRef, 0)
+        CommentsActivity.startActivity(context, post.ref, post.ownerRef, 0)
     }
 
     private fun starPost() {
@@ -204,7 +203,7 @@ class BottomSheetHelper(
     }
 
     private fun addPostToFavorites(user: UserModel) {
-        val starPost = StarPostModel(user.ref, user.userId, post)
+        val starPost = StarPostModel(user.ref, post)
         StarPostAccess().createItemInFB(starPost,
             object : FirebaseItemAccess.OnItemCreated<StarPostModel> {
                 override fun onSuccess(item: StarPostModel) {
@@ -260,7 +259,7 @@ class BottomSheetHelper(
     }
 
     private fun isUsersPost(user: UserModel?, post: PostModel) =
-        user != null && post.ownerId == user.userId
+        user != null && post.ownerRef == user.ref
 
     private fun handleDeletePost(postRef: String) {
         if (postRef.isNotBlank()) {

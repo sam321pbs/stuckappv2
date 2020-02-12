@@ -20,6 +20,8 @@ class VotableTextChoiceView(
     updateParentContainer: UpdateParentContainer?
 ) : VotableContainer(context, post, choiceItem, userVote, updateParentContainer) {
 
+    private val TAG = VotableTextChoiceView::class.java.simpleName
+
     private val bullet = ImageView(context)
     private val choiceText = TextView(context)
     private val votesText = TextView(context)
@@ -109,9 +111,5 @@ class VotableTextChoiceView(
     }
 
     private fun isUsersPost() =
-        UserRepository.currentUser != null && UserRepository.currentUser!!.ref == post.ownerRef
-
-    companion object {
-        val TAG = VotableTextChoiceView::class.java.simpleName
-    }
+        UserRepository.currentUser != null && UserRepository.currentUser?.ref == post.ownerRef
 }

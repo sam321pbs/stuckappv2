@@ -12,7 +12,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.sammengistu.stuckapp.utils.DateUtils" />
+        <import type="com.sammengistu.stuckfirebase.utils.DateUtils" />
 
         <variable
             name="post"

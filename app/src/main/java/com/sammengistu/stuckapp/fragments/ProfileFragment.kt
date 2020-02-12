@@ -101,12 +101,12 @@ class ProfileFragment : BaseFragment() {
         } else {
             UserRepository.getUserInstance(context!!) {
                 if (it != null) {
-                    userViewModel.userLiveData.observe(viewLifecycleOwner) { users ->
-                        if (!users.isNullOrEmpty()) {
-                            populateFields(users[0])
+                    userViewModel.userLiveData.observe(viewLifecycleOwner) { user ->
+                        if (user != null) {
+                            populateFields(user)
                         }
                     }
-                    userViewModel.setUserId(it.userId)
+                    userViewModel.setUserRef(it.ref)
                 }
             }
         }
@@ -259,7 +259,7 @@ class ProfileFragment : BaseFragment() {
                 override fun onSuccess(list: List<UserModel>) {
                     if (list.isNotEmpty()) {
                         val fetchedUser = list[0]
-                        if (fetchedUser.userId != updateUser.userId) {
+                        if (fetchedUser.ref != updateUser.ref) {
                             Toast.makeText(activity, "Username is taken", Toast.LENGTH_SHORT).show()
                             progressBar.visibility = View.GONE
                         } else {
@@ -274,7 +274,7 @@ class ProfileFragment : BaseFragment() {
                     progressBar.visibility = View.GONE
                     ErrorNotifier.notifyError(activity, "Error Occurred", TAG, e)
                 }
-            })
+            }, 1)
     }
 
     private fun sendUpdates(updatedUser: UserModel) {

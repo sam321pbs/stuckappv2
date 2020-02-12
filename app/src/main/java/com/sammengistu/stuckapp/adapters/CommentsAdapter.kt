@@ -10,13 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
-import com.sammengistu.stuckapp.utils.DateUtils
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.models.CommentVoteModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.utils.DateUtils
 import org.jetbrains.anko.find
 
 
@@ -70,15 +70,15 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
             updateVoteUi(holder, comment, vote)
         }
 
-        holder.avatar.setOnClickListener { showProfile(context, comment.ownerId) }
-        holder.username.setOnClickListener { showProfile(context, comment.ownerId) }
+        holder.avatar.setOnClickListener { showProfile(context, comment.ownerRef) }
+        holder.username.setOnClickListener { showProfile(context, comment.ownerRef) }
     }
 
     override fun getItemCount() = commentsList.size
 
-    private fun showProfile(context: Context, ownerId: String) {
-        if (context is BaseActivity && ownerId.isNotBlank()) {
-            context.addFragment(ProfileViewFragment.newInstance(ownerId))
+    private fun showProfile(context: Context, ownerRef: String) {
+        if (context is BaseActivity && ownerRef.isNotBlank()) {
+            context.addFragment(ProfileViewFragment.newInstance(ownerRef))
         }
     }
 
@@ -162,7 +162,6 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
         voteType: Int
     ) {
         val newCommentVote = CommentVoteModel(
-            user.userId,
             user.ref,
             user.username,
             user.avatar,

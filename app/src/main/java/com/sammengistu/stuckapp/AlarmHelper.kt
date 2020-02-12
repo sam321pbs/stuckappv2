@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import com.sammengistu.stuckapp.constants.PendingIntentRequestCodes.Companion.REQUEST_DAILY_NOTIFIER
 import com.sammengistu.stuckapp.receiver.StuckReceiver
-import com.sammengistu.stuckapp.utils.DateUtils.Companion.MS_ONE_DAY
+import com.sammengistu.stuckfirebase.utils.DateUtils.Companion.MS_ONE_DAY
 
 class AlarmHelper {
     companion object {

@@ -10,20 +10,19 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class UserViewModel internal constructor(private val repository: UserRepository) : ViewModel() {
-    private val _userId = MutableLiveData<String>()
-    val userId: LiveData<String>
-        get() = _userId
-    val userLiveData : LiveData<List<UserModel>?> =
-        Transformations.switchMap(_userId) { userID ->
-            if (userID == null) {
+    private val _ownerRef = MutableLiveData<String>()
+
+    val userLiveData : LiveData<UserModel?> =
+        Transformations.switchMap(_ownerRef) { ownerRef ->
+            if (ownerRef == null) {
                 AbsentLiveData.create()
             } else {
-                repository.getUserLiveData(userID)
+                repository.getUserLiveData(ownerRef)
             }
     }
 
-    fun setUserId(userId: String) {
-        _userId.value = userId
+    fun setUserRef(ownerRef: String) {
+        _ownerRef.value = ownerRef
     }
 
     fun updateUser(userModel: UserModel) {

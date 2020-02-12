@@ -7,11 +7,10 @@ import com.google.firebase.firestore.FieldValue
 import java.util.*
 
 abstract class FirebaseItem(
-    // ownerId is a link to the firebase user id
-    ownerId: String,
-    // ownerRef is a link to the User model ref
+    // ownerId is a link to the user ref
     ownerRef: String
 ) {
+    @Exclude
     var ref: String = ""
 
     // Todo: fix this

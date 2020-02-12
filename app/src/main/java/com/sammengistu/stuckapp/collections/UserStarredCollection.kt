@@ -8,6 +8,7 @@ import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.utils.DateUtils
 import org.greenrobot.eventbus.EventBus
 
 class UserStarredCollection {
@@ -48,7 +49,9 @@ class UserStarredCollection {
         private fun loadUserStars(context: Context) {
             UserRepository.getUserInstance(context) { user ->
                 if (user != null) {
-                    StarPostAccess().getUsersStarredPosts(user.ref,
+                    StarPostAccess().getUsersStarredPostsBefore(
+                        user.ref,
+                        DateUtils.getMaxDate(),
                         object : FirebaseItemAccess.OnItemsRetrieved<StarPostModel> {
                             override fun onSuccess(list: List<StarPostModel>) {
                                 Log.d(TAG, "Finished star load")
