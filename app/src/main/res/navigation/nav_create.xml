@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_create"
+    app:startDestination="@id/newPostTypeFragment">
+
+    <fragment
+        android:id="@+id/newPostTypeFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewPostTypeFragment"
+        android:label="NewPostTypeFragment"
+        tools:layout="@layout/fragment_new_post_type">
+        <action
+            android:id="@+id/action_newPostTypeFragment_to_newTextPostFragment"
+            app:destination="@id/newTextPostFragment" />
+        <action
+            android:id="@+id/action_newPostTypeFragment_to_newImagePostFragment"
+            app:destination="@id/newImagePostFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newImagePostFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewImagePostFragment"
+        android:label="NewImagePostFragment"
+        tools:layout="@layout/fragment_new_image_post"/>
+    <fragment
+        android:id="@+id/newTextPostFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewTextPostFragment"
+        android:label="NewTextPostFragment"
+        tools:layout="@layout/fragment_new_text_post"/>
+</navigation>

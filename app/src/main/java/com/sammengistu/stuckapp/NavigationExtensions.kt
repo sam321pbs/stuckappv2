@@ -120,8 +120,8 @@ fun BottomNavigationView.setupWithNavController(
     // Optional: on item reselected, pop back stack to the destination of the graph
     setupItemReselected(graphIdToTagMap, fragmentManager)
 
-    // Handle deep link
-    setupDeepLinks(navGraphIds, fragmentManager, containerId, intent)
+//    // Handle deep link
+//    setupDeepLinks(navGraphIds, fragmentManager, containerId, intent)
 
     // Finally, ensure that we update our BottomNavigationView when the back stack changes
     fragmentManager.addOnBackStackChangedListener {

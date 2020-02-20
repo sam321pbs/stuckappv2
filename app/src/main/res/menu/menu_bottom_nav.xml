@@ -2,31 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/homeListFragment"
+    <item android:id="@+id/nav_home"
         android:title="@string/menu_home"
         android:icon="@drawable/ic_home_blue_400_24dp"
         app:showAsAction="ifRoom"
         android:enabled="true"/>
 
-    <item android:id="@+id/categoriesFragment"
+    <item android:id="@+id/nav_categories"
         android:title="@string/menu_categories"
         android:icon="@drawable/ic_subject_blue_400_24dp"
         app:showAsAction="ifRoom"
         android:enabled="true"/>
 
-    <item android:id="@+id/newPostTypeFragment"
+    <item android:id="@+id/nav_create"
         android:title="@string/menu_create"
         android:icon="@drawable/ic_create_blue_400_24dp"
         app:showAsAction="ifRoom"
         android:enabled="true"/>
 
-    <item android:id="@+id/favoritesListFragment"
+    <item android:id="@+id/nav_favorites"
         android:title="@string/menu_favorites"
         android:icon="@drawable/ic_star_blue_400_24dp"
         app:showAsAction="ifRoom"
         android:enabled="true"/>
 
-    <item android:id="@+id/userPostsListFragment"
+    <item android:id="@+id/nav_me"
         android:title="@string/menu_me"
         android:icon="@drawable/ic_person_blue_400_24dp"
         app:showAsAction="ifRoom"
