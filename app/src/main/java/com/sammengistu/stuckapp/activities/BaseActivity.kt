@@ -18,14 +18,6 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
-        supportFragmentManager.addOnBackStackChangedListener {
-            val manager = supportFragmentManager
-            val frag = manager.findFragmentById(R.id.fragment_container)
-            if (frag != null) {
-                onFragmentChanged(frag)
-                updateTitle(frag)
-            }
-        }
     }
 
     override fun onBackPressed() {

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeListFragment">
+    <fragment
+        android:id="@+id/homeListFragment"
+        android:name="com.sammengistu.stuckapp.fragments.HomeListFragment"
+        android:label="HomeListFragment"
+        tools:layout="@layout/fragment_post_list"/>
+    <fragment
+        android:id="@+id/userPostsListFragment"
+        android:name="com.sammengistu.stuckapp.fragments.UserPostsListFragment"
+        android:label="UserPostsListFragment"
+        tools:layout="@layout/fragment_post_list"/>
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.sammengistu.stuckapp.fragments.CategoriesFragment"
+        android:label="CategoriesFragment"
+        tools:layout="@layout/basic_list_view">
+        <action
+            android:id="@+id/action_categoriesFragment_to_categoriesPostsFragment"
+            app:destination="@id/categoriesPostsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoriesPostsFragment"
+        android:name="com.sammengistu.stuckapp.fragments.CategoriesPostsFragment"
+        android:label="CategoriesPostsFragment"
+        tools:layout="@layout/fragment_post_list"/>
+    <fragment
+        android:id="@+id/favoritesListFragment"
+        android:name="com.sammengistu.stuckapp.fragments.FavoritesListFragment"
+        android:label="FavoritesListFragment"
+        tools:layout="@layout/fragment_post_list"/>
+    <fragment
+        android:id="@+id/newPostTypeFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewPostTypeFragment"
+        android:label="NewPostTypeFragment"
+        tools:layout="@layout/fragment_new_post_type">
+        <action
+            android:id="@+id/action_newPostTypeFragment_to_newTextPostFragment"
+            app:destination="@id/newTextPostFragment" />
+        <action
+            android:id="@+id/action_newPostTypeFragment_to_newImagePostFragment"
+            app:destination="@id/newImagePostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newImagePostFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewImagePostFragment"
+        android:label="NewImagePostFragment"
+        tools:layout="@layout/fragment_new_image_post"/>
+    <fragment
+        android:id="@+id/newTextPostFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewTextPostFragment"
+        android:label="NewTextPostFragment"
+        tools:layout="@layout/fragment_new_text_post"/>
+</navigation>

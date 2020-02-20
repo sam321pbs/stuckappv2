@@ -87,12 +87,12 @@ class SplashScreenActivity : BaseActivity() {
         )
     }
 
-    fun launchProfileActivity() {
+    private fun launchProfileActivity() {
         val mainIntent = Intent(this, CreateProfileActivity::class.java)
         startActivity(mainIntent)
     }
 
-    fun launchMainActivity() {
+    private fun launchMainActivity() {
         val mainIntent = Intent(this, MainActivity::class.java)
         mainIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
