@@ -1,8 +1,9 @@
-package com.sammengistu.stuckfirebase.viewmodels
+package com.sammengistu.stuckfirebase.viewmodels.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
+import com.sammengistu.stuckfirebase.viewmodels.HiddenItemsViewModel
 
 class HiddenItemsViewModelFactory(
     private val repository: HiddenItemsRepository,
@@ -11,5 +12,8 @@ class HiddenItemsViewModelFactory(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>) =
-        HiddenItemsViewModel(repository, ownerRef) as T
+        HiddenItemsViewModel(
+            repository,
+            ownerRef
+        ) as T
 }

@@ -12,25 +12,23 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
+import androidx.navigation.Navigation
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.AlarmHelper
 import com.sammengistu.stuckapp.AssetImageUtils
-import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
-import com.sammengistu.stuckapp.constants.*
 import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.notification.StuckNotificationFactory
 import com.sammengistu.stuckapp.views.AvatarView
-import com.sammengistu.stuckapp.views.StuckNavigationBar
-import com.sammengistu.stuckapp.views.VerticalIconToTextView
 import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
@@ -47,7 +45,7 @@ import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var navigationBar: StuckNavigationBar
+    private lateinit var navigationBar: BottomNavigationView
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
@@ -57,6 +55,18 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     private val userViewModel: UserViewModel by viewModels {
         InjectorUtils.provideUserFactory(this)
     }
+
+    private val bottomNavListener =
+        BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.homeListFragment -> addFragment(HomeListFragment())
+                R.id.categoriesFragment -> addFragment(CategoriesFragment())
+                R.id.newPostTypeFragment -> addFragment(NewPostTypeFragment())
+                R.id.favoritesListFragment -> addFragment(FavoritesListFragment())
+                R.id.userPostsListFragment -> addFragment(UserPostsListFragment())
+            }
+            true
+        }
 
     @Subscribe
     fun onChangeBottomSheet(event: ChangeBottomSheetStateEvent) {
@@ -75,15 +85,15 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         FirebaseApp.initializeApp(this)
         AssetImageUtils.initListOfImages(this)
         navigationBar = stuck_navigation_bar
-        navigationBar.onItemClicked = getOnNavItemClicked()
+        navigationBar.setOnNavigationItemSelectedListener(bottomNavListener)
         setupDrawer()
         UserRepository.getUserInstance(this) { onUserLoaded(it) }
 
         bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
+        navigationBar.setupWithNavController(Navigation.findNavController(this, R.id.nav_host_fragment))
         invisibleCover = invisible_view
         invisibleCover.setOnClickListener { hideBottomSheet() }
 
-        addFragment(HomeListFragment())
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.cancelAll()
     }
@@ -152,21 +162,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         return true
     }
 
-    override fun onFragmentChanged(topFragment: Fragment) {
-        super.onFragmentChanged(topFragment)
-        when (topFragment) {
-            is HomeListFragment -> updateNavBar(navigationBar.homeView)
-            is CategoriesPostsFragment -> updateNavBar(navigationBar.categoriesView)
-            is CategoriesFragment -> updateNavBar(navigationBar.categoriesView)
-            is FavoritesListFragment -> updateNavBar(navigationBar.favView)
-            is UserPostsListFragment -> updateNavBar(navigationBar.myPostsView)
-            else -> {
-                navigationBar.deselectViews()
-                navigationBar.visibility = View.GONE
-            }
-        }
-    }
-
     private fun onUserLoaded(user: UserModel?) {
         if (user != null) {
             UserStarredCollection.getInstance(this)
@@ -196,11 +191,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
             postViewIntent.putExtra(StuckNotificationFactory.EXTRA_POST_REF, postRef)
             startActivity(postViewIntent)
         }
-    }
-
-    private fun updateNavBar(view: VerticalIconToTextView) {
-        navigationBar.selectView(view)
-        navigationBar.visibility = View.VISIBLE
     }
 
     private fun showBottomSheet(post: PostModel) {
@@ -240,23 +230,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
             val parentView = navigationView.getHeaderView(0)
             parentView.findViewById<TextView>(R.id.nav_username).text = user.username
             parentView.findViewById<AvatarView>(R.id.avatar_view).loadImage(user.avatar)
-        }
-    }
-
-    private fun getOnNavItemClicked(): OnItemClickListener<Int> {
-        return object : OnItemClickListener<Int> {
-            override fun onItemClicked(item: Int) {
-                when (item) {
-                    HOME -> addFragment(HomeListFragment())
-                    CATEGORIES -> addFragment(CategoriesFragment())
-                    FAVORITE -> addFragment(FavoritesListFragment())
-                    ME -> addFragment(UserPostsListFragment())
-                    CREATE -> {
-                        val intentNewPost = Intent(this@MainActivity, NewPostActivity::class.java)
-                        startActivity(intentNewPost)
-                    }
-                }
-            }
         }
     }
 

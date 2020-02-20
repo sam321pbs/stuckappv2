@@ -24,18 +24,30 @@
 
                 <include layout="@layout/toolbar_layout" />
 
-                <FrameLayout
-                    android:id="@+id/fragment_container"
+                <fragment
+                    android:id="@+id/nav_host_fragment"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    app:defaultNavHost="true"
+                    app:navGraph="@navigation/nav_graph" />
 
             </LinearLayout>
 
-            <com.sammengistu.stuckapp.views.StuckNavigationBar
+            <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/stuck_navigation_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" />
+                android:layout_alignParentBottom="true"
+                app:itemBackground="@color/colorPrimary"
+                app:itemIconTint="@color/white"
+                app:itemTextColor="@color/white"
+                app:menu="@menu/menu_bottom_nav"/>
         </RelativeLayout>
 
         <View

@@ -12,6 +12,10 @@ class CreateProfileActivity : LoggedInActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
-        addFragment(ProfileFragment.newInstance(true))
+        addFragment(ProfileFragment.newInstance(CREATE_MODE))
+    }
+
+    companion object {
+        const val CREATE_MODE = true
     }
 }

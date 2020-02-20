@@ -8,10 +8,10 @@ import com.sammengistu.stuckfirebase.repositories.CommentsRepository
 import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 import com.sammengistu.stuckfirebase.repositories.PostRepository
 import com.sammengistu.stuckfirebase.repositories.UserRepository
-import com.sammengistu.stuckfirebase.viewmodels.CommentsViewModelFactory
-import com.sammengistu.stuckfirebase.viewmodels.HiddenItemsViewModelFactory
-import com.sammengistu.stuckfirebase.viewmodels.PostListViewModelFactory
-import com.sammengistu.stuckfirebase.viewmodels.UsersViewModelFactory
+import com.sammengistu.stuckfirebase.viewmodels.factories.CommentsViewModelFactory
+import com.sammengistu.stuckfirebase.viewmodels.factories.HiddenItemsViewModelFactory
+import com.sammengistu.stuckfirebase.viewmodels.factories.PostListViewModelFactory
+import com.sammengistu.stuckfirebase.viewmodels.factories.UsersViewModelFactory
 
 object InjectorUtils {
 
@@ -21,7 +21,10 @@ object InjectorUtils {
 
     fun providePostListFactory(context: Context, loadType:String): PostListViewModelFactory {
         val repository = getDraftPostRepository(context)
-        return PostListViewModelFactory(repository, loadType)
+        return PostListViewModelFactory(
+            repository,
+            loadType
+        )
     }
 
     private fun getHiddenItemsRepository(context: Context): HiddenItemsRepository {
@@ -30,7 +33,10 @@ object InjectorUtils {
 
     fun provideHiddenItemsListFactory(context: Context, ownerRef: String): HiddenItemsViewModelFactory {
         val repository = getHiddenItemsRepository(context)
-        return HiddenItemsViewModelFactory(repository, ownerRef)
+        return HiddenItemsViewModelFactory(
+            repository,
+            ownerRef
+        )
     }
 
     fun getUsersRepository(context: Context): UserRepository {
@@ -40,7 +46,9 @@ object InjectorUtils {
 
     fun provideUserFactory(context: Context): UsersViewModelFactory {
         val repository = getUsersRepository(context)
-        return UsersViewModelFactory(repository)
+        return UsersViewModelFactory(
+            repository
+        )
     }
 
     fun getCommentsRepository(): CommentsRepository {
@@ -52,6 +60,8 @@ object InjectorUtils {
 
     fun provideCommentFactory(): CommentsViewModelFactory {
         val repository = getCommentsRepository()
-        return CommentsViewModelFactory(repository)
+        return CommentsViewModelFactory(
+            repository
+        )
     }
 }

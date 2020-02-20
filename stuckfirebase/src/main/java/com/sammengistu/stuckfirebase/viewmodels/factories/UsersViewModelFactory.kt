@@ -1,8 +1,9 @@
-package com.sammengistu.stuckfirebase.viewmodels
+package com.sammengistu.stuckfirebase.viewmodels.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 
 class UsersViewModelFactory (
     private val repository: UserRepository

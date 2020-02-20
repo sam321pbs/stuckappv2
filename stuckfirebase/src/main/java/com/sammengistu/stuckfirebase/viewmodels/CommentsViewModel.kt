@@ -18,8 +18,6 @@ class CommentsViewModel(
 
     private var postRef: String = ""
     private val _userRef = MutableLiveData<String>()
-    val userRef: LiveData<String>
-        get() = _userRef
 
     val commentsLiveData : LiveData<List<CommentModel>?> =
         Transformations.switchMap(_userRef) {userREf ->
