@@ -12,9 +12,11 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
-import androidx.navigation.Navigation
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.NavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
@@ -28,6 +30,7 @@ import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
 import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.notification.StuckNotificationFactory
+import com.sammengistu.stuckapp.setupWithNavController
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
@@ -45,28 +48,17 @@ import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var navigationBar: BottomNavigationView
     private lateinit var drawer: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
     private lateinit var bottomSheetHelper: BottomSheetHelper
     private lateinit var invisibleCover: View
 
+    private var currentNavController: LiveData<NavController>? = null
+
     private val userViewModel: UserViewModel by viewModels {
         InjectorUtils.provideUserFactory(this)
     }
-
-    private val bottomNavListener =
-        BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.homeListFragment -> addFragment(HomeListFragment())
-                R.id.categoriesFragment -> addFragment(CategoriesFragment())
-                R.id.newPostTypeFragment -> addFragment(NewPostTypeFragment())
-                R.id.favoritesListFragment -> addFragment(FavoritesListFragment())
-                R.id.userPostsListFragment -> addFragment(UserPostsListFragment())
-            }
-            true
-        }
 
     @Subscribe
     fun onChangeBottomSheet(event: ChangeBottomSheetStateEvent) {
@@ -84,18 +76,28 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         setSupportActionBar(toolbar)
         FirebaseApp.initializeApp(this)
         AssetImageUtils.initListOfImages(this)
-        navigationBar = stuck_navigation_bar
-        navigationBar.setOnNavigationItemSelectedListener(bottomNavListener)
+
         setupDrawer()
         UserRepository.getUserInstance(this) { onUserLoaded(it) }
 
-        bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
-        navigationBar.setupWithNavController(Navigation.findNavController(this, R.id.nav_host_fragment))
         invisibleCover = invisible_view
         invisibleCover.setOnClickListener { hideBottomSheet() }
 
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.cancelAll()
+
+        bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
+        if (savedInstanceState == null) {
+            setupBottomNavigationBar()
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // Now that BottomNavigationBar has restored its instance state
+        // and its selectedItemId, we can proceed with setting up the
+        // BottomNavigationBar with Navigation
+        setupBottomNavigationBar()
     }
 
     override fun onStart() {
@@ -231,6 +233,27 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
             parentView.findViewById<TextView>(R.id.nav_username).text = user.username
             parentView.findViewById<AvatarView>(R.id.avatar_view).loadImage(user.avatar)
         }
+    }
+
+    private fun setupBottomNavigationBar() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.stuck_navigation_bar)
+
+        val navGraphIds = listOf(R.navigation.nav_home, R.navigation.nav_categories,
+            R.navigation.nav_create, R.navigation.nav_favorites, R.navigation.nav_me)
+
+        // Setup the bottom navigation view with a list of navigation graphs
+        val controller = bottomNavigationView.setupWithNavController(
+            navGraphIds = navGraphIds,
+            fragmentManager = supportFragmentManager,
+            containerId = R.id.nav_host_fragment,
+            intent = intent
+        )
+
+        // Whenever the selected controller changes, setup the action bar.
+        controller.observe(this, Observer { navController ->
+            setupActionBarWithNavController(navController)
+        })
+        currentNavController = controller
     }
 
     companion object {
