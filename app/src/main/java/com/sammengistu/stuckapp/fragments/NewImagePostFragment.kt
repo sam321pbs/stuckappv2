@@ -8,9 +8,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.NewPostActivity.Companion.EXTRA_POST_ID
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
@@ -29,6 +29,8 @@ class NewImagePostFragment : BaseNewPostFragment() {
     private var mBitmap2: Bitmap? = null
     private lateinit var image1Select: TextView
     private lateinit var image2Select: TextView
+
+    val args: NewImagePostFragmentArgs by navArgs()
 
     @Subscribe
     fun onSaveDraft(event: SaveDraftEvent) {
@@ -64,9 +66,11 @@ class NewImagePostFragment : BaseNewPostFragment() {
             createImagePost(PostType.LANDSCAPE, mBitmap1, mBitmap2)
         }
 
-        if (arguments != null) {
-            val postId = arguments!!.getLong(EXTRA_POST_ID)
-            val liveDraftPost = InjectorUtils.getDraftPostRepository(activity as Context).getDraftPost(postId)
+        val draftId = args.postId
+        if (draftId != -1L) {
+            val liveDraftPost = InjectorUtils
+                .getDraftPostRepository(activity as Context)
+                .getDraftPost(draftId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
                 if (draftList.isNotEmpty()) {
@@ -136,18 +140,9 @@ class NewImagePostFragment : BaseNewPostFragment() {
     }
 
     companion object {
-        const val TITLE = "New Image Post"
-        val TAG = NewImagePostFragment::class.java.simpleName
-        val REQUEST_LOAD_IMG_1 = 0
-        val REQUEST_LOAD_IMG_2 = 1
-
-        fun newInstance(postId: Long): NewImagePostFragment {
-            val bundle = Bundle()
-            bundle.putLong(EXTRA_POST_ID, postId)
-
-            val frag = NewImagePostFragment()
-            frag.arguments = bundle
-            return frag
-        }
+        private const val TITLE = "New Image Post"
+        private const val TAG = "NewImagePostFragment"
+        private const val REQUEST_LOAD_IMG_1 = 0
+        private const val REQUEST_LOAD_IMG_2 = 1
     }
 }

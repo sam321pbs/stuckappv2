@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.google.firebase.auth.FirebaseAuth
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.activities.MainActivity
 import com.sammengistu.stuckapp.constants.Gender.Companion.FEMALE
 import com.sammengistu.stuckapp.constants.Gender.Companion.IGNORE
@@ -324,7 +323,7 @@ class ProfileFragment : BaseFragment() {
                                 progressBar.visibility = View.GONE
                                 ErrorNotifier.notifyError(
                                     context!!,
-                                    BaseActivity.TAG,
+                                    TAG,
                                     "Failed to create profile",
                                     e
                                 )

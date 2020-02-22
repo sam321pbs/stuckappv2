@@ -7,7 +7,9 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
+import androidx.navigation.fragment.findNavController
 import com.sammengistu.stuckapp.AssetImageUtils
+import com.sammengistu.stuckapp.activities.MainActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.dialog.CategoriesListDialog
@@ -269,7 +271,9 @@ abstract class BaseNewPostFragment : BaseFragment() {
         progress_bar.visibility = View.GONE
         Toast.makeText(activity!!, message, Toast.LENGTH_SHORT)
             .show()
-        activity!!.finish()
+        val controller = findNavController()
+        controller.popBackStack(controller.graph.startDestination, true)
+        (context as MainActivity).goHome()
     }
 
     private fun handleFailedToCreateItem(message: String) {

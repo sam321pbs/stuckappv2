@@ -9,9 +9,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.helpers.KeyboardStateHelper
 import com.sammengistu.stuckapp.utils.KeyboardUtils
@@ -35,6 +35,8 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
     private lateinit var keyboardHelper: KeyboardStateHelper
     private var selectedChoice: Int = 0
     private var isKeyboardOpen = false
+
+    val args: NewTextPostFragmentArgs by navArgs()
 
     @Subscribe
     fun onSaveDraft(event: SaveDraftEvent) {
@@ -85,9 +87,11 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
             KeyboardUtils.hideKeyboard(activity!!, editText)
         }
 
-        if (arguments != null) {
-            val postId = arguments!!.getLong(NewPostActivity.EXTRA_POST_ID)
-            val liveDraftPost = InjectorUtils.getDraftPostRepository(activity as Context).getDraftPost(postId)
+        val draftId = args.postId
+        if (draftId != -1L) {
+            val liveDraftPost = InjectorUtils
+                .getDraftPostRepository(activity as Context)
+                .getDraftPost(draftId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
                 if (draftList.isNotEmpty()) {
@@ -224,17 +228,8 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
     }
 
     companion object {
-        val TAG = NewTextPostFragment::class.java.simpleName
-        const val TITLE = "Text Post"
-        const val MAX_NUMBER_OF_CHOICES = 4
-
-        fun newInstance(postId: Long): NewTextPostFragment {
-            val bundle = Bundle()
-            bundle.putLong(NewPostActivity.EXTRA_POST_ID, postId)
-
-            val frag = NewTextPostFragment()
-            frag.arguments = bundle
-            return frag
-        }
+        private const val TAG = "NewTextPostFragment"
+        private const val TITLE = "Text Post"
+        private const val MAX_NUMBER_OF_CHOICES = 4
     }
 }

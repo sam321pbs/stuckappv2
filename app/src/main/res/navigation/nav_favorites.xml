@@ -8,6 +8,6 @@
     <fragment
         android:id="@+id/favoritesListFragment"
         android:name="com.sammengistu.stuckapp.fragments.FavoritesListFragment"
-        android:label="FavoritesListFragment"
-        tools:layout="@layout/fragment_post_list"/>
+        android:label="Favorites"
+        tools:layout="@layout/fragment_post_list" />
 </navigation>

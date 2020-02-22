@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/userPostsListFragment"
         android:name="com.sammengistu.stuckapp.fragments.UserPostsListFragment"
-        android:label="UserPostsListFragment"
-        tools:layout="@layout/fragment_post_list"/>
+        android:label="Your Posts"
+        tools:layout="@layout/fragment_post_list" />
 
 </navigation>

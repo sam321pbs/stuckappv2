@@ -3,20 +3,22 @@ package com.sammengistu.stuckapp.activities
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
@@ -27,14 +29,11 @@ import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
-import com.sammengistu.stuckapp.fragments.*
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.notification.StuckNotificationFactory
 import com.sammengistu.stuckapp.setupWithNavController
 import com.sammengistu.stuckapp.views.AvatarView
-import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
-import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
@@ -46,19 +45,43 @@ import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
-class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : LoggedInActivity() {
 
-    private lateinit var drawer: DrawerLayout
-    private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var navigationView: NavigationView
     private lateinit var bottomSheetHelper: BottomSheetHelper
     private lateinit var invisibleCover: View
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     private var currentNavController: LiveData<NavController>? = null
+    private val appBarNavController : NavController
+        get() = findNavController(R.id.nav_host_fragment)
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private val userViewModel: UserViewModel by viewModels {
         InjectorUtils.provideUserFactory(this)
     }
+
+    private val onDestinationChangedListener =
+        NavController.OnDestinationChangedListener { controller, destination, arguments ->
+            val dest: String = try {
+                resources.getResourceName(destination.id)
+            } catch (e: Resources.NotFoundException) {
+                Integer.toString(destination.id)
+            }
+            if (destination.id == R.id.profileFragment ||
+                destination.id == R.id.statsFragment ||
+                destination.id == R.id.settingsFragment ||
+                destination.id == R.id.newPostTypeFragment ||
+                destination.id == R.id.newImagePostFragment ||
+                destination.id == R.id.newTextPostFragment) {
+                bottomNavigationView.visibility = View.GONE
+            } else {
+                bottomNavigationView.visibility = View.VISIBLE
+            }
+
+            Log.d(TAG, "Navigated to $dest")
+        }
 
     @Subscribe
     fun onChangeBottomSheet(event: ChangeBottomSheetStateEvent) {
@@ -76,20 +99,18 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         setSupportActionBar(toolbar)
         FirebaseApp.initializeApp(this)
         AssetImageUtils.initListOfImages(this)
-
-        setupDrawer()
         UserRepository.getUserInstance(this) { onUserLoaded(it) }
-
-        invisibleCover = invisible_view
-        invisibleCover.setOnClickListener { hideBottomSheet() }
 
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.cancelAll()
 
-        bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
+        navigationView = nav_view
+        setupActionBar(appBarNavController)
+        setupBottomSheet()
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         }
+        appBarNavController.addOnDestinationChangedListener(onDestinationChangedListener)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -121,47 +142,59 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         AlarmHelper.setDailyNotifier(this)
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        toggle.syncState()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        toggle.onConfigurationChanged(newConfig)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val retValue = super.onCreateOptionsMenu(menu)
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        if (navigationView == null) {
+            //android needs to know what menu I need
+            menuInflater.inflate(R.menu.menu_main, menu)
+            return true
+        }
+        return retValue
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (toggle.onOptionsItemSelected(item)) {
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+        return item!!.onNavDestinationSelected(appBarNavController) || super.onOptionsItemSelected(item)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_home -> addFragment(HomeListFragment())
-            R.id.action_profile -> addFragment(ProfileFragment.newInstance(false))
-            R.id.action_stats -> {
-                AnalyticsHelper.postSelectEvent(
-                    this,
-                    AnalyticEventType.CLICK,
-                    "view_stats_fragment"
-                )
-                addFragment(StatsFragment())
-            }
-            R.id.action_drafts -> {
-                AnalyticsHelper.postSelectEvent(
-                    this,
-                    AnalyticEventType.CLICK,
-                    "view_drafts_fragment"
-                )
-                addFragment(DraftListFragment())
-            }
-            R.id.action_settings -> addFragment(SettingsFragment())
+    override fun onSupportNavigateUp() =
+        NavigationUI.navigateUp(appBarNavController, drawer_layout) || super.onSupportNavigateUp()
+
+    override fun onBackPressed() {
+        //the code is beautiful enough without comments
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
         }
-        drawer.closeDrawers()
-        return true
+    }
+
+    fun goHome() { bottomNavigationView.selectedItemId = R.id.nav_home }
+
+    private fun setupActionBar(navController: NavController) {
+        setupNavigation(navController)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    private fun setupNavigation(navController: NavController) {
+        val sideNavView = findViewById<NavigationView>(R.id.nav_view)
+        sideNavView?.setupWithNavController(navController)
+        val drawerLayout: DrawerLayout? = findViewById(R.id.drawer_layout)
+
+        val homeDestinations = setOf(
+            R.id.nav_home,
+            R.id.categoriesFragment,
+            R.id.newPostTypeFragment,
+            R.id.favoritesListFragment,
+            R.id.userPostsListFragment,
+            R.id.profileFragment,
+            R.id.statsFragment,
+            R.id.draftListFragment,
+            R.id.settingsFragment)
+
+        val appBarConfigurationBuilder = AppBarConfiguration.Builder(homeDestinations)
+        appBarConfigurationBuilder.setDrawerLayout(drawerLayout)
+        appBarConfiguration = appBarConfigurationBuilder.build()
     }
 
     private fun onUserLoaded(user: UserModel?) {
@@ -195,6 +228,12 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
+    private fun setupBottomSheet() {
+        invisibleCover = invisible_view
+        invisibleCover.setOnClickListener { hideBottomSheet() }
+        bottomSheetHelper = BottomSheetHelper(this, bottom_sheet)
+    }
+
     private fun showBottomSheet(post: PostModel) {
         if (invisibleCover != null) {
             invisibleCover.visibility = View.VISIBLE
@@ -209,24 +248,6 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
         bottomSheetHelper.hideMenu()
     }
 
-    private fun setupDrawer() {
-        drawer = drawer_layout
-        toggle = ActionBarDrawerToggle(
-            this,
-            drawer,
-            toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        drawer.addDrawerListener(toggle)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp)
-
-        navigationView = nav_view
-        navigationView.setNavigationItemSelectedListener(this)
-    }
-
     private fun setupNavHeader(user: UserModel?) {
         if (user != null) {
             val parentView = navigationView.getHeaderView(0)
@@ -236,10 +257,14 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun setupBottomNavigationBar() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.stuck_navigation_bar)
+        bottomNavigationView = findViewById(R.id.stuck_navigation_bar)
 
-        val navGraphIds = listOf(R.navigation.nav_home, R.navigation.nav_categories,
-            R.navigation.nav_create, R.navigation.nav_favorites, R.navigation.nav_me)
+        val navGraphIds = listOf(
+            R.navigation.nav_home,
+            R.navigation.nav_categories,
+            R.navigation.nav_create,
+            R.navigation.nav_favorites,
+            R.navigation.nav_me)
 
         // Setup the bottom navigation view with a list of navigation graphs
         val controller = bottomNavigationView.setupWithNavController(
@@ -251,12 +276,14 @@ class MainActivity : LoggedInActivity(), NavigationView.OnNavigationItemSelected
 
         // Whenever the selected controller changes, setup the action bar.
         controller.observe(this, Observer { navController ->
-            setupActionBarWithNavController(navController)
+            navController.addOnDestinationChangedListener(onDestinationChangedListener)
+            setupActionBarWithNavController(navController, appBarConfiguration)
         })
+
         currentNavController = controller
     }
 
     companion object {
-        val TAG = MainActivity::class.java.simpleName
+        const val TAG = "MainActivity"
     }
 }

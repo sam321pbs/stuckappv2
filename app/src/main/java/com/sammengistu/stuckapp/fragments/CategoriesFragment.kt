@@ -2,6 +2,7 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.OnItemClickListener
 import com.sammengistu.stuckapp.R
@@ -24,7 +25,9 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
             AnalyticEventType.CLICK,
             "category_${item.toLowerCase()}"
         )
-        addFragment(CategoriesPostsFragment.newInstance(item))
+        val action = CategoriesFragmentDirections.actionCategoriesFragmentToCategoriesPostsFragment()
+            .setCategory(item)
+        findNavController().navigate(action)
     }
 
     override fun getLayoutId() = R.layout.basic_list_view

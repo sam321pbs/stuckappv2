@@ -46,12 +46,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".activities.NewPostActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-
-        <activity
             android:name=".activities.CommentsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />

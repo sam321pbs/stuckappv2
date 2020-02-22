@@ -3,7 +3,6 @@ package com.sammengistu.stuckapp.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.BaseFragment
@@ -18,19 +17,6 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
-    }
-
-    override fun onBackPressed() {
-        val manager = supportFragmentManager
-        if (manager.backStackEntryCount > 1) {
-            super.onBackPressed()
-        } else {
-            finish()
-        }
-    }
-
-    open fun onFragmentChanged(topFragment: Fragment) {
-        // Override me
     }
 
     fun addFragment(fragment: BaseFragment) {
@@ -58,10 +44,6 @@ abstract class BaseActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun updateTitle(title: String) {
-        supportActionBar?.title = title
-    }
-
     private fun popToFragment(fragmentTag: String): Boolean {
         val backStackFrag = supportFragmentManager.findFragmentByTag(fragmentTag)
         val commitId = mapFragmentTagsToCommits[fragmentTag]
@@ -72,14 +54,8 @@ abstract class BaseActivity : AppCompatActivity() {
         return false
     }
 
-    private fun updateTitle(frag: Fragment) {
-        if (frag is BaseFragment) {
-            supportActionBar?.title = frag.getFragmentTitle()
-        }
-    }
-
     companion object {
         const val RC_SIGN_IN = 0
-        val TAG = BaseActivity::class.java.simpleName
+        private const val TAG = "BaseActivity"
     }
 }
