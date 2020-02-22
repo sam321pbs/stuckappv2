@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/newPostTypeFragment"
         android:name="com.sammengistu.stuckapp.fragments.NewPostTypeFragment"
-        android:label="NewPostTypeFragment"
+        android:label="Post Type"
         tools:layout="@layout/fragment_new_post_type">
         <action
             android:id="@+id/action_newPostTypeFragment_to_newTextPostFragment"
@@ -21,11 +21,21 @@
     <fragment
         android:id="@+id/newImagePostFragment"
         android:name="com.sammengistu.stuckapp.fragments.NewImagePostFragment"
-        android:label="NewImagePostFragment"
-        tools:layout="@layout/fragment_new_image_post"/>
+        android:label="Image Post"
+        tools:layout="@layout/fragment_new_image_post">
+        <argument
+            android:name="post_id"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
     <fragment
         android:id="@+id/newTextPostFragment"
         android:name="com.sammengistu.stuckapp.fragments.NewTextPostFragment"
-        android:label="NewTextPostFragment"
-        tools:layout="@layout/fragment_new_text_post"/>
+        android:label="Text Post"
+        tools:layout="@layout/fragment_new_text_post">
+        <argument
+            android:name="post_id"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
 </navigation>

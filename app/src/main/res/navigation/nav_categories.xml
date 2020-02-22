@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.sammengistu.stuckapp.fragments.CategoriesFragment"
-        android:label="CategoriesFragment"
+        android:label="Categories"
         tools:layout="@layout/basic_list_view">
         <action
             android:id="@+id/action_categoriesFragment_to_categoriesPostsFragment"
@@ -17,7 +17,12 @@
     <fragment
         android:id="@+id/categoriesPostsFragment"
         android:name="com.sammengistu.stuckapp.fragments.CategoriesPostsFragment"
-        android:label="CategoriesPostsFragment"
-        tools:layout="@layout/fragment_post_list"/>
+        android:label="Stuck"
+        tools:layout="@layout/fragment_post_list">
+        <argument
+            android:name="category"
+            android:defaultValue="general"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

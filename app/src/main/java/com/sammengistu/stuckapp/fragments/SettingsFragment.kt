@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.fragment.findNavController
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
@@ -25,7 +26,10 @@ class SettingsFragment : BaseFragment() {
         notificationItem = notifications_setting
         deleteAccountItem = delete_account
         logoutItem = logout
-        notificationItem.setOnClickListener { addFragment(NotificationSettingsFragment()) }
+        notificationItem.setOnClickListener {
+            val action = SettingsFragmentDirections.actionSettingsFragmentToNotificationSettingsFragment()
+            findNavController().navigate(action)
+        }
         deleteAccountItem.setOnClickListener { showDeleteAccountAlertDialog() }
         logoutItem.setOnClickListener {
             UserVotesCollection.getInstance(context!!).clearList()

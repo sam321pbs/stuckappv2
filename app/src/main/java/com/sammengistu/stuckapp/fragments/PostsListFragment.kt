@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -112,7 +113,10 @@ abstract class PostsListFragment : BaseFragment() {
         viewAdapter.notifyDataSetChanged()
     }
 
-    fun getPostCategory(): String = arguments?.getString(EXTRA_CATEGORY) ?: ""
+    /**
+     * Override me
+     */
+    open fun getPostCategory(): String = ""
 
     private fun setupSwipeToRefresh() {
         swipeToRefreshLayout = swipe_to_refresh
@@ -130,7 +134,7 @@ abstract class PostsListFragment : BaseFragment() {
         }
 
         viewManager = LinearLayoutManager(this.context)
-        viewAdapter = PostsAdapter(this.context!!, viewMode)
+        viewAdapter = PostsAdapter(this.context!!, findNavController(), viewMode)
         recyclerView = recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
@@ -160,7 +164,7 @@ abstract class PostsListFragment : BaseFragment() {
                     LOAD_TYPE_FAVORITE -> listViewModel.setData(user.ref, lastCreatedAt)
                     LOAD_TYPE_CATEGORIES -> listViewModel.setData(getPostCategory(), lastCreatedAt)
                     LOAD_TYPE_USER -> listViewModel.setData(user.ref, lastCreatedAt)
-//                    TYPE_DRAFT -> {
+//                    LOAD_TYPE_DRAFT -> {
 //                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
 //                            updateAdapter(convertDraftToPost(draftList), adapter, false)
 //                        }
@@ -180,7 +184,7 @@ abstract class PostsListFragment : BaseFragment() {
                     LOAD_TYPE_FAVORITE -> listViewModel.setData(user.ref)
                     LOAD_TYPE_CATEGORIES -> listViewModel.setData(getPostCategory())
                     LOAD_TYPE_USER -> listViewModel.setData(user.ref)
-//                    TYPE_DRAFT -> {
+//                    LOAD_TYPE_DRAFT -> {
 //                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
 //                            updateAdapter(convertDraftToPost(draftList), adapter, false)
 //                        }

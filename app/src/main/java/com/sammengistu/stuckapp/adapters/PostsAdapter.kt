@@ -1,7 +1,6 @@
 package com.sammengistu.stuckapp.adapters
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,16 +9,17 @@ import android.widget.LinearLayout
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.BR
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.BaseActivity
-import com.sammengistu.stuckapp.activities.NewPostActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.events.DeletedPostEvent
+import com.sammengistu.stuckapp.fragments.NewPostTypeFragmentDirections
 import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.handler.PostAdapterEventHandler
 import com.sammengistu.stuckapp.helpers.AnimationHelper
@@ -40,6 +40,7 @@ import org.jetbrains.anko.find
 
 class PostsAdapter(
     private val context: Context,
+    private val navController: NavController,
     private val viewMode: Int
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     private var dataset = listOf<PostModel>()
@@ -134,10 +135,18 @@ class PostsAdapter(
     ) {
         if (viewMode == VIEW_MODE_DRAFTS) {
             holder.itemView.setOnClickListener {
-                val intent = Intent(context, NewPostActivity::class.java)
-                intent.putExtra(NewPostActivity.EXTRA_POST_TYPE, post.type)
-                intent.putExtra(NewPostActivity.EXTRA_POST_ID, post.draftId)
-                context.startActivity(intent)
+                val postId = post.draftId
+                if (post.type == PostType.TEXT.toString()) {
+                    val action = NewPostTypeFragmentDirections
+                        .actionNewPostTypeFragmentToNewImagePostFragment()
+                        .setPostId(postId)
+                    navController.navigate(action)
+                } else {
+                    val action = NewPostTypeFragmentDirections
+                        .actionNewPostTypeFragmentToNewTextPostFragment()
+                        .setPostId(postId)
+                    navController.navigate(action)
+                }
             }
         } else {
             holder.itemView.setOnClickListener(null)

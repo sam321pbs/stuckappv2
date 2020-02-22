@@ -2,6 +2,7 @@ package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckfirebase.AnalyticsHelper
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
@@ -23,7 +24,9 @@ class NewPostTypeFragment : BaseFragment() {
                 AnalyticEventType.CLICK,
                 "start_create_image_text_post"
             )
-            addFragment(NewImagePostFragment())
+            val action = NewPostTypeFragmentDirections
+                .actionNewPostTypeFragmentToNewImagePostFragment()
+            findNavController().navigate(action)
         }
 
         text_post_choice_container.setOnClickListener {
@@ -32,12 +35,14 @@ class NewPostTypeFragment : BaseFragment() {
                 AnalyticEventType.CLICK,
                 "start_create_text_post"
             )
-            addFragment(NewTextPostFragment())
+            val action = NewPostTypeFragmentDirections
+                .actionNewPostTypeFragmentToNewTextPostFragment()
+            findNavController().navigate(action)
         }
     }
 
     companion object {
-        val TAG: String = NewPostTypeFragment::class.java.simpleName
-        const val TITLE = "Post Type"
+        private const val TAG: String = "NewPostTypeFragment"
+        private const val TITLE = "Post Type"
     }
 }
