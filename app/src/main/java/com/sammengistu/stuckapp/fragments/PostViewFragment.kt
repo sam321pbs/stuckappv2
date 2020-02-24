@@ -5,13 +5,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.navigation.fragment.findNavController
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.CommentsActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
-import com.sammengistu.stuckfirebase.utils.DateUtils
 import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.VotableImageView
 import com.sammengistu.stuckapp.views.VotableTextChoiceView
@@ -21,6 +20,7 @@ import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.utils.DateUtils
 import kotlinx.android.synthetic.main.fragment_post_view.*
 import kotlinx.android.synthetic.main.top_portion_post.*
 
@@ -29,7 +29,6 @@ class PostViewFragment : BaseFragment() {
 
     override fun getLayoutId(): Int = R.layout.fragment_post_view
     override fun getFragmentTag(): String = TAG
-    override fun getFragmentTitle(): String = TITLE
 
     override fun onViewCreated(parentView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(parentView, savedInstanceState)
@@ -87,7 +86,9 @@ class PostViewFragment : BaseFragment() {
         updateStarIcon(post, user_star_icon)
 
         show_comments.setOnClickListener {
-            CommentsActivity.startActivity(context!!, post.ref, post.ownerRef, 0)
+            // Todo: and this to
+            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
+            findNavController().navigate(action)
         }
     }
 
@@ -128,8 +129,7 @@ class PostViewFragment : BaseFragment() {
     }
 
     companion object {
-        val TAG = PostViewFragment::class.java.simpleName
-        const val TITLE = "Post View"
+        private const val TAG = "PostViewFragment"
         const val EXTRA_POST_REF = "extra_post_ref"
 
         fun newInstince(postRef: String): PostViewFragment {

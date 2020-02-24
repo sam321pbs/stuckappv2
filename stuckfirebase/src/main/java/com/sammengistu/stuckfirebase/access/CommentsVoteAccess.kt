@@ -25,13 +25,13 @@ class CommentsVoteAccess : FirebaseItemAccess<CommentVoteModel>() {
         }
     }
 
-    override fun onItemDeleted(deletedItem: CommentVoteModel?) {
-        super.onItemDeleted(deletedItem)
-        if (deletedItem != null) {
-            if (deletedItem.voteType == UP_VOTE) {
-                CommentAccess().incrementField(deletedItem.commentRef, "upVotes", -1)
-            } else if (deletedItem.voteType == DOWN_VOTE) {
-                CommentAccess().incrementField(deletedItem.commentRef, "upVotes")
+    override fun onItemDeleted(item: CommentVoteModel?) {
+        super.onItemDeleted(item)
+        if (item != null) {
+            if (item.voteType == UP_VOTE) {
+                CommentAccess().incrementField(item.commentRef, "upVotes", -1)
+            } else if (item.voteType == DOWN_VOTE) {
+                CommentAccess().incrementField(item.commentRef, "upVotes")
             }
         }
     }

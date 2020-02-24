@@ -3,13 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_home"
-    app:startDestination="@id/nav_home">
+    app:startDestination="@id/homeListFragment">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/homeListFragment"
         android:name="com.sammengistu.stuckapp.fragments.HomeListFragment"
         android:label="Stuck"
-        tools:layout="@layout/fragment_post_list" />
+        tools:layout="@layout/fragment_post_list" >
+        <action
+            android:id="@+id/action_nav_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.sammengistu.stuckapp.fragments.ProfileFragment"
@@ -37,5 +41,16 @@
         android:id="@+id/notificationSettingsFragment"
         android:name="com.sammengistu.stuckapp.fragments.NotificationSettingsFragment"
         android:label="Notifications" />
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.sammengistu.stuckapp.fragments.CommentsFragment"
+        android:label="Comments" >
+        <argument
+            android:name="postRef"
+            app:argType="string" />
+        <argument
+            android:name="userChoice"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

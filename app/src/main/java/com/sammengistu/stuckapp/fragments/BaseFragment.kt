@@ -10,7 +10,6 @@ import com.sammengistu.stuckapp.R
 abstract class BaseFragment : Fragment() {
     abstract fun getLayoutId(): Int
     abstract fun getFragmentTag(): String
-    abstract fun getFragmentTitle(): String
 
     var mViewCreated = false
 

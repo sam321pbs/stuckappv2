@@ -39,7 +39,6 @@ class NewImagePostFragment : BaseNewPostFragment() {
 
     override fun getFragmentTag(): String = TAG
     override fun getLayoutId(): Int = R.layout.fragment_new_image_post
-    override fun getFragmentTitle(): String = TITLE
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -140,7 +139,6 @@ class NewImagePostFragment : BaseNewPostFragment() {
     }
 
     companion object {
-        private const val TITLE = "New Image Post"
         private const val TAG = "NewImagePostFragment"
         private const val REQUEST_LOAD_IMG_1 = 0
         private const val REQUEST_LOAD_IMG_2 = 1

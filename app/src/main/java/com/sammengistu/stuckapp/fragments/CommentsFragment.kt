@@ -8,11 +8,9 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_CHOICE_POS
-import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_ID
-import com.sammengistu.stuckapp.activities.CommentsActivity.Companion.EXTRA_POST_OWNER_REF
 import com.sammengistu.stuckapp.adapters.CommentsAdapter
 import com.sammengistu.stuckapp.helpers.RecyclerViewHelper
 import com.sammengistu.stuckapp.views.VerticalIconToTextView
@@ -26,9 +24,6 @@ import kotlinx.android.synthetic.main.compose_area.*
 import kotlinx.android.synthetic.main.fragment_comments.*
 
 
-private val TAG = CommentsFragment::class.java.simpleName
-private const val TITLE = "Comments"
-
 class CommentsFragment : BaseFragment() {
 
     private lateinit var commentET: EditText
@@ -36,6 +31,7 @@ class CommentsFragment : BaseFragment() {
     private lateinit var commentsAdapter: CommentsAdapter
     private lateinit var emptyListMessage: VerticalIconToTextView
     private lateinit var progressBar: ProgressBar
+    private val args: CommentsFragmentArgs by navArgs()
 
     private lateinit var postRef: String
     private val commentsViewModel: CommentsViewModel by viewModels {
@@ -46,7 +42,6 @@ class CommentsFragment : BaseFragment() {
 
     override fun getFragmentTag(): String = TAG
     override fun getLayoutId(): Int = R.layout.fragment_comments
-    override fun getFragmentTitle(): String = TITLE
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,8 +50,8 @@ class CommentsFragment : BaseFragment() {
         emptyListMessage = empty_list_message
         progressBar = progress_bar
 
-        postRef = arguments?.getString(EXTRA_POST_ID) ?: ""
-        choicePos = arguments?.getInt(EXTRA_POST_CHOICE_POS) ?: 0
+        postRef = args.postRef
+        choicePos = args.userChoice
 
         if (postRef.isBlank()) {
             emptyListMessage.visibility = View.VISIBLE
@@ -113,11 +108,10 @@ class CommentsFragment : BaseFragment() {
     }
 
     private fun createComment(user: UserModel?) {
-        val postOwnerRef = arguments?.getString(EXTRA_POST_OWNER_REF) ?: ""
         if (user != null) {
             val commentModel = CommentModel(
                 postRef,
-                postOwnerRef,
+                user.ref,
                 user.username,
                 user.avatar,
                 commentET.text.toString(),
@@ -128,21 +122,7 @@ class CommentsFragment : BaseFragment() {
             emptyListMessage.visibility = View.GONE
         }
     }
-
     companion object {
-        fun newInstance(
-            postId: String,
-            postOwnerRef: String,
-            choicePos: Int
-        ): CommentsFragment {
-            val bundle = Bundle()
-            bundle.putString(EXTRA_POST_ID, postId)
-            bundle.putString(EXTRA_POST_OWNER_REF, postOwnerRef)
-            bundle.putInt(EXTRA_POST_CHOICE_POS, choicePos)
-
-            val fragment = CommentsFragment()
-            fragment.arguments = bundle
-            return fragment
-        }
+        private const val TAG = "CommentsFragment"
     }
 }

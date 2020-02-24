@@ -15,8 +15,6 @@ import kotlinx.android.synthetic.main.basic_list_view.*
 
 class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
 
-    override fun getFragmentTitle(): String = TITLE
-
     override fun getFragmentTag() = TAG
 
     override fun onItemClicked(item: String) {
@@ -44,7 +42,6 @@ class CategoriesFragment : BaseFragment(), OnItemClickListener<String> {
     }
 
     companion object {
-        const val TITLE = "Categories"
-        val TAG: String = CategoriesFragment::class.java.simpleName
+        const val TAG: String = "CategoriesFragment"
     }
 }

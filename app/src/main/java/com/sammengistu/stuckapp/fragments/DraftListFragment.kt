@@ -10,10 +10,7 @@ class DraftListFragment : PostsListFragment() {
 
     override fun getFragmentTag(): String = TAG
 
-    override fun getFragmentTitle(): String = TITLE
-
     companion object {
-        const val TITLE = "Drafts"
-        val TAG: String = DraftListFragment::class.java.simpleName
+        private const val TAG: String = "DraftListFragment"
     }
 }

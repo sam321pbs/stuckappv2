@@ -74,7 +74,10 @@ class MainActivity : LoggedInActivity() {
                 destination.id == R.id.settingsFragment ||
                 destination.id == R.id.newPostTypeFragment ||
                 destination.id == R.id.newImagePostFragment ||
-                destination.id == R.id.newTextPostFragment) {
+                destination.id == R.id.newTextPostFragment ||
+                destination.id == R.id.commentsFragment ||
+                destination.id == R.id.notificationSettingsFragment
+            ) {
                 bottomNavigationView.visibility = View.GONE
             } else {
                 bottomNavigationView.visibility = View.VISIBLE
@@ -182,7 +185,7 @@ class MainActivity : LoggedInActivity() {
         val drawerLayout: DrawerLayout? = findViewById(R.id.drawer_layout)
 
         val homeDestinations = setOf(
-            R.id.nav_home,
+            R.id.homeListFragment,
             R.id.categoriesFragment,
             R.id.newPostTypeFragment,
             R.id.favoritesListFragment,
@@ -284,6 +287,6 @@ class MainActivity : LoggedInActivity() {
     }
 
     companion object {
-        const val TAG = "MainActivity"
+        private const val TAG = "MainActivity"
     }
 }
