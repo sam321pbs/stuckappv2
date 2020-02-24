@@ -4,19 +4,22 @@ import android.content.Context
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.CommentsActivity
+import com.sammengistu.stuckapp.activities.MainActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.constants.ReportReasons
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckapp.events.DeletedPostEvent
+import com.sammengistu.stuckapp.fragments.HomeListFragmentDirections
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.*
 import com.sammengistu.stuckfirebase.models.*
 import com.sammengistu.stuckfirebase.models.HiddenItemModel.Companion.TYPE_POST
 import com.sammengistu.stuckfirebase.repositories.UserRepository
+import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
@@ -183,7 +186,10 @@ class BottomSheetHelper(
 
     private fun showComments() {
         hideMenu()
-        CommentsActivity.startActivity(context, post.ref, post.ownerRef, 0)
+        if (context is MainActivity) {
+            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
+            context.nav_host_fragment.findNavController().navigate(action)
+        }
     }
 
     private fun starPost() {

@@ -73,7 +73,7 @@ class PostsAdapter(
 
         val starred = UserStarredCollection.getInstance(context).getStarPost(post) != null
         val isHidden = HiddenItemsHelper.containesRef(post.ref)
-        holder.bind(post, PostAdapterEventHandler(context, post), viewMode, starred, isHidden)
+        holder.bind(post, PostAdapterEventHandler(context, navController, post), viewMode, starred, isHidden)
         if (PrivacyOptions.ANONYMOUS.toString() == post.privacy &&
             viewMode != VIEW_MODE_DRAFTS) {
             val avatar = AssetImageUtils.getAvatar(post.avatar)
@@ -238,10 +238,10 @@ class PostsAdapter(
     }
 
     companion object {
-        val TAG = PostsAdapter::class.java.simpleName
-        const val LANDSCAPE_VIEW_TYPE = 0
-        const val PORTRAIT_VIEW_TYPE = 1
-        const val TEXT_VIEW_TYPE = 2
+        private const val TAG = "PostsAdapter"
+        private const val LANDSCAPE_VIEW_TYPE = 0
+        private const val PORTRAIT_VIEW_TYPE = 1
+        private const val TEXT_VIEW_TYPE = 2
 
         const val VIEW_MODE_FAVORITES = 0
         const val VIEW_MODE_DRAFTS = 1

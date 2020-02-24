@@ -14,18 +14,12 @@ import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.fragment_profile_view.*
 
-
-private val TAG = ProfileViewFragment::class.java.simpleName
-private const val TITLE = "Profile"
-private const val EXTRA_OWNER_REF = "extra_owner_ref"
-
 class ProfileViewFragment : BaseFragment() {
 
     private lateinit var binding: FragmentProfileViewBinding
 
     override fun getLayoutId() = R.layout.fragment_profile_view
     override fun getFragmentTag() = TAG
-    override fun getFragmentTitle() = TITLE
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,6 +60,9 @@ class ProfileViewFragment : BaseFragment() {
     }
 
     companion object {
+        private const val TAG = "ProfileViewFragment"
+        private const val EXTRA_OWNER_REF = "extra_owner_ref"
+
         fun newInstance(ownerRef : String): ProfileViewFragment {
             val bundle = Bundle()
             bundle.putString(EXTRA_OWNER_REF, ownerRef)

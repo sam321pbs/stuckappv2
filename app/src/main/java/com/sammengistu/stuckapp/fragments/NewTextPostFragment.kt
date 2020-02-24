@@ -43,7 +43,6 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         draftTextPost(choicesContainer)
     }
 
-    override fun getFragmentTitle(): String = TITLE
     override fun getFragmentTag(): String = TAG
     override fun getLayoutId(): Int = R.layout.fragment_new_text_post
 
@@ -229,7 +228,6 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
 
     companion object {
         private const val TAG = "NewTextPostFragment"
-        private const val TITLE = "Text Post"
         private const val MAX_NUMBER_OF_CHOICES = 4
     }
 }

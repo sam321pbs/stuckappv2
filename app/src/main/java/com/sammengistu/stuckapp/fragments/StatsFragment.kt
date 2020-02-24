@@ -18,7 +18,6 @@ class StatsFragment: BaseFragment() {
 
     override fun getLayoutId(): Int = R.layout.fragment_stats
     override fun getFragmentTag(): String = TAG
-    override fun getFragmentTitle(): String = TITLE
 
     override fun onCreateView(
         inflater: LayoutInflater,

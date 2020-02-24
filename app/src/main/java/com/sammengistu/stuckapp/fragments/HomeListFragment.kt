@@ -10,10 +10,7 @@ class HomeListFragment : PostsListFragment() {
 
     override fun getFragmentTag(): String = TAG
 
-    override fun getFragmentTitle(): String = TITLE
-
     companion object {
-        const val TITLE = "Home"
-        val TAG: String = HomeListFragment::class.java.simpleName
+        private const val TAG: String = "HomeListFragment"
     }
 }

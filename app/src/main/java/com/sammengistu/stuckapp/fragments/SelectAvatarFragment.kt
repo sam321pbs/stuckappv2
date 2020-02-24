@@ -31,8 +31,6 @@ class SelectAvatarFragment : BaseFragment(), OnItemClickListener<Bitmap> {
 
     override fun getFragmentTag(): String = TAG
 
-    override fun getFragmentTitle() = TITLE
-
     override fun onItemClicked(item: Bitmap) {
         EventBus.getDefault().post(OnAvatarSelected(item))
         activity!!.supportFragmentManager.popBackStack()
@@ -70,7 +68,6 @@ class SelectAvatarFragment : BaseFragment(), OnItemClickListener<Bitmap> {
     }
 
     companion object {
-        val TAG = SelectAvatarFragment::class.java.simpleName
-        const val TITLE = "Select Avatar"
+        const val TAG = "SelectAvatarFragment"
     }
 }

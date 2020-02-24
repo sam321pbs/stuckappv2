@@ -19,7 +19,6 @@ class SettingsFragment : BaseFragment() {
 
     override fun getLayoutId() = R.layout.fragment_settings
     override fun getFragmentTag(): String = TAG
-    override fun getFragmentTitle() = TITLE
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +50,6 @@ class SettingsFragment : BaseFragment() {
     }
 
     companion object {
-        val TAG = SettingsFragment::class.java.simpleName
-        const val TITLE = "Settings"
+        const val TAG = "SettingsFragment"
     }
 }

@@ -9,8 +9,6 @@ import com.sammengistu.stuckfirebase.constants.LOAD_TYPE_CATEGORIES
 
 class CategoriesPostsFragment : PostsListFragment() {
 
-    private val TAG: String = CategoriesPostsFragment::class.java.simpleName
-
     private val args: CategoriesPostsFragmentArgs by navArgs()
 
     override fun getEmptyMessage() =
@@ -27,10 +25,9 @@ class CategoriesPostsFragment : PostsListFragment() {
         (requireActivity() as BaseActivity).title = getPostCategory()
     }
 
-    override fun getFragmentTitle() =
-        if (getPostCategory().isBlank()) "Categories" else StringUtils.capitilizeFirstLetter(
-            getPostCategory()
-        )
-
     override fun getPostCategory() = args.category
+
+    companion object {
+        private const val TAG: String = "CategoriesPostsFragment"
+    }
 }

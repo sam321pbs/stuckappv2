@@ -9,5 +9,21 @@
         android:id="@+id/favoritesListFragment"
         android:name="com.sammengistu.stuckapp.fragments.FavoritesListFragment"
         android:label="Favorites"
-        tools:layout="@layout/fragment_post_list" />
+        tools:layout="@layout/fragment_post_list" >
+        <action
+            android:id="@+id/action_nav_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.sammengistu.stuckapp.fragments.CommentsFragment"
+        android:label="Comments">
+        <argument
+            android:name="postRef"
+            app:argType="string" />
+        <argument
+            android:name="userChoice"
+            app:argType="integer" />
+    </fragment>
 </navigation>

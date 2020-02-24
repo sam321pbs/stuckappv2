@@ -10,10 +10,7 @@ class FavoritesListFragment : PostsListFragment() {
 
     override fun getFragmentTag(): String = TAG
 
-    override fun getFragmentTitle(): String = TITLE
-
     companion object {
-        val TAG = FavoritesListFragment::class.java.simpleName
-        const val TITLE = "Favorites"
+        private const val TAG = "FavoritesListFragment"
     }
 }

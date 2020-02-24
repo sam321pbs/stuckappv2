@@ -9,7 +9,6 @@ import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import kotlinx.android.synthetic.main.fragment_new_post_type.*
 
 class NewPostTypeFragment : BaseFragment() {
-    override fun getFragmentTitle(): String = TITLE
 
     override fun getFragmentTag(): String = TAG
 
@@ -43,6 +42,5 @@ class NewPostTypeFragment : BaseFragment() {
 
     companion object {
         private const val TAG: String = "NewPostTypeFragment"
-        private const val TITLE = "Post Type"
     }
 }

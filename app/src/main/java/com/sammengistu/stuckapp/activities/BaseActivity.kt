@@ -32,10 +32,6 @@ abstract class BaseActivity : AppCompatActivity() {
             .commit()
 
         mapFragmentTagsToCommits[fragment.getFragmentTag()] = commitId
-
-        if (fragment.getFragmentTitle().isNotBlank()) {
-            supportActionBar?.title = fragment.getFragmentTitle()
-        }
     }
 
     fun launchSplashScreenActivity() {

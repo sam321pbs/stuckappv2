@@ -13,8 +13,6 @@ class NotificationSettingsFragment : BaseFragment() {
 
     override fun getFragmentTag(): String = TAG
 
-    override fun getFragmentTitle(): String = TITLE
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -35,7 +33,6 @@ class NotificationSettingsFragment : BaseFragment() {
     }
 
     companion object {
-        val TAG = NotificationSettingsFragment::class.java.simpleName
-        const val TITLE = "Notifications"
+        private const val TAG = "NotificationSettingsFragment"
     }
 }

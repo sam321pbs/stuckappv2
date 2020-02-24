@@ -78,8 +78,6 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    override fun getFragmentTitle(): String = TITLE
-
     override fun getLayoutId(): Int = R.layout.fragment_profile
 
     override fun getFragmentTag(): String = TAG
@@ -483,8 +481,7 @@ class ProfileFragment : BaseFragment() {
 
     companion object {
 
-        val TAG = ProfileFragment::class.java.simpleName
-        const val TITLE = "Profile"
+        private const val TAG = "ProfileFragment"
         const val REQUEST_LOAD_IMG_3 = 3
         const val EXTRA_CREATE_MODE = "extra_create_mode"
 
