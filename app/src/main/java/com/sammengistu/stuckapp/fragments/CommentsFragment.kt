@@ -8,6 +8,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
@@ -57,7 +58,7 @@ class CommentsFragment : BaseFragment() {
             emptyListMessage.visibility = View.VISIBLE
             ErrorNotifier.notifyError(context, TAG, "Error loading comments.")
         } else {
-            commentsAdapter = CommentsAdapter(context!!, ArrayList())
+            commentsAdapter = CommentsAdapter(context!!, findNavController(), ArrayList())
             RecyclerViewHelper.setupWithLinearManager(
                 activity!!, recycler_view,
                 commentsAdapter as RecyclerView.Adapter<RecyclerView.ViewHolder>

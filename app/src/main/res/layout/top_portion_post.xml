@@ -57,7 +57,7 @@
             android:layout_marginStart="11dp"
             android:layout_marginEnd="16dp"
             android:onClick="@{handler::showProfile}"
-            android:text="@{post.userName}"
+            android:text='@{post.privacy.equals("anonymous") ? "anonymous" : post.userName}'
             android:textColor="@color/black"
             app:layout_constraintStart_toEndOf="@+id/avatar_view"
             app:layout_constraintTop_toTopOf="parent"

@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.BaseActivity
-import com.sammengistu.stuckapp.fragments.ProfileViewFragment
+import com.sammengistu.stuckapp.fragments.CommentsFragmentDirections
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
@@ -20,7 +20,9 @@ import com.sammengistu.stuckfirebase.utils.DateUtils
 import org.jetbrains.anko.find
 
 
-class CommentsAdapter(val context: Context, private val commentsList: ArrayList<CommentModel>) :
+class CommentsAdapter(private val context: Context,
+                      private val navController: NavController,
+                      private val commentsList: ArrayList<CommentModel>) :
     RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
 
     private var commentVotesMap: HashMap<String, CommentVoteModel> = HashMap()
@@ -70,16 +72,15 @@ class CommentsAdapter(val context: Context, private val commentsList: ArrayList<
             updateVoteUi(holder, comment, vote)
         }
 
-        holder.avatar.setOnClickListener { showProfile(context, comment.ownerRef) }
-        holder.username.setOnClickListener { showProfile(context, comment.ownerRef) }
+        holder.avatar.setOnClickListener { showProfile(comment.ownerRef) }
+        holder.username.setOnClickListener { showProfile(comment.ownerRef) }
     }
 
     override fun getItemCount() = commentsList.size
 
-    private fun showProfile(context: Context, ownerRef: String) {
-        if (context is BaseActivity && ownerRef.isNotBlank()) {
-            context.addFragment(ProfileViewFragment.newInstance(ownerRef))
-        }
+    private fun showProfile(ownerRef: String) {
+        val action = CommentsFragmentDirections.actionToProfileViewFragment(ownerRef)
+        navController.navigate(action)
     }
 
     private fun updateVoteUi(

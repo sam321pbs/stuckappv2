@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserStarredCollection
@@ -27,29 +28,28 @@ import kotlinx.android.synthetic.main.top_portion_post.*
 class PostViewFragment : BaseFragment() {
     lateinit var spinner: ProgressBar
 
+    private val args: PostViewFragmentArgs by navArgs()
+
     override fun getLayoutId(): Int = R.layout.fragment_post_view
     override fun getFragmentTag(): String = TAG
 
     override fun onViewCreated(parentView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(parentView, savedInstanceState)
         spinner = progress_bar
-        val postRef = arguments?.getString(EXTRA_POST_REF)
-        if (!postRef.isNullOrEmpty()) {
-            PostAccess().getItem(postRef,
-                object : FirebaseItemAccess.OnItemRetrieved<PostModel> {
-                    override fun onSuccess(item: PostModel) {
-                        bindPostDetails(item)
-                        spinner.visibility = View.GONE
-                    }
+        val postRef = args.postRef
 
-                    override fun onFailed(e: Exception) {
-                        ErrorNotifier.notifyError(activity!!, "Error loading post", TAG, e)
-                        activity!!.finish()
-                    }
-                })
-        } else {
-            activity!!.finish()
-        }
+        PostAccess().getItem(postRef,
+            object : FirebaseItemAccess.OnItemRetrieved<PostModel> {
+                override fun onSuccess(item: PostModel) {
+                    bindPostDetails(item)
+                    spinner.visibility = View.GONE
+                }
+
+                override fun onFailed(e: Exception) {
+                    ErrorNotifier.notifyError(activity!!, "Error loading post", TAG, e)
+                    activity!!.finish()
+                }
+            })
     }
 
     private fun bindPostDetails(post: PostModel) {
@@ -86,7 +86,6 @@ class PostViewFragment : BaseFragment() {
         updateStarIcon(post, user_star_icon)
 
         show_comments.setOnClickListener {
-            // Todo: and this to
             val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
             findNavController().navigate(action)
         }
@@ -130,15 +129,5 @@ class PostViewFragment : BaseFragment() {
 
     companion object {
         private const val TAG = "PostViewFragment"
-        const val EXTRA_POST_REF = "extra_post_ref"
-
-        fun newInstince(postRef: String): PostViewFragment {
-            val bundle = Bundle()
-            bundle.putString(EXTRA_POST_REF, postRef)
-
-            val fragment = PostViewFragment()
-            fragment.arguments = bundle
-            return fragment
-        }
     }
 }
