@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.navArgs
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.databinding.FragmentProfileViewBinding
 import com.sammengistu.stuckfirebase.ErrorNotifier
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_profile_view.*
 class ProfileViewFragment : BaseFragment() {
 
     private lateinit var binding: FragmentProfileViewBinding
+    private val args: ProfileViewFragmentArgs by navArgs()
 
     override fun getLayoutId() = R.layout.fragment_profile_view
     override fun getFragmentTag() = TAG
@@ -36,40 +38,28 @@ class ProfileViewFragment : BaseFragment() {
     }
 
     private fun loadUser() {
-        val ownerRef = arguments?.getString(EXTRA_OWNER_REF)
-        if (ownerRef != null) {
-            val userViewModel: UserViewModel by viewModels {
-                InjectorUtils.provideUserFactory(requireContext())
-            }
-            userViewModel.userLiveData.observe(viewLifecycleOwner) { user ->
-                when (user) {
-                    null -> {
-                        activity!!.supportFragmentManager.popBackStack()
-                        ErrorNotifier.notifyError(activity, "Error loading user")
-                    }
-                    else -> {
-                        binding.user = user
-                        if (user.avatar.isNotBlank()) {
-                            avatar_view.loadImage(user.avatar)
-                        }
+        val ownerRef = args.ownerRef
+        val userViewModel: UserViewModel by viewModels {
+            InjectorUtils.provideUserFactory(requireContext())
+        }
+        userViewModel.userLiveData.observe(viewLifecycleOwner) { user ->
+            when (user) {
+                null -> {
+                    activity!!.supportFragmentManager.popBackStack()
+                    ErrorNotifier.notifyError(activity, "Error loading user")
+                }
+                else -> {
+                    binding.user = user
+                    if (user.avatar.isNotBlank()) {
+                        avatar_view.loadImage(user.avatar)
                     }
                 }
             }
-            userViewModel.setUserRef(ownerRef)
         }
+        userViewModel.setUserRef(ownerRef)
     }
 
     companion object {
         private const val TAG = "ProfileViewFragment"
-        private const val EXTRA_OWNER_REF = "extra_owner_ref"
-
-        fun newInstance(ownerRef : String): ProfileViewFragment {
-            val bundle = Bundle()
-            bundle.putString(EXTRA_OWNER_REF, ownerRef)
-
-            val frag = ProfileViewFragment()
-            frag.arguments = bundle
-            return frag
-        }
     }
 }

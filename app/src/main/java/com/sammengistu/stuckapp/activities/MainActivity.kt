@@ -2,7 +2,6 @@ package com.sammengistu.stuckapp.activities
 
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
@@ -29,9 +28,12 @@ import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
+import com.sammengistu.stuckapp.fragments.CategoriesPostsFragmentArgs
+import com.sammengistu.stuckapp.fragments.PostViewFragmentArgs
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.notification.StuckNotificationFactory
 import com.sammengistu.stuckapp.setupWithNavController
+import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
 import com.sammengistu.stuckfirebase.database.InjectorUtils
@@ -81,6 +83,12 @@ class MainActivity : LoggedInActivity() {
                 bottomNavigationView.visibility = View.GONE
             } else {
                 bottomNavigationView.visibility = View.VISIBLE
+            }
+
+            if (destination.id == R.id.categoriesPostsFragment && arguments != null) {
+                destination.label =
+                    StringUtils.capitilizeFirstLetter(
+                        CategoriesPostsFragmentArgs.fromBundle(arguments).category)
             }
 
             Log.d(TAG, "Navigated to $dest")
@@ -225,9 +233,8 @@ class MainActivity : LoggedInActivity() {
             val postRef = intent.getStringExtra(StuckNotificationFactory.EXTRA_POST_REF)
             Log.d(TAG, "Main found ref $postRef")
             intent = null
-            val postViewIntent = Intent(this, PostViewActivity::class.java)
-            postViewIntent.putExtra(StuckNotificationFactory.EXTRA_POST_REF, postRef)
-            startActivity(postViewIntent)
+            val args = PostViewFragmentArgs.Builder(postRef).build()
+            findNavController(R.id.nav_host_fragment).navigate(R.id.postViewFragment, args.toBundle())
         }
     }
 

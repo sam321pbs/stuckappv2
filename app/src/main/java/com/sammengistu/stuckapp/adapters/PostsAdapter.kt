@@ -14,13 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.BR
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.activities.BaseActivity
 import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.fragments.NewPostTypeFragmentDirections
-import com.sammengistu.stuckapp.fragments.ProfileViewFragment
 import com.sammengistu.stuckapp.handler.PostAdapterEventHandler
 import com.sammengistu.stuckapp.helpers.AnimationHelper
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
@@ -78,10 +76,8 @@ class PostsAdapter(
             viewMode != VIEW_MODE_DRAFTS) {
             val avatar = AssetImageUtils.getAvatar(post.avatar)
             holder.avatarView.setImageBitmap(avatar)
-            holder.avatarView.setOnClickListener(null)
         } else {
             holder.avatarView.loadImage(post.avatar)
-            holder.avatarView.setOnClickListener { showProfile(context, post) }
         }
 
         val userVote = UserVotesCollection.getInstance(context).getVoteForPost(post.ref)
@@ -150,12 +146,6 @@ class PostsAdapter(
             }
         } else {
             holder.itemView.setOnClickListener(null)
-        }
-    }
-
-    private fun showProfile(context: Context, post: PostModel) {
-        if (context is BaseActivity) {
-            context.addFragment(ProfileViewFragment.newInstance(post.ownerRef))
         }
     }
 

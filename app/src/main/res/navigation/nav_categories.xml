@@ -15,6 +15,14 @@
             app:destination="@id/categoriesPostsFragment" />
     </fragment>
     <fragment
+        android:id="@+id/profileViewFragment"
+        android:name="com.sammengistu.stuckapp.fragments.ProfileViewFragment"
+        android:label="Profile" >
+        <argument
+            android:name="ownerRef"
+            app:argType="string" />
+    </fragment>
+    <fragment
         android:id="@+id/categoriesPostsFragment"
         android:name="com.sammengistu.stuckapp.fragments.CategoriesPostsFragment"
         android:label="Stuck"
@@ -26,6 +34,9 @@
         <action
             android:id="@+id/action_nav_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_to_profileViewFragment"
+            app:destination="@id/profileViewFragment" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -37,5 +48,8 @@
         <argument
             android:name="userChoice"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_to_profileViewFragment"
+            app:destination="@id/profileViewFragment" />
     </fragment>
 </navigation>
