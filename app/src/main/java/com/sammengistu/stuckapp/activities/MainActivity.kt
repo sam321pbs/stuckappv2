@@ -5,21 +5,18 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.*
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.onNavDestinationSelected
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
 import com.sammengistu.stuckapp.AlarmHelper
 import com.sammengistu.stuckapp.AssetImageUtils
@@ -34,13 +31,10 @@ import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckapp.notification.StuckNotificationFactory
 import com.sammengistu.stuckapp.setupWithNavController
 import com.sammengistu.stuckapp.utils.StringUtils
-import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.access.DeviceTokenAccess
-import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
-import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_post_view.*
 import kotlinx.android.synthetic.main.toolbar_layout.*
@@ -49,7 +43,6 @@ import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : LoggedInActivity() {
 
-    private lateinit var navigationView: NavigationView
     private lateinit var bottomSheetHelper: BottomSheetHelper
     private lateinit var invisibleCover: View
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -59,10 +52,6 @@ class MainActivity : LoggedInActivity() {
         get() = findNavController(R.id.nav_host_fragment)
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-
-    private val userViewModel: UserViewModel by viewModels {
-        InjectorUtils.provideUserFactory(this)
-    }
 
     private val onDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
@@ -115,7 +104,6 @@ class MainActivity : LoggedInActivity() {
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.cancelAll()
 
-        navigationView = nav_view
         setupActionBar(appBarNavController)
         setupBottomSheet()
         if (savedInstanceState == null) {
@@ -153,17 +141,6 @@ class MainActivity : LoggedInActivity() {
         AlarmHelper.setDailyNotifier(this)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val retValue = super.onCreateOptionsMenu(menu)
-        val navigationView = findViewById<NavigationView>(R.id.nav_view)
-        if (navigationView == null) {
-            //android needs to know what menu I need
-            menuInflater.inflate(R.menu.menu_main, menu)
-            return true
-        }
-        return retValue
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return item!!.onNavDestinationSelected(appBarNavController) || super.onOptionsItemSelected(item)
     }
@@ -183,28 +160,20 @@ class MainActivity : LoggedInActivity() {
     fun goHome() { bottomNavigationView.selectedItemId = R.id.nav_home }
 
     private fun setupActionBar(navController: NavController) {
-        setupNavigation(navController)
+        setupNavigation()
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    private fun setupNavigation(navController: NavController) {
-        val sideNavView = findViewById<NavigationView>(R.id.nav_view)
-        sideNavView?.setupWithNavController(navController)
-        val drawerLayout: DrawerLayout? = findViewById(R.id.drawer_layout)
-
+    private fun setupNavigation() {
         val homeDestinations = setOf(
             R.id.homeListFragment,
             R.id.categoriesFragment,
             R.id.newPostTypeFragment,
             R.id.favoritesListFragment,
-            R.id.userPostsListFragment,
-            R.id.profileFragment,
-            R.id.statsFragment,
-            R.id.draftListFragment,
-            R.id.settingsFragment)
+            R.id.userProfileFragment
+        )
 
         val appBarConfigurationBuilder = AppBarConfiguration.Builder(homeDestinations)
-        appBarConfigurationBuilder.setDrawerLayout(drawerLayout)
         appBarConfiguration = appBarConfigurationBuilder.build()
     }
 
@@ -214,15 +183,6 @@ class MainActivity : LoggedInActivity() {
             UserVotesCollection.getInstance(this)
             DeviceTokenAccess(user.ref).checkTokenExists(this)
             HiddenItemsHelper(user.ref, this)
-
-            userViewModel.userLiveData.observe(this) { user ->
-                Log.d(TAG, "Received user db changes")
-                if (user != null) {
-                    UserRepository.currentUser = user
-                    setupNavHeader(user)
-                }
-            }
-            userViewModel.setUserRef(user.ref)
         }
     }
 
@@ -256,14 +216,6 @@ class MainActivity : LoggedInActivity() {
             invisibleCover.visibility = View.GONE
         }
         bottomSheetHelper.hideMenu()
-    }
-
-    private fun setupNavHeader(user: UserModel?) {
-        if (user != null) {
-            val parentView = navigationView.getHeaderView(0)
-            parentView.findViewById<TextView>(R.id.nav_username).text = user.username
-            parentView.findViewById<AvatarView>(R.id.avatar_view).loadImage(user.avatar)
-        }
     }
 
     private fun setupBottomNavigationBar() {
