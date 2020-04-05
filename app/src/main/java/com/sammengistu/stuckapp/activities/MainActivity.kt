@@ -2,7 +2,6 @@ package com.sammengistu.stuckapp.activities
 
 import android.app.NotificationManager
 import android.content.Context
-import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -55,32 +54,27 @@ class MainActivity : LoggedInActivity() {
 
     private val onDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
-            val dest: String = try {
-                resources.getResourceName(destination.id)
-            } catch (e: Resources.NotFoundException) {
-                Integer.toString(destination.id)
-            }
-            if (destination.id == R.id.profileFragment ||
-                destination.id == R.id.statsFragment ||
-                destination.id == R.id.settingsFragment ||
-                destination.id == R.id.newPostTypeFragment ||
-                destination.id == R.id.newImagePostFragment ||
-                destination.id == R.id.newTextPostFragment ||
-                destination.id == R.id.commentsFragment ||
-                destination.id == R.id.notificationSettingsFragment
+            val destinationId = destination.id
+            
+            if (destinationId == R.id.profileFragment ||
+                destinationId == R.id.statsFragment ||
+                destinationId == R.id.settingsFragment ||
+                destinationId == R.id.newPostTypeFragment ||
+                destinationId == R.id.newImagePostFragment ||
+                destinationId == R.id.newTextPostFragment ||
+                destinationId == R.id.commentsFragment ||
+                destinationId == R.id.notificationSettingsFragment
             ) {
                 bottomNavigationView.visibility = View.GONE
             } else {
                 bottomNavigationView.visibility = View.VISIBLE
             }
 
-            if (destination.id == R.id.categoriesPostsFragment && arguments != null) {
+            if (destinationId == R.id.categoriesPostsFragment && arguments != null) {
                 destination.label =
                     StringUtils.capitilizeFirstLetter(
                         CategoriesPostsFragmentArgs.fromBundle(arguments).category)
             }
-
-            Log.d(TAG, "Navigated to $dest")
         }
 
     @Subscribe
