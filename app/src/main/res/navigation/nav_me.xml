@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_me"
-    app:startDestination="@id/userPostsListFragment">
+    app:startDestination="@id/userProfileFragment">
 
     <fragment
         android:id="@+id/userPostsListFragment"
         android:name="com.sammengistu.stuckapp.fragments.UserPostsListFragment"
         android:label="Your Posts"
-        tools:layout="@layout/fragment_post_list" >
+        tools:layout="@layout/fragment_post_list">
         <action
             android:id="@+id/action_nav_to_commentsFragment"
             app:destination="@id/commentsFragment" />
@@ -20,7 +20,8 @@
     <fragment
         android:id="@+id/profileViewFragment"
         android:name="com.sammengistu.stuckapp.fragments.ProfileViewFragment"
-        android:label="Profile" >
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile_view">
         <argument
             android:name="ownerRef"
             app:argType="string" />
@@ -29,7 +30,8 @@
     <fragment
         android:id="@+id/commentsFragment"
         android:name="com.sammengistu.stuckapp.fragments.CommentsFragment"
-        android:label="Comments">
+        android:label="Comments"
+        tools:layout="@layout/fragment_comments">
         <argument
             android:name="postRef"
             app:argType="string" />
@@ -40,5 +42,55 @@
             android:id="@+id/action_to_profileViewFragment"
             app:destination="@id/profileViewFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.sammengistu.stuckapp.fragments.UserProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_user_profile">
+        <action
+            android:id="@+id/action_userProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_statsFragment"
+            app:destination="@id/statsFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_draftListFragment"
+            app:destination="@id/draftListFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_userPostsListFragment"
+            app:destination="@id/userPostsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.sammengistu.stuckapp.fragments.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile"/>
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.sammengistu.stuckapp.fragments.StatsFragment"
+        android:label="Stats"
+        tools:layout="@layout/fragment_stats"/>
+    <fragment
+        android:id="@+id/draftListFragment"
+        android:name="com.sammengistu.stuckapp.fragments.DraftListFragment"
+        android:label="Drafts"
+        tools:layout="@layout/fragment_post_list"/>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.sammengistu.stuckapp.fragments.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_notificationSettingsFragment"
+            app:destination="@id/notificationSettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationSettingsFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NotificationSettingsFragment"
+        android:label="Notifications"
+        tools:layout="@layout/fragment_notifications"/>
 
 </navigation>
