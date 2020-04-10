@@ -26,6 +26,7 @@ import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.utils.DateUtils
+import com.sammengistu.stuckfirebase.viewmodels.DraftViewModel
 import com.sammengistu.stuckfirebase.viewmodels.PostListViewModel
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import org.greenrobot.eventbus.EventBus
@@ -37,12 +38,15 @@ abstract class PostsListFragment : BaseFragment() {
     private lateinit var viewAdapter: PostsAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var swipeToRefreshLayout: SwipeRefreshLayout
-    private var postsList = ArrayList<PostModel>()
     private var lastCreatedAt: Any = 0L
     private var addItems = false
 
     private val listViewModel: PostListViewModel by viewModels {
         InjectorUtils.providePostListFactory(requireContext(), getLoadType())
+    }
+
+    private val draftListViewModel: DraftViewModel by viewModels {
+        InjectorUtils.provideDraftPostListFactory(requireContext())
     }
 
     abstract fun getLoadType(): String
@@ -59,28 +63,12 @@ abstract class PostsListFragment : BaseFragment() {
 
     @Subscribe
     fun onPostDeleted(event: DeletedPostEvent) {
-        for (post in postsList) {
-            if (post.ref == event.ref) {
-                postsList.remove(post)
-                onDataUpdated()
-                break
-            }
-        }
+        viewAdapter.removePost(event.ref)
     }
 
     @Subscribe
     fun onIncreaseCommentCount(event: IncreaseCommentCountEvent) {
-        var refresh = false
-        for (post in postsList) {
-            if (post.ref == event.postRef) {
-                post.totalComments += 1
-                refresh = true
-                break
-            }
-        }
-        if (refresh) {
-            viewAdapter.swapData(postsList)
-        }
+        viewAdapter.updateCommentCountOnPost(event.postRef)
     }
 
     override fun getLayoutId() = R.layout.fragment_post_list
@@ -95,11 +83,21 @@ abstract class PostsListFragment : BaseFragment() {
             refreshAdapter()
         }
 
-        listViewModel.postsViewModel.observe(viewLifecycleOwner) { posts ->
-            if (posts == null) {
-                ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts")
-            } else {
-                updateAdapter(posts, viewAdapter, addItems)
+        if (getLoadType() == LOAD_TYPE_DRAFT) {
+            draftListViewModel.draftsViewModel.observe(viewLifecycleOwner) { posts ->
+                if (posts == null) {
+                    ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts")
+                } else {
+                    updateAdapter(convertDraftToPost(posts), addItems)
+                }
+            }
+        } else {
+            listViewModel.postsViewModel.observe(viewLifecycleOwner) { posts ->
+                if (posts == null) {
+                    ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts")
+                } else {
+                    updateAdapter(posts, addItems)
+                }
             }
         }
     }
@@ -144,9 +142,7 @@ abstract class PostsListFragment : BaseFragment() {
         val scrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && postsList.isNotEmpty()
-                    && postsList.size > 30
-                ) {
+                if (!recyclerView.canScrollVertically(1) && viewAdapter.itemCount > 30) {
                     loadMoreItems()
                 }
             }
@@ -164,11 +160,7 @@ abstract class PostsListFragment : BaseFragment() {
                     LOAD_TYPE_FAVORITE -> listViewModel.setData(user.ref, lastCreatedAt)
                     LOAD_TYPE_CATEGORIES -> listViewModel.setData(getPostCategory(), lastCreatedAt)
                     LOAD_TYPE_USER -> listViewModel.setData(user.ref, lastCreatedAt)
-//                    LOAD_TYPE_DRAFT -> {
-//                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
-//                            updateAdapter(convertDraftToPost(draftList), adapter, false)
-//                        }
-//                    }
+                    LOAD_TYPE_DRAFT -> { /* do nothnig */ }
                     else -> listViewModel.setData(lastCreatedAt)
                 }
             }
@@ -184,11 +176,7 @@ abstract class PostsListFragment : BaseFragment() {
                     LOAD_TYPE_FAVORITE -> listViewModel.setData(user.ref)
                     LOAD_TYPE_CATEGORIES -> listViewModel.setData(getPostCategory())
                     LOAD_TYPE_USER -> listViewModel.setData(user.ref)
-//                    LOAD_TYPE_DRAFT -> {
-//                        listViewModel.posts.observe(viewLifecycleOwner) { draftList ->
-//                            updateAdapter(convertDraftToPost(draftList), adapter, false)
-//                        }
-//                    }
+                    LOAD_TYPE_DRAFT -> { draftListViewModel.setData(user.ref) }
                     else -> listViewModel.setData()
                 }
             }
@@ -199,28 +187,23 @@ abstract class PostsListFragment : BaseFragment() {
         val list = ArrayList<PostModel>()
         for (draft in draftList) {
             val post = PostModel(draft)
-            post.draftId = draft.postId
+            post.draftId = draft._id
             list.add(post)
         }
         return list
     }
 
     private fun updateAdapter(
-        list: List<PostModel>,
-        adapter: PostsAdapter,
+        posts: List<PostModel>,
         addItems: Boolean
     ) {
-        if (list.isNotEmpty()) {
-            lastCreatedAt = list[list.size - 1].createdAt ?: DateUtils.getMaxDate()
+        if (posts.isNotEmpty()) {
+            lastCreatedAt = posts[posts.size - 1].createdAt ?: DateUtils.getMaxDate()
         }
-        if (addItems) {
-            postsList.addAll(list)
-        } else {
-            postsList = list as ArrayList<PostModel>
-        }
-        adapter.swapData(postsList)
+
+        viewAdapter.swapData(posts, addItems)
         swipeToRefreshLayout.isRefreshing = false
-        showEmptyMessage(postsList.isEmpty())
+        showEmptyMessage(viewAdapter.isEmpty())
     }
 
     private fun showEmptyMessage(isEmpty: Boolean) {
@@ -236,7 +219,6 @@ abstract class PostsListFragment : BaseFragment() {
     }
 
     companion object {
-        val TAG: String = PostsListFragment::class.java.simpleName
-        const val EXTRA_CATEGORY = "extra_category"
+        private const val TAG: String = "PostsListFragment"
     }
 }

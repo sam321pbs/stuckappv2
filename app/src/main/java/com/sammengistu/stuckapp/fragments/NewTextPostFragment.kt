@@ -3,7 +3,6 @@ package com.sammengistu.stuckapp.fragments
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -12,16 +11,13 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.events.SaveDraftEvent
-import com.sammengistu.stuckapp.helpers.KeyboardStateHelper
 import com.sammengistu.stuckapp.utils.KeyboardUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
+import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.DraftPostModel
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
-import org.greenrobot.eventbus.Subscribe
-import java.util.*
 
 
 class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked {
@@ -31,26 +27,18 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
     private lateinit var composeHeader: TextView
     private lateinit var editText: EditText
     private lateinit var doneButton: TextView
-    private lateinit var submitButton: Button
-    private lateinit var keyboardHelper: KeyboardStateHelper
     private var selectedChoice: Int = 0
-    private var isKeyboardOpen = false
 
-    val args: NewTextPostFragmentArgs by navArgs()
-
-    @Subscribe
-    fun onSaveDraft(event: SaveDraftEvent) {
-        draftTextPost(choicesContainer)
-    }
+    private val args: NewTextPostFragmentArgs by navArgs()
 
     override fun getFragmentTag(): String = TAG
+
     override fun getLayoutId(): Int = R.layout.fragment_new_text_post
 
     override fun onClearClicked(tag: Int) {
         for (view in choicesContainer.children) {
             if (view.tag == tag) {
                 choicesContainer.removeView(view)
-                updateSubmitButton()
                 add_choice_button.visibility = View.VISIBLE
                 break
             }
@@ -62,6 +50,32 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         }
     }
 
+    override fun fieldsValidated(showSnack: Boolean): Boolean {
+        if (question.text.toString().isEmpty()) {
+            if (showSnack)
+                Snackbar.make(view!!, "Question is empty", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        for (choiceView in choicesContainer.children) {
+            if (choiceView is ChoiceCardView && choiceView.getChoiceText().isEmpty()) {
+                if (showSnack)
+                    Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT)
+                        .show()
+                return false
+            }
+        }
+        return true
+    }
+
+    override fun saveAsDraft() {
+        saveDraft(PostType.TEXT, emptyMap())
+    }
+
+    override fun createPost() {
+        createTextPost()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         choicesContainer = choices_container
@@ -69,27 +83,20 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         composeHeader = choice_header
         editText = new_choice_edit_text
         doneButton = send_button
-        submitButton = submit_button
-        updateSubmitButton()
 
         add_choice_button.setOnClickListener {
             addChoiceView()
         }
 
-        submitButton.setOnClickListener {
-            createTextPost(choicesContainer)
-        }
-
         doneButton.setOnClickListener {
             setChoice()
-            updateSubmitButton()
             KeyboardUtils.hideKeyboard(activity!!, editText)
         }
 
         val draftId = args.postId
         if (draftId != -1L) {
             val liveDraftPost = InjectorUtils
-                .getDraftPostRepository(activity as Context)
+                .getPostRepository(activity as Context)
                 .getDraftPost(draftId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
@@ -102,49 +109,6 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
             addChoiceView()
             addChoiceView()
         }
-
-        keyboardHelper = KeyboardStateHelper(view) { open ->
-            isKeyboardOpen = open
-            if (open) {
-                submitButton.visibility = View.GONE
-            } else {
-                Timer().schedule(object: TimerTask(){
-                    override fun run() {
-                        if (activity != null) {
-                            activity!!.runOnUiThread {
-                                updateSubmitButton()
-                            }
-                        }
-                    }
-                } , 200)
-            }
-        }
-    }
-
-    private fun updateSubmitButton() {
-        if (isKeyboardOpen) {
-            submitButton.visibility = View.GONE
-            return
-        }
-        if (!fieldsValidated(false)){
-            submitButton.visibility = View.GONE
-            return
-        }
-        for (view in choicesContainer.children) {
-            if (view is ChoiceCardView) {
-                if (view.getChoiceText().isBlank()) {
-                    submitButton.visibility = View.GONE
-                    return
-                }
-            }
-        }
-
-        if (question.text.isBlank()) {
-            submitButton.visibility = View.GONE
-            return
-        }
-        submitButton.visibility = View.VISIBLE
-        composeAreaContainer.visibility = View.GONE
     }
 
     private fun setChoice() {
@@ -186,7 +150,6 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
                 add_choice_button.visibility = View.GONE
             }
         }
-        updateSubmitButton()
     }
 
     private fun addChoiceView() {
@@ -197,7 +160,6 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         newChild.setOnClickListener {
             selectedChoice = it.tag as Int
             if (it is ChoiceCardView) {
-                submitButton.visibility = View.GONE
                 composeAreaContainer.visibility = View.VISIBLE
                 composeHeader.text = "Choice ${selectedChoice.toString()}"
                 editText.setText(newChild.getChoiceText())
@@ -206,24 +168,6 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
                 KeyboardUtils.showKeyboard(activity!!, editText)
             }
         }
-    }
-
-    override fun fieldsValidated(showSnack: Boolean): Boolean {
-        if (question.text.toString().isEmpty()) {
-            if (showSnack)
-                Snackbar.make(view!!, "Question is empty", Snackbar.LENGTH_SHORT).show()
-            return false
-        }
-
-        for (choiceView in choicesContainer.children) {
-            if (choiceView is ChoiceCardView && choiceView.getChoiceText().isEmpty()) {
-                if (showSnack)
-                    Snackbar.make(view!!, "Make sure choices are filled in", Snackbar.LENGTH_SHORT)
-                    .show()
-                return false
-            }
-        }
-        return true
     }
 
     companion object {

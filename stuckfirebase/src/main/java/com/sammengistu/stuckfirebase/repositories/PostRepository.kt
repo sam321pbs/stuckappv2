@@ -15,9 +15,9 @@ private const val TAG = "PostRepository"
 
 class PostRepository private constructor(val dao: PostDao) {
 
-    fun getAllDraftPosts(ownerId: String) = dao.getAllPosts(ownerId)
+    fun getAllDraftPosts(ownerId: String) = dao.getDraftPosts(ownerId)
 
-    fun getDraftPost(id: Long) = dao.getPost(id)
+    fun getDraftPost(id: Long) = dao.getDraftPost(id)
 
     fun insertDraftPost(post: DraftPostModel) = dao.insertPost(post)
 

@@ -6,7 +6,7 @@ import com.sammengistu.stuckfirebase.constants.PostType
 
 @Entity(tableName = "posts")
 data class DraftPostModel(
-    @PrimaryKey(autoGenerate = true) val postId: Long,
+    @PrimaryKey(autoGenerate = true) val _id: Long,
     val ownerRef: String,
     val question: String,
     val privacy: String,

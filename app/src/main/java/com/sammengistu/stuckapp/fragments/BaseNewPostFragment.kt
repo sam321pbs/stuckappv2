@@ -3,12 +3,16 @@ package com.sammengistu.stuckapp.fragments
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
 import androidx.navigation.fragment.findNavController
 import com.sammengistu.stuckapp.AssetImageUtils
+import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.activities.MainActivity
 import com.sammengistu.stuckapp.constants.Categories
 import com.sammengistu.stuckapp.constants.PrivacyOptions
@@ -17,6 +21,7 @@ import com.sammengistu.stuckapp.dialog.PostPrivacyDialog
 import com.sammengistu.stuckapp.events.CategorySelectedEvent
 import com.sammengistu.stuckapp.events.PrivacySelectedEvent
 import com.sammengistu.stuckapp.utils.ImageStorageUtils
+import com.sammengistu.stuckapp.utils.KeyboardUtils
 import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import com.sammengistu.stuckfirebase.AnalyticsHelper
@@ -40,9 +45,6 @@ import java.util.*
 
 abstract class BaseNewPostFragment : BaseFragment() {
 
-    val IMAGE_1 = "image_1"
-    val IMAGE_2 = "image_2"
-    val CHOICES_VIEW = "choices_view"
     var draft: DraftPostModel? = null
     var isPostGettingCreated = false
 
@@ -51,6 +53,10 @@ abstract class BaseNewPostFragment : BaseFragment() {
     private var avatarKey: String? = ""
 
     abstract fun fieldsValidated(showSnack: Boolean = true): Boolean
+
+    abstract fun saveAsDraft()
+
+    abstract fun createPost()
 
     @Subscribe
     fun onCategorySelected(event: CategorySelectedEvent) {
@@ -78,6 +84,11 @@ abstract class BaseNewPostFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -116,24 +127,33 @@ abstract class BaseNewPostFragment : BaseFragment() {
         EventBus.getDefault().unregister(this)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.new_post_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.save_draft -> {
+                KeyboardUtils.hideKeyboard(activity!!)
+                saveAsDraft()
+                true
+            }
+            R.id.create -> {
+                KeyboardUtils.hideKeyboard(activity!!)
+                createPost()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     fun createImagePost(type: PostType, bitmap1: Bitmap?, bitmap2: Bitmap?) {
         val data = mapOf(Pair(IMAGE_1, bitmap1), Pair(IMAGE_2, bitmap2))
-        createPost(type, data)
+        createNewPost(type, data)
     }
 
-    fun createTextPost(view: LinearLayout) {
-        val data = mapOf(Pair(CHOICES_VIEW, view))
-        createPost(PostType.TEXT, data)
-    }
-
-    fun draftImagePost(type: PostType, bitmap1: Bitmap?, bitmap2: Bitmap?) {
-        val data = mapOf(Pair(IMAGE_1, bitmap1), Pair(IMAGE_2, bitmap2))
-        saveAsDraft(type, data)
-    }
-
-    fun draftTextPost(view: LinearLayout) {
-        val data = mapOf(Pair(CHOICES_VIEW, view))
-        saveAsDraft(PostType.TEXT, data)
+    fun createTextPost() {
+        createNewPost(PostType.TEXT, emptyMap())
     }
 
     protected fun updateViewFromDraft(draft: DraftPostModel) {
@@ -144,7 +164,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
         privacy_choice.setText(StringUtils.capitilizeFirstLetter(selectedPrivacy))
     }
 
-    private fun createPost(type: PostType, data: Map<String, Any?>) {
+    private fun createNewPost(type: PostType, data: Map<String, Any?>) {
         if (isPostGettingCreated) {
             return
         }
@@ -167,8 +187,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
                                 bitmap2!!,
                                 getOnItemCreatedCallback()
                             )
-                        } else if (data.containsKey(CHOICES_VIEW)) {
-                            addChoicesToPost(data, post)
+                        } else {
+                            addChoicesToPost(post)
                             PostAccess().createItemInFB(
                                 post,
                                 getOnItemCreatedCallback()
@@ -185,13 +205,9 @@ abstract class BaseNewPostFragment : BaseFragment() {
         }
     }
 
-    private fun saveAsDraft(type: PostType, data: Map<String, Any?>) {
+    fun saveDraft(type: PostType, data: Map<String, Any?>) {
         UserRepository.getUserInstance(context!!) { user ->
             val post = buildPost(user, type)
-
-            if (data.containsKey(CHOICES_VIEW)) {
-                addChoicesToPost(data, post)
-            }
 
             doAsync {
                 uiThread {
@@ -236,12 +252,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
         }
     }
 
-    private fun addChoicesToPost(
-        data: Map<String, Any?>,
-        post: PostModel
-    ) {
-        val data1 = data[CHOICES_VIEW]
-        val choiceContainer = if (data1 is LinearLayout) data1 else null
+    private fun addChoicesToPost(post: PostModel) {
+        val choiceContainer = view!!.findViewById<LinearLayout>(R.id.choices_container)
         for (choiceView in choiceContainer!!.children) {
             if (choiceView is ChoiceCardView) {
                 post.addChoice(choiceView.getChoiceText())
@@ -313,7 +325,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
             doAsync {
                 try {
                     DraftPostAccess(activity!!)
-                        .deletePost(draft!!.postId)
+                        .deletePost(draft!!._id)
                 } catch (e: Exception) {
                     ErrorNotifier.notifyError(context!!, TAG, "Error deleting post", e)
                 }
@@ -322,6 +334,8 @@ abstract class BaseNewPostFragment : BaseFragment() {
     }
 
     companion object {
-        val TAG = BaseNewPostFragment::class.java.simpleName
+        private const val TAG = "BaseNewPostFragment"
+        const val IMAGE_1 = "image_1"
+        const val IMAGE_2 = "image_2"
     }
 }
