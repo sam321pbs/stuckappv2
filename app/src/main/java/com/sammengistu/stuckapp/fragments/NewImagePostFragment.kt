@@ -11,7 +11,6 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.events.SaveDraftEvent
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.database.InjectorUtils
@@ -19,26 +18,30 @@ import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
-import org.greenrobot.eventbus.Subscribe
 import java.io.File
 
 
 class NewImagePostFragment : BaseNewPostFragment() {
 
-    private var mBitmap1: Bitmap? = null
-    private var mBitmap2: Bitmap? = null
+    private var bitmap1: Bitmap? = null
+    private var bitmap2: Bitmap? = null
     private lateinit var image1Select: TextView
     private lateinit var image2Select: TextView
 
-    val args: NewImagePostFragmentArgs by navArgs()
-
-    @Subscribe
-    fun onSaveDraft(event: SaveDraftEvent) {
-        draftImagePost(PostType.LANDSCAPE, mBitmap1, mBitmap2)
-    }
+    private val args: NewImagePostFragmentArgs by navArgs()
 
     override fun getFragmentTag(): String = TAG
+
     override fun getLayoutId(): Int = R.layout.fragment_new_image_post
+
+    override fun saveAsDraft() {
+        val data = mapOf(Pair(IMAGE_1, bitmap1), Pair(IMAGE_2, bitmap2))
+        saveDraft(PostType.LANDSCAPE, data)
+    }
+
+    override fun createPost() {
+        createImagePost(PostType.LANDSCAPE, bitmap1, bitmap2)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,14 +64,10 @@ class NewImagePostFragment : BaseNewPostFragment() {
             LoadImageFromGalleryHelper.loadImageFromGallery(this, REQUEST_LOAD_IMG_2)
         }
 
-        submit_button.setOnClickListener {
-            createImagePost(PostType.LANDSCAPE, mBitmap1, mBitmap2)
-        }
-
         val draftId = args.postId
         if (draftId != -1L) {
             val liveDraftPost = InjectorUtils
-                .getDraftPostRepository(activity as Context)
+                .getPostRepository(activity as Context)
                 .getDraftPost(draftId)
 
             liveDraftPost.observe(viewLifecycleOwner) { draftList ->
@@ -84,11 +83,11 @@ class NewImagePostFragment : BaseNewPostFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_LOAD_IMG_1 -> { mBitmap1 =
+            REQUEST_LOAD_IMG_1 -> { bitmap1 =
                 LoadImageFromGalleryHelper.addImageToView(activity, image_1, data)
                 updateSelectImageText()
             }
-            REQUEST_LOAD_IMG_2 -> { mBitmap2 =
+            REQUEST_LOAD_IMG_2 -> { bitmap2 =
                 LoadImageFromGalleryHelper.addImageToView(activity, image_2, data)
                 updateSelectImageText()
             }
@@ -96,10 +95,10 @@ class NewImagePostFragment : BaseNewPostFragment() {
     }
 
     private fun updateSelectImageText() {
-        if (mBitmap1 != null) {
+        if (bitmap1 != null) {
             image1Select.visibility = View.GONE
         }
-        if (mBitmap2 != null) {
+        if (bitmap2 != null) {
             image2Select.visibility = View.GONE
         }
     }
@@ -110,7 +109,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
             return false
         }
 
-        if (mBitmap1 == null || mBitmap2 == null) {
+        if (bitmap1 == null || bitmap2 == null) {
             Snackbar.make(view!!, "Images are empty", Snackbar.LENGTH_SHORT).show()
             return false
         }
@@ -120,7 +119,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
     private fun updateImagesFromDraft(draftPost: DraftPostModel) {
         if (draftPost.image1Loc.isNotBlank()) {
             val file1 = File(draftPost.image1Loc)
-            mBitmap1 = BitmapFactory.decodeFile(file1.path)
+            bitmap1 = BitmapFactory.decodeFile(file1.path)
             Picasso.get()
                 .load(file1)
                 .fit()
@@ -129,7 +128,7 @@ class NewImagePostFragment : BaseNewPostFragment() {
 
         if (draftPost.image2Loc.isNotBlank()) {
             val file2 = File(draftPost.image2Loc)
-            mBitmap2 = BitmapFactory.decodeFile(file2.path)
+            bitmap2 = BitmapFactory.decodeFile(file2.path)
             Picasso.get()
                 .load(file2)
                 .fit()

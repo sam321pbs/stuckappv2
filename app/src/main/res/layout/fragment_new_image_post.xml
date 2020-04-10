@@ -8,7 +8,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/submit_button"
         android:layout_marginBottom="3dp">
 
         <FrameLayout
@@ -93,16 +92,4 @@
                 android:visibility="gone" />
         </FrameLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/submit_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:text="Done"
-        android:background="@drawable/button_done"
-        android:textColor="@color/white" />
 </RelativeLayout>

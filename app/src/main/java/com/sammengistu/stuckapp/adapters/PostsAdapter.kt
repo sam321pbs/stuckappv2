@@ -41,7 +41,7 @@ class PostsAdapter(
     private val navController: NavController,
     private val viewMode: Int
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
-    private var dataset = listOf<PostModel>()
+    private var dataSet = ArrayList<PostModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -56,7 +56,7 @@ class PostsAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val post = dataset[position]
+        val post = dataSet[position]
         return when (post.type) {
             PostType.LANDSCAPE.toString() -> LANDSCAPE_VIEW_TYPE
             PostType.PORTRAIT.toString() -> PORTRAIT_VIEW_TYPE
@@ -64,10 +64,10 @@ class PostsAdapter(
         }
     }
 
-    override fun getItemCount() = dataset.size
+    override fun getItemCount() = dataSet.size
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = dataset[position]
+        val post = dataSet[position]
 
         val starred = UserStarredCollection.getInstance(context).getStarPost(post) != null
         val isHidden = HiddenItemsHelper.containesRef(post.ref)
@@ -90,6 +90,36 @@ class PostsAdapter(
         handleDraftPost(holder, post)
         handleRefreshIcon(post, holder)
     }
+
+    fun swapData(dataSet: List<PostModel>, addItems: Boolean) {
+        if (!addItems) {
+            this.dataSet.clear()
+        }
+        this.dataSet.addAll(dataSet)
+        notifyDataSetChanged()
+    }
+
+    fun removePost(ref: String) {
+        for (post in dataSet) {
+            if (post.ref == ref) {
+                dataSet.remove(post)
+                notifyDataSetChanged()
+                break
+            }
+        }
+    }
+
+    fun updateCommentCountOnPost(ref: String) {
+        for (post in dataSet) {
+            if (post.ref == ref) {
+                post.totalComments += 1
+                notifyDataSetChanged()
+                break
+            }
+        }
+    }
+
+    fun isEmpty() = dataSet.isEmpty()
 
     private fun handleRefreshIcon(post: PostModel, holder: PostViewHolder) {
         if (viewMode == VIEW_MODE_FAVORITES && post is StarPostModel) {
@@ -149,11 +179,6 @@ class PostsAdapter(
         }
     }
 
-    fun swapData(dataset: List<PostModel>) {
-        this.dataset = dataset
-        notifyDataSetChanged()
-    }
-
     private fun buildTextChoices(
         holder: PostViewHolder,
         post: PostModel,
@@ -207,8 +232,9 @@ class PostsAdapter(
         }
     }
 
-    class PostTextViewHolder(binding: ViewDataBinding) : PostViewHolder(binding)
-    class PostImageViewHolder(binding: ViewDataBinding) : PostViewHolder(binding)
+    private class PostTextViewHolder(binding: ViewDataBinding) : PostViewHolder(binding)
+
+    private class PostImageViewHolder(binding: ViewDataBinding) : PostViewHolder(binding)
 
     open class PostViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
         val choiceContainer: LinearLayout = binding.root.find(R.id.choice_container)

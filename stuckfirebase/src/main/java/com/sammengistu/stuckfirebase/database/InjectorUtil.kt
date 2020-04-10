@@ -8,22 +8,24 @@ import com.sammengistu.stuckfirebase.repositories.CommentsRepository
 import com.sammengistu.stuckfirebase.repositories.HiddenItemsRepository
 import com.sammengistu.stuckfirebase.repositories.PostRepository
 import com.sammengistu.stuckfirebase.repositories.UserRepository
-import com.sammengistu.stuckfirebase.viewmodels.factories.CommentsViewModelFactory
-import com.sammengistu.stuckfirebase.viewmodels.factories.HiddenItemsViewModelFactory
-import com.sammengistu.stuckfirebase.viewmodels.factories.PostListViewModelFactory
-import com.sammengistu.stuckfirebase.viewmodels.factories.UsersViewModelFactory
+import com.sammengistu.stuckfirebase.viewmodels.factories.*
 
 object InjectorUtils {
 
-    fun getDraftPostRepository(context: Context): PostRepository {
+    fun getPostRepository(context: Context): PostRepository {
         return PostRepository.getInstance(AppDatabase.getInstance(context.applicationContext).postsDao())
     }
 
     fun providePostListFactory(context: Context, loadType:String): PostListViewModelFactory {
-        val repository = getDraftPostRepository(context)
         return PostListViewModelFactory(
-            repository,
+            getPostRepository(context),
             loadType
+        )
+    }
+
+    fun provideDraftPostListFactory(context: Context): DraftPostListViewModelFactory {
+        return DraftPostListViewModelFactory(
+            getPostRepository(context)
         )
     }
 
