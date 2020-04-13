@@ -187,7 +187,7 @@ abstract class PostsListFragment : BaseFragment() {
         val list = ArrayList<PostModel>()
         for (draft in draftList) {
             val post = PostModel(draft)
-            post.draftId = draft._id
+            post.draftId = draft._id ?: -1
             list.add(post)
         }
         return list

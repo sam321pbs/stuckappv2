@@ -325,7 +325,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
             doAsync {
                 try {
                     DraftPostAccess(activity!!)
-                        .deletePost(draft!!._id)
+                        .deletePost(draft!!._id!!)
                 } catch (e: Exception) {
                     ErrorNotifier.notifyError(context!!, TAG, "Error deleting post", e)
                 }

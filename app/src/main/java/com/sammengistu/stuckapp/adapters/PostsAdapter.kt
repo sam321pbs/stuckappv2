@@ -18,7 +18,7 @@ import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.events.DeletedPostEvent
-import com.sammengistu.stuckapp.fragments.NewPostTypeFragmentDirections
+import com.sammengistu.stuckapp.fragments.DraftListFragmentDirections
 import com.sammengistu.stuckapp.handler.PostAdapterEventHandler
 import com.sammengistu.stuckapp.helpers.AnimationHelper
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
@@ -160,18 +160,20 @@ class PostsAdapter(
         post: PostModel
     ) {
         if (viewMode == VIEW_MODE_DRAFTS) {
-            holder.itemView.setOnClickListener {
-                val postId = post.draftId
-                if (post.type == PostType.TEXT.toString()) {
-                    val action = NewPostTypeFragmentDirections
-                        .actionNewPostTypeFragmentToNewImagePostFragment()
-                        .setPostId(postId)
-                    navController.navigate(action)
-                } else {
-                    val action = NewPostTypeFragmentDirections
-                        .actionNewPostTypeFragmentToNewTextPostFragment()
-                        .setPostId(postId)
-                    navController.navigate(action)
+            val draftId = post.draftId
+            if (draftId != null) {
+                holder.itemView.setOnClickListener {
+                    if (post.type == PostType.TEXT.toString()) {
+                        val action = DraftListFragmentDirections
+                            .actionDraftListFragmentToNewTextPostFragment2()
+                            .setDraftId(draftId)
+                        navController.navigate(action)
+                    } else {
+                        val action = DraftListFragmentDirections
+                            .actionDraftListFragmentToNewImagePostFragment2()
+                            .setDraftId(draftId)
+                        navController.navigate(action)
+                    }
                 }
             }
         } else {

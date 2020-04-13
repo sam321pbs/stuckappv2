@@ -17,13 +17,13 @@ class PostRepository private constructor(val dao: PostDao) {
 
     fun getAllDraftPosts(ownerId: String) = dao.getDraftPosts(ownerId)
 
-    fun getDraftPost(id: Long) = dao.getDraftPost(id)
+    fun getDraftPost(draftId: Int) = dao.getDraftPost(draftId)
 
     fun insertDraftPost(post: DraftPostModel) = dao.insertPost(post)
 
     fun deleteDraftPost(post: DraftPostModel) = dao.deletePost(post)
 
-    fun deleteDraftPost(postId: Long) = dao.deleteByPostId(postId)
+    fun deleteDraftPost(draftId: Int) = dao.deleteByPostId(draftId)
 
     fun getStarPosts(userRef: String, timestamp: Any): LiveData<List<PostModel>?> {
         val liveData = MutableLiveData<List<PostModel>?>()

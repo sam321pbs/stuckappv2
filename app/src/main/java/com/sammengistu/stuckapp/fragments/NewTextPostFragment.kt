@@ -93,8 +93,8 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
             KeyboardUtils.hideKeyboard(activity!!, editText)
         }
 
-        val draftId = args.postId
-        if (draftId != -1L) {
+        val draftId = args.draftId
+        if (draftId != -1) {
             val liveDraftPost = InjectorUtils
                 .getPostRepository(activity as Context)
                 .getDraftPost(draftId)

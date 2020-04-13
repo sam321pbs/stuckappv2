@@ -21,7 +21,7 @@ open class PostModel(
 ) : FirebaseItem(ownerRef) {
 
     @Exclude
-    var draftId = -1L
+    var draftId: Int? = null
 
     init {
         if (votes.isEmpty()) {
@@ -72,6 +72,8 @@ open class PostModel(
 
         addImage(draftPost.image1Loc)
         addImage(draftPost.image2Loc)
+
+        draftId = draftPost._id ?: -1
 
         addEmptyVotes()
     }

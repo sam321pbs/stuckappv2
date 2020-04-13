@@ -288,7 +288,10 @@ class BottomSheetHelper(
     private fun deleteDraft(post: PostModel) {
         doAsync {
             try {
-                DraftPostAccess(context).deletePost(post.draftId)
+                val draftId = post.draftId
+                if (draftId != null) {
+                    DraftPostAccess(context).deletePost(draftId)
+                }
                 uiThread { Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show() }
             } catch (e: Exception) {
                 ErrorNotifier.notifyError(context, TAG, "Error deleting post", e)

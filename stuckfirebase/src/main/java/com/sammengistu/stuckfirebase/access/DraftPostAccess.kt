@@ -10,11 +10,11 @@ class DraftPostAccess(private val context: Context) {
         PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).insertDraftPost(post)
     }
 
-    fun getPost(postId: Long) : DraftPostModel? {
-        return PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).getDraftPost(postId).value?.get(0)
+    fun getPost(draftId: Int) : DraftPostModel? {
+        return PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).getDraftPost(draftId).value?.get(0)
     }
 
-    fun deletePost(postId: Long) {
-        PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).deleteDraftPost(postId)
+    fun deletePost(draftId: Int) {
+        PostRepository.getInstance(AppDatabase.getInstance(context).postsDao()).deleteDraftPost(draftId)
     }
 }

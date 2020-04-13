@@ -64,8 +64,8 @@ class NewImagePostFragment : BaseNewPostFragment() {
             LoadImageFromGalleryHelper.loadImageFromGallery(this, REQUEST_LOAD_IMG_2)
         }
 
-        val draftId = args.postId
-        if (draftId != -1L) {
+        val draftId = args.draftId
+        if (draftId != -1) {
             val liveDraftPost = InjectorUtils
                 .getPostRepository(activity as Context)
                 .getDraftPost(draftId)
