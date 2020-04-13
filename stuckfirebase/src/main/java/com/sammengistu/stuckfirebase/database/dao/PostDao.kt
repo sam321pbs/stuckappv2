@@ -10,7 +10,7 @@ interface PostDao {
     fun getDraftPosts(ownerRef: String): LiveData<List<DraftPostModel>>
 
     @Query("SELECT * FROM posts WHERE _id = :id")
-    fun getDraftPost(id: Long): LiveData<List<DraftPostModel>>
+    fun getDraftPost(id: Int): LiveData<List<DraftPostModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPost(post: DraftPostModel)
@@ -19,5 +19,5 @@ interface PostDao {
     fun deletePost(post: DraftPostModel)
 
     @Query("DELETE FROM posts WHERE _id = :postId")
-    fun deleteByPostId(postId: Long)
+    fun deleteByPostId(postId: Int)
 }

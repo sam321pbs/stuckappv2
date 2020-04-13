@@ -22,20 +22,10 @@
         android:id="@+id/newImagePostFragment"
         android:name="com.sammengistu.stuckapp.fragments.NewImagePostFragment"
         android:label="Image Post"
-        tools:layout="@layout/fragment_new_image_post">
-        <argument
-            android:name="post_id"
-            android:defaultValue="-1L"
-            app:argType="long" />
-    </fragment>
+        tools:layout="@layout/fragment_new_image_post"/>
     <fragment
         android:id="@+id/newTextPostFragment"
         android:name="com.sammengistu.stuckapp.fragments.NewTextPostFragment"
         android:label="Text Post"
-        tools:layout="@layout/fragment_new_text_post">
-        <argument
-            android:name="post_id"
-            android:defaultValue="-1L"
-            app:argType="long" />
-    </fragment>
+        tools:layout="@layout/fragment_new_text_post"/>
 </navigation>

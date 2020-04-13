@@ -77,7 +77,14 @@
         android:id="@+id/draftListFragment"
         android:name="com.sammengistu.stuckapp.fragments.DraftListFragment"
         android:label="Drafts"
-        tools:layout="@layout/fragment_post_list"/>
+        tools:layout="@layout/fragment_post_list">
+        <action
+            android:id="@+id/action_draftListFragment_to_newTextPostFragment2"
+            app:destination="@id/newTextPostFragment" />
+        <action
+            android:id="@+id/action_draftListFragment_to_newImagePostFragment2"
+            app:destination="@id/newImagePostFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.sammengistu.stuckapp.fragments.SettingsFragment"
@@ -92,5 +99,25 @@
         android:name="com.sammengistu.stuckapp.fragments.NotificationSettingsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications"/>
+    <fragment
+        android:id="@+id/newTextPostFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewTextPostFragment"
+        android:label="Text Post"
+        tools:layout="@layout/fragment_new_text_post">
+        <argument
+            android:name="draft_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+    <fragment
+        android:id="@+id/newImagePostFragment"
+        android:name="com.sammengistu.stuckapp.fragments.NewImagePostFragment"
+        android:label="Image Post"
+        tools:layout="@layout/fragment_new_image_post">
+        <argument
+            android:name="draft_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
 
 </navigation>
