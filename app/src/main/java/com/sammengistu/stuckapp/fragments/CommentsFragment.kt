@@ -113,8 +113,6 @@ class CommentsFragment : BaseFragment() {
             val commentModel = CommentModel(
                 postRef,
                 user.ref,
-                user.username,
-                user.avatar,
                 commentET.text.toString(),
                 choicePos
             )
