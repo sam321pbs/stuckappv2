@@ -1,11 +1,13 @@
 package com.sammengistu.stuckapp.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -27,10 +29,12 @@ import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
+import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.exceptions.DocNotExistException
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.find
@@ -71,22 +75,32 @@ class PostsAdapter(
 
         val starred = UserStarredCollection.getInstance(context).getStarPost(post) != null
         val isHidden = HiddenItemsHelper.containesRef(post.ref)
-        holder.bind(post, PostAdapterEventHandler(context, navController, post), viewMode, starred, isHidden)
-        if (PrivacyOptions.ANONYMOUS.toString() == post.privacy &&
-            viewMode != VIEW_MODE_DRAFTS) {
-            val avatar = AssetImageUtils.getAvatar(post.avatar)
+        holder.bind(post,
+            PostAdapterEventHandler(context, navController, post), viewMode, starred, isHidden)
+
+        if (PrivacyOptions.ANONYMOUS.toString() == post.privacy && viewMode != VIEW_MODE_DRAFTS) {
+            holder.username.text = "Anonymous"
+            val avatar = AssetImageUtils.getRandomAvatar()
             holder.avatarView.setImageBitmap(avatar)
         } else {
-            holder.avatarView.loadImage(post.avatar)
+            // Load user
+            UserAccess().getItem(post.ownerRef,
+                object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
+                    override fun onSuccess(item: UserModel) {
+                        // TODO: check that views are alive
+                        holder.avatarView.loadImage(item.avatar)
+                        holder.username.text = item.username
+                    }
+
+                    override fun onFailed(e: Exception) {
+                        Log.e(TAG, "Failed to load user data from post", e)
+                    }
+                })
         }
 
         val userVote = UserVotesCollection.getInstance(context).getVoteForPost(post.ref)
-        if (holder is PostTextViewHolder) {
-            buildTextChoices(holder, post, userVote)
-        } else if (holder is PostImageViewHolder) {
-            buildImageChoices(holder, post, userVote)
-        }
 
+        buildChoices(holder, post, userVote)
         handleDraftPost(holder, post)
         handleRefreshIcon(post, holder)
     }
@@ -131,7 +145,10 @@ class PostsAdapter(
                         override fun onSuccess(item: PostModel) {
                             post.totalComments = item.totalComments
                             post.totalStars = item.totalStars
-                            post.choices = item.choices
+                            post.choice1 = item.choice1
+                            post.choice2 = item.choice2
+                            post.choice3 = item.choice3
+                            post.choice4 = item.choice4
                             notifyDataSetChanged()
                             StarPostAccess().updateItemInFB(
                                 post.ref, item.convertPostUpdatesToMap(), null)
@@ -160,7 +177,7 @@ class PostsAdapter(
         post: PostModel
     ) {
         if (viewMode == VIEW_MODE_DRAFTS) {
-            val draftId = post.draftId
+            val draftId = post._id
             if (draftId != null) {
                 holder.itemView.setOnClickListener {
                     if (post.type == PostType.TEXT.toString()) {
@@ -181,53 +198,41 @@ class PostsAdapter(
         }
     }
 
-    private fun buildTextChoices(
+    private fun buildChoices(
         holder: PostViewHolder,
         post: PostModel,
         userVote: UserVoteModel?
     ) {
         val container = holder.choiceContainer
         container.removeAllViews()
-        val updateParentContainer = getUpdateParentContainer(container) {
+        val listener = getOnItemVotedOnListener(container) {
             holder.voteTotalView.setText((post.getTotalVotes() + 1).toString())
         }
-        for (tripleItem in post.getChoicesToVoteList()) {
-            container.addView(
-                VotableTextChoiceView(context, post, tripleItem, userVote, updateParentContainer)
-            )
+        for (choice in post.choicesAsList()) {
+            val choiceView : VotableContainer =
+                when (post.type) {
+                    PostType.TEXT.toString() ->
+                        ChoiceView(context, post.ref, post.ownerRef, choice, userVote)
+                    else ->
+                        ChoiceImageView(context, post.ref, post.ownerRef, choice, userVote)
+                }
+
+            choiceView.setOnItemVotedListener(listener)
+            container.addView(choiceView)
         }
     }
 
-    private fun buildImageChoices(
-        holder: PostViewHolder,
-        post: PostModel,
-        userVote: UserVoteModel?
-    ) {
-        val container = holder.choiceContainer
-        container.removeAllViews()
-        val updateParentContainer = getUpdateParentContainer(container) {
-            holder.voteTotalView.setText((post.getTotalVotes() + 1).toString())
-        }
-        for (tripleItem in post.getImagesToVoteList()) {
-            container.addView(
-                VotableImageView(context, post, tripleItem, userVote, updateParentContainer)
-            )
-        }
-    }
-
-    private fun getUpdateParentContainer(
+    private fun getOnItemVotedOnListener(
         container: LinearLayout,
         func: (choicePos: String) -> Unit
-    ): VotableContainer.UpdateParentContainer {
-        return object : VotableContainer.UpdateParentContainer {
-            override fun updateContainer(userVote: UserVoteModel?) {
-                if (userVote != null) {
-                    for (view in container.children) {
-                        if (view is VotableContainer) {
-                            view.onItemVotedOn(userVote)
-                            view.userVote = userVote
-                            func.invoke(userVote.voteItem)
-                        }
+    ): VotableContainer.OnItemVotedOnListener {
+        return object : VotableContainer.OnItemVotedOnListener {
+            override fun onItemVotedOn(userVote: UserVoteModel) {
+                for (view in container.children) {
+                    if (view is VotableContainer) {
+                        view.onNewVoteCreated(userVote)
+                        view.userVote = userVote
+                        func.invoke(userVote.choiceId)
                     }
                 }
             }
@@ -239,6 +244,7 @@ class PostsAdapter(
     private class PostImageViewHolder(binding: ViewDataBinding) : PostViewHolder(binding)
 
     open class PostViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+        val username: TextView = binding.root.find(R.id.username)
         val choiceContainer: LinearLayout = binding.root.find(R.id.choice_container)
         val avatarView: AvatarView = binding.root.find(R.id.avatar_view)
         val voteTotalView: HorizontalIconToTextView = binding.root.find(R.id.votesTotal)

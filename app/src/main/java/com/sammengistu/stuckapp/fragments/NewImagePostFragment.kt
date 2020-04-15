@@ -14,7 +14,7 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.database.InjectorUtils
-import com.sammengistu.stuckfirebase.models.DraftPostModel
+import com.sammengistu.stuckfirebase.models.PostModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_new_image_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
@@ -116,9 +116,9 @@ class NewImagePostFragment : BaseNewPostFragment() {
         return true
     }
 
-    private fun updateImagesFromDraft(draftPost: DraftPostModel) {
-        if (draftPost.image1Loc.isNotBlank()) {
-            val file1 = File(draftPost.image1Loc)
+    private fun updateImagesFromDraft(draftPost: PostModel) {
+        if (draftPost.image1.isNotBlank()) {
+            val file1 = File(draftPost.image1)
             bitmap1 = BitmapFactory.decodeFile(file1.path)
             Picasso.get()
                 .load(file1)
@@ -126,8 +126,8 @@ class NewImagePostFragment : BaseNewPostFragment() {
                 .into(image_1)
         }
 
-        if (draftPost.image2Loc.isNotBlank()) {
-            val file2 = File(draftPost.image2Loc)
+        if (draftPost.image2.isNotBlank()) {
+            val file2 = File(draftPost.image2)
             bitmap2 = BitmapFactory.decodeFile(file2.path)
             Picasso.get()
                 .load(file2)

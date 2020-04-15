@@ -22,7 +22,6 @@ import com.sammengistu.stuckfirebase.constants.LOAD_TYPE_FAVORITE
 import com.sammengistu.stuckfirebase.constants.LOAD_TYPE_USER
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.events.IncreaseCommentCountEvent
-import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.utils.DateUtils
@@ -88,7 +87,7 @@ abstract class PostsListFragment : BaseFragment() {
                 if (posts == null) {
                     ErrorNotifier.notifyError(activity, TAG, "Error retrieving posts")
                 } else {
-                    updateAdapter(convertDraftToPost(posts), addItems)
+                    updateAdapter(posts, addItems)
                 }
             }
         } else {
@@ -181,16 +180,6 @@ abstract class PostsListFragment : BaseFragment() {
                 }
             }
         }
-    }
-
-    private fun convertDraftToPost(draftList: List<DraftPostModel>): List<PostModel> {
-        val list = ArrayList<PostModel>()
-        for (draft in draftList) {
-            val post = PostModel(draft)
-            post.draftId = draft._id ?: -1
-            list.add(post)
-        }
-        return list
     }
 
     private fun updateAdapter(

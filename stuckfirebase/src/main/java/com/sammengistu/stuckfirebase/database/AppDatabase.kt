@@ -10,11 +10,11 @@ import com.sammengistu.stuckfirebase.constants.DATABASE_NAME
 import com.sammengistu.stuckfirebase.database.dao.HiddenItemsDao
 import com.sammengistu.stuckfirebase.database.dao.PostDao
 import com.sammengistu.stuckfirebase.database.dao.UsersDao
-import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.HiddenItemModel
+import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 
-@Database(entities = [DraftPostModel::class, HiddenItemModel::class, UserModel::class],
+@Database(entities = [PostModel::class, HiddenItemModel::class, UserModel::class],
     version = 9, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postsDao(): PostDao
@@ -34,7 +34,6 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): AppDatabase {
 
-            //
             val MIGRATION_7_8 = object : Migration(7, 8) {
                 override fun migrate(database: SupportSQLiteDatabase) {
                     database.execSQL("DELETE FROM users")

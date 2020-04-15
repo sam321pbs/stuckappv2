@@ -1,159 +1,117 @@
 package com.sammengistu.stuckfirebase.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude
+import com.sammengistu.stuckfirebase.constants.PostType
 
-@Exclude
-const val MAX_NUMBER_OF_CHOICES = 4
-
+@Entity(tableName = "posts")
 open class PostModel(
     val ownerRef: String,
-    val userName: String,
-    val avatar: String,
     val question: String,
     val privacy: String,
     val category: String,
     val type: String,
+    var image1: String,
+    var image2: String,
+    var choice1: String,
+    var choice2: String,
+    var choice3: String,
+    var choice4: String,
+    var votes1: Int = 0,
+    var votes2: Int = 0,
+    var votes3: Int = 0,
+    var votes4: Int = 0,
     var totalStars: Int = 0,
-    var totalComments: Int = 0,
-    var images: HashMap<String, String> = HashMap(),
-    var choices: HashMap<String, String> = HashMap(),
-    var votes: HashMap<String, Int> = HashMap()
+    var totalComments: Int = 0
 ) : FirebaseItem(ownerRef) {
 
+    // _id is the id inside the local db
     @Exclude
-    var draftId: Int? = null
-
-    init {
-        if (votes.isEmpty()) {
-            addEmptyVotes()
-        }
-    }
+    @PrimaryKey(autoGenerate = true)
+    var _id: Int? = null
 
     constructor() :
-            this("", "", "", "", "", "", "")
+            this("", "", "", "", "",
+                "", "", "", "", "", "")
 
-    constructor(
-        ownerId: String,
-        userName: String,
-        avatar: String,
-        question: String,
-        privacy: String,
-        category: String,
-        type: String,
-        createdAt: Any,
-        totalStars: Int,
-        totalComments: Int,
-        images: HashMap<String, String>,
-        choices: HashMap<String, String>,
-        votes: HashMap<String, Int>
-    ) : this(ownerId, userName, avatar, question, privacy, category, type) {
-        this.createdAt = createdAt
-        this.totalStars = totalStars
-        this.totalComments = totalComments
-        this.images = images
-        this.choices = choices
-        this.votes = votes
-    }
+    constructor(ownerRef: String,
+                question: String,
+                privacy: String,
+                category: String,
+                type: String) : this(ownerRef, question, privacy, category, type,
+        "", "", "", "", "", "")
 
-    constructor(draftPost: DraftPostModel) :
-            this(
-                "",
-                "",
-                "",
-                draftPost.question,
-                draftPost.privacy,
-                draftPost.category,
-                draftPost.type
-            ) {
-        addChoice(draftPost.choice1)
-        addChoice(draftPost.choice2)
-        addChoice(draftPost.choice3)
-        addChoice(draftPost.choice4)
-
-        addImage(draftPost.image1Loc)
-        addImage(draftPost.image2Loc)
-
-        draftId = draftPost._id ?: -1
-
-        addEmptyVotes()
-    }
-
+    /**
+     * creates a map to send updates to server
+     */
     @Exclude
     fun convertPostUpdatesToMap(): Map<String, Any> {
         return mapOf(
             Pair("totalStars", totalStars),
             Pair("totalComments", totalComments),
-            Pair("votes", votes)
+            Pair("votes1", votes1),
+            Pair("votes2", votes2),
+            Pair("votes3", votes3),
+            Pair("votes4", votes4)
         )
     }
 
+    /**
+     * imageLocation - can be a location on the device or a url in firestorage
+     */
     @Exclude
-    fun addImage(loc: String) {
-        val imageKey = convertToChoiceText(images.size + 1)
-        images[imageKey] = loc
+    fun addImage(imageLocation: String) {
+        if (image1.isBlank()) {
+            image1 = imageLocation
+        } else {
+            image2 = imageLocation
+        }
     }
 
     @Exclude
     fun addChoice(choice: String) {
-        if (choice.isNotEmpty()) {
-            val choiceKey = convertToChoiceText(choices.size + 1)
-            choices[choiceKey] = choice
+        when {
+            choice1.isBlank() -> {
+                choice1 = choice
+            }
+            choice2.isBlank() -> {
+                choice2 = choice
+            }
+            choice3.isBlank() -> {
+                choice3 = choice
+            }
+            else -> {
+                choice4 = choice
+            }
+        }
+    }
+
+    /**
+     * return a list of all the choices
+     */
+    @Exclude
+    fun choicesAsList() : List<ChoiceModel> {
+        if (type == PostType.TEXT.toString()) {
+            val choiceList = mutableListOf(
+                ChoiceModel("choice1", choice1, votes1),
+                ChoiceModel("choice2", choice2, votes2)
+            )
+            if (choice3.isNotBlank()) {
+                choiceList.add(ChoiceModel("choice3", choice3, votes3))
+            }
+            if (choice4.isNotBlank()) {
+                choiceList.add(ChoiceModel("choice4", choice4, votes4))
+            }
+            return choiceList
+        } else {
+            return mutableListOf(
+                ChoiceModel("image1", image1, votes1),
+                ChoiceModel("image2", image2, votes2)
+            )
         }
     }
 
     @Exclude
-    fun addEmptyVotes() {
-        for (i in 1..MAX_NUMBER_OF_CHOICES) {
-            val votesKey = convertToChoiceText(votes.size + 1)
-            votes[votesKey] = 0
-        }
-    }
-
-    @Exclude
-    fun getTotalVotes(): Int {
-        var total = 0
-        for (num in votes) {
-            total += num.value
-        }
-        return total
-    }
-
-    @Exclude
-    fun getChoicesToVoteList(): List<Triple<String, String, Int>> {
-        val list = mutableListOf<Triple<String, String, Int>>()
-        for (choice in choices) {
-            list.add(Triple(choice.key, choice.value, votes[choice.key]!!))
-        }
-        return list
-    }
-
-    @Exclude
-    fun getImagesToVoteList(): List<Triple<String, String, Int>> {
-        val list = mutableListOf<Triple<String, String, Int>>()
-        for (image in images) {
-            list.add(Triple(image.key, image.value, votes[image.key]!!))
-        }
-        return list
-    }
-
-    @Exclude
-    fun convertToChoiceText(pos: Int): String = "choice_$pos"
-
-    @Exclude
-    fun toDraft(): DraftPostModel {
-        return DraftPostModel(
-            draftId,
-            ownerRef,
-            question,
-            privacy,
-            category,
-            type,
-            images["choice_1"].orEmpty(),
-            images["choice_2"].orEmpty(),
-            choices["choice_1"].orEmpty(),
-            choices["choice_2"].orEmpty(),
-            choices["choice_3"].orEmpty(),
-            choices["choice_4"].orEmpty()
-        )
-    }
+    fun getTotalVotes(): Int = votes1 + votes2 +  votes3 + votes4
 }

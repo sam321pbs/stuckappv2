@@ -1,6 +1,7 @@
 package com.sammengistu.stuckapp.views
 
 import android.content.Context
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -12,19 +13,19 @@ import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.helpers.ViewHelper
-import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.ChoiceModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.squareup.picasso.Picasso
 import java.io.File
 
-class VotableImageView(
+class ChoiceImageView(
     context: Context,
-    post: PostModel,
-    choiceItem: Triple<String, String, Int>,
-    userVote: UserVoteModel?,
-    updateParentContainer: UpdateParentContainer?
-) : VotableContainer(context, post, choiceItem, userVote, updateParentContainer) {
+    postRef: String,
+    postOwnerRef: String,
+    choice: ChoiceModel,
+    userVote: UserVoteModel?
+) : VotableContainer(context, postRef, postOwnerRef, choice, userVote) {
 
     private val imageView = ImageView(context)
     private val votesTextView = TextView(context)
@@ -33,19 +34,16 @@ class VotableImageView(
     init {
         buildView()
         buildVotesText()
-        if (post.ref.isBlank()) {
-            loadImageFromFile(choiceItem.second)
+        if (postRef.isBlank()) {
+            loadImageFromFile(choice.data)
         } else {
-            loadImage(choiceItem.second)
+            loadImage(choice.data)
         }
     }
 
-    override fun onItemVotedOn(userVote: UserVoteModel?) {
+    override fun onNewVoteCreated(userVote: UserVoteModel?) {
         // Todo: start animation to show votes
         handleVotedItem(userVote, true)
-        if(userVote != null && post.votes[userVote.voteItem] != null) {
-            post.votes[userVote.voteItem]?.plus(1)
-        }
     }
 
     fun setTotal(amount: Int) {
@@ -53,28 +51,36 @@ class VotableImageView(
     }
 
     private fun loadImage(imageLoc: String) {
-        post {
-            Picasso.get()
-                .load(imageLoc)
-                .fit()
+        if (imageLoc.isNotBlank()) {
+            post {
+                Picasso.get()
+                    .load(imageLoc)
+                    .fit()
 //                .centerCrop()
-                .into(imageView)
+                    .into(imageView)
+            }
+        } else {
+            Log.e(TAG, "Image URL is blank")
         }
     }
 
     private fun loadImageFromFile(imageLoc: String) {
-        post {
-            val file = File(imageLoc)
-            Picasso.get()
-                .load(file)
-                .fit()
+        if (imageLoc.isNotBlank()) {
+            post {
+                val file = File(imageLoc)
+                Picasso.get()
+                    .load(file)
+                    .fit()
 //                .centerCrop()
-                .into(imageView)
+                    .into(imageView)
+            }
+        } else {
+            Log.e(TAG, "Image file path is blank")
         }
     }
 
     private fun isUsersPost() =
-        UserRepository.currentUser != null && UserRepository.currentUser!!.ref == post.ownerRef
+        UserRepository.currentUser != null && UserRepository.currentUser!!.ref == postOwnerRef
 
     private fun buildView() {
         val params = getParams()
@@ -93,7 +99,7 @@ class VotableImageView(
 //                    ViewHelper.convertDrawableToBitmap(bitmap))
 //        }
 
-        val userVote = UserVotesCollection.getInstance(context).getVoteForPost(post.ref)
+        val userVote = UserVotesCollection.getInstance(context).getVoteForPost(postRef)
         if (userVote == null) {
             votesTextView.visibility = View.GONE
         } else {
@@ -115,7 +121,7 @@ class VotableImageView(
         votesTextView.setBackgroundResource(R.drawable.circle_gray)
         votesTextView.setPadding(5, 5, 5, 5)
         votesTextView.textSize = 15f
-        setTotal(choiceItem.third)
+        setTotal(choice.votes)
         handleVotedItem(userVote)
 
         addView(votesTextView)
@@ -128,10 +134,10 @@ class VotableImageView(
             votesTextView.visibility = View.GONE
         } else {
             votesTextView.visibility = View.VISIBLE
-            if (choiceItem.first == userVote.voteItem) {
+            if (choice.id == userVote.choiceId) {
                 votesTextView.setBackgroundResource(R.drawable.circle_gold)
                 if (isUpdate) {
-                    setTotal(choiceItem.third + 1)
+                    setTotal(choice.votes + 1)
                 }
             }
         }
@@ -141,6 +147,6 @@ class VotableImageView(
         ViewGroup.LayoutParams(MATCH_PARENT, ViewHelper.convertDpToPixel(200F, context).toInt())
 
     companion object {
-        val TAG = VotableImageView::class.java.simpleName
+        val TAG = ChoiceImageView::class.java.simpleName
     }
 }

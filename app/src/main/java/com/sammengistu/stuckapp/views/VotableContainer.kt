@@ -8,30 +8,32 @@ import android.widget.RelativeLayout
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckfirebase.access.UserVoteAccess
-import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.ChoiceModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 abstract class VotableContainer(
     context: Context,
-    var post: PostModel,
-    var choiceItem: Triple<String, String, Int>,
-    var userVote: UserVoteModel?,
-    private val updateParentContainer: UpdateParentContainer?
+    val postRef: String,
+    val postOwnerRef: String,
+    var choice: ChoiceModel,
+    var userVote: UserVoteModel?
 ) : RelativeLayout(context), DoubleTapGesture.DoubleTapListener {
 
     var mGestureDetector = DoubleTapGesture(context, this)
 
-    interface UpdateParentContainer {
-        fun updateContainer(userVote: UserVoteModel?)
+    private var onItemVotedOnListener: OnItemVotedOnListener? = null
+
+    interface OnItemVotedOnListener {
+        fun onItemVotedOn(userVote: UserVoteModel)
     }
 
     init {
         applyStyleManually(context)
     }
 
-    abstract fun onItemVotedOn(userVote: UserVoteModel?)
+    abstract fun onNewVoteCreated(userVote: UserVoteModel?)
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         return mGestureDetector.onTouchEvent(event)
@@ -42,21 +44,23 @@ abstract class VotableContainer(
             if (user != null && allowUserToVote(user)) {
                 val userVote = UserVoteModel(
                     user.ref,
-                    user.username,
-                    user.avatar,
-                    post.ref,
-                    choiceItem.first
+                    postRef,
+                    choice.id
                 )
                 UserVoteAccess().createItemInFB(userVote)
                 UserVotesCollection.getInstance(context).addVoteToMap(userVote)
-                onItemVotedOn(userVote)
-                updateParentContainer?.updateContainer(userVote)
+                onNewVoteCreated(userVote)
+                onItemVotedOnListener?.onItemVotedOn(userVote)
             }
         }
     }
 
+    fun setOnItemVotedListener(listener: OnItemVotedOnListener) {
+        onItemVotedOnListener = listener
+    }
+
     private fun allowUserToVote(user: UserModel?) =
-        post.ref.isNotBlank() && userVote == null && user != null && post.ownerRef != user.ref
+        postRef.isNotBlank() && userVote == null && user != null && postOwnerRef != user.ref
 
     private fun applyStyleManually(context: Context) {
         val attrs =

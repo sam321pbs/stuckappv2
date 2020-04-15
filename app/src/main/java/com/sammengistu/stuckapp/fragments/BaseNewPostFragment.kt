@@ -31,7 +31,6 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.constants.AnalyticEventType
 import com.sammengistu.stuckfirebase.constants.PostType
-import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
@@ -45,7 +44,7 @@ import java.util.*
 
 abstract class BaseNewPostFragment : BaseFragment() {
 
-    var draft: DraftPostModel? = null
+    var draft: PostModel? = null
     var isPostGettingCreated = false
 
     private var selectedCategory: String = Categories.GENERAL.toString()
@@ -156,7 +155,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
         createNewPost(PostType.TEXT, emptyMap())
     }
 
-    protected fun updateViewFromDraft(draft: DraftPostModel) {
+    protected fun updateViewFromDraft(draft: PostModel) {
         question.setText(draft.question)
         selectedCategory = draft.category
         selectedPrivacy = draft.privacy
@@ -188,7 +187,6 @@ abstract class BaseNewPostFragment : BaseFragment() {
                                 getOnItemCreatedCallback()
                             )
                         } else {
-                            addChoicesToPost(post)
                             PostAccess().createItemInFB(
                                 post,
                                 getOnItemCreatedCallback()
@@ -214,7 +212,7 @@ abstract class BaseNewPostFragment : BaseFragment() {
                     progress_bar.visibility = View.VISIBLE
                 }
                 saveImagesToLocalStorage(data, post)
-                DraftPostAccess(activity!!).insertPost(post.toDraft())
+                DraftPostAccess(activity!!).insertPost(post)
                 uiThread {
                     handleItemCreated("Draft Saved!")
                 }
@@ -305,19 +303,17 @@ abstract class BaseNewPostFragment : BaseFragment() {
         user: UserModel? = null,
         type: PostType
     ): PostModel {
-        var avatar = user?.avatar ?: ""
-        if (selectedPrivacy == PrivacyOptions.ANONYMOUS.toString()) {
-            avatar = avatarKey ?: AssetImageUtils.getRandomAvatarKey() ?: ""
-        }
-        return PostModel(
+        val post = PostModel(
             user?.ref ?: "",
-            user?.username ?: "",
-            avatar,
             question.text.toString().trim(),
             selectedPrivacy,
             selectedCategory,
             type.toString()
         )
+        if (type == PostType.TEXT) {
+            addChoicesToPost(post)
+        }
+        return post
     }
 
     private fun deleteDraft() {

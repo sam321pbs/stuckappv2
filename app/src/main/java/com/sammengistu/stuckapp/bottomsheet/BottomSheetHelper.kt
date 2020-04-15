@@ -288,7 +288,7 @@ class BottomSheetHelper(
     private fun deleteDraft(post: PostModel) {
         doAsync {
             try {
-                val draftId = post.draftId
+                val draftId = post._id
                 if (draftId != null) {
                     DraftPostAccess(context).deletePost(draftId)
                 }
