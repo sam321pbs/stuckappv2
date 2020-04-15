@@ -52,8 +52,8 @@ class UserRepository private constructor(
         firebaseUserId: String, isCurrentUser: Boolean = false,
         callback: (m: UserModel?) -> Unit
     ) {
-        // get from db if exists
-        val users = usersDao.getUserAsList(firebaseUserId)
+        // For now disabling getting and adding user from db
+        val users : List<UserModel>? = null //usersDao.getUserAsList(firebaseUserId)
         if (users.isNullOrEmpty()) {
             Log.d(TAG, "users is empty")
             // get from webservice
@@ -64,12 +64,13 @@ class UserRepository private constructor(
                             callback.invoke(null)
                         } else {
                             callback.invoke(list[0])
-                            if (isCurrentUser) {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    usersDao.deleteByUserRef(firebaseUserId)
-                                    usersDao.insertItem(list[0])
-                                }
-                            }
+                            // For now disabling getting and adding user from db
+//                            if (isCurrentUser) {
+//                                CoroutineScope(Dispatchers.IO).launch {
+//                                    usersDao.deleteByUserRef(firebaseUserId)
+//                                    usersDao.insertItem(list[0])
+//                                }
+//                            }
                         }
                     }
 
@@ -121,9 +122,9 @@ class UserRepository private constructor(
                     val userId = firebaseUserId
                     val repo = InjectorUtils.getUsersRepository(context)
                     CoroutineScope(Dispatchers.Main).launch {
-                        repo.getUser(userId, true) {
-                            currentUser = it
-                            callback.invoke(it)
+                        repo.getUser(userId, true) { user ->
+                            currentUser = user
+                            callback.invoke(user)
                         }
                     }
                 }
