@@ -15,6 +15,7 @@ import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.fragments.HomeListFragmentDirections
 import com.sammengistu.stuckapp.helpers.HiddenItemsHelper
 import com.sammengistu.stuckfirebase.ErrorNotifier
+import com.sammengistu.stuckfirebase.FbStorageHelper
 import com.sammengistu.stuckfirebase.access.*
 import com.sammengistu.stuckfirebase.models.*
 import com.sammengistu.stuckfirebase.models.HiddenItemModel.Companion.TYPE_POST
@@ -272,6 +273,8 @@ class BottomSheetHelper(
             PostAccess().deleteItemInFb(postRef,
                 object : FirebaseItemAccess.OnItemDeleted {
                     override fun onSuccess() {
+                        FbStorageHelper.deleteImage(post.image1)
+                        FbStorageHelper.deleteImage(post.image2)
                         EventBus.getDefault().post(DeletedPostEvent(postRef))
                         Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
                     }
