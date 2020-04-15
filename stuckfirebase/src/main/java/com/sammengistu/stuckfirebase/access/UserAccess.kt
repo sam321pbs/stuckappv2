@@ -42,6 +42,7 @@ class UserAccess : FirebaseItemAccess<UserModel>() {
         FbStorageHelper.uploadAvatar(image,
             object : FbStorageHelper.UploadCompletionCallback {
                 override fun onSuccess(url: String) {
+                    FbStorageHelper.deleteImage(updateUserModel.avatar)
                     updateUserModel.avatar = url
                     updateItemInFB(updateUserModel.ref, updateUserModel.convertUserToMap(), callback)
                 }

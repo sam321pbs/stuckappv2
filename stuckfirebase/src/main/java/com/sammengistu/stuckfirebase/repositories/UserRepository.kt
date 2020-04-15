@@ -28,14 +28,18 @@ class UserRepository private constructor(
     ): LiveData<UserModel> {
         val liveData = MutableLiveData<UserModel>()
 
-        if (UserRepository.currentUser?.ref == ownerRef) {
-            // we will retrieve current user from db
-            return usersDao.getUserSingle(ownerRef)
-        } else {
+//        if (currentUser?.ref == ownerRef) {
+//            // we will retrieve current user from db
+//            return usersDao.getUserSingle(ownerRef)
+//        } else {
             userAccess.getItem(ownerRef,
                 object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
                     override fun onSuccess(item: UserModel) {
                         liveData.value = item
+                        if (currentUser?.ref == ownerRef) {
+                            // To set latest data
+                            currentUser = item
+                        }
                     }
 
                     override fun onFailed(e: Exception) {
@@ -44,7 +48,7 @@ class UserRepository private constructor(
                     }
                 }
             )
-        }
+//        }
         return liveData
     }
 
