@@ -7,20 +7,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.helpers.ViewHelper
-import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.ChoiceModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.jetbrains.anko.centerVertically
 
-class VotableTextChoiceView(
+class ChoiceView(
     context: Context,
-    post: PostModel,
-    choiceItem: Triple<String, String, Int>,
-    userVote: UserVoteModel?,
-    updateParentContainer: UpdateParentContainer?
-) : VotableContainer(context, post, choiceItem, userVote, updateParentContainer) {
+    postRef: String,
+    postOwnerRef: String,
+    choice: ChoiceModel,
+    userVote: UserVoteModel?
+) : VotableContainer(context, postRef, postOwnerRef, choice, userVote) {
 
-    private val TAG = VotableTextChoiceView::class.java.simpleName
+    private val TAG = ChoiceView::class.java.simpleName
 
     private val bullet = ImageView(context)
     private val choiceText = TextView(context)
@@ -30,19 +30,16 @@ class VotableTextChoiceView(
         buildViews()
     }
 
-    override fun onItemVotedOn(userVote: UserVoteModel?) {
+    override fun onNewVoteCreated(userVote: UserVoteModel?) {
         // Todo: start animation to show votes
         handleVotedItem(userVote, true)
-        if(userVote != null && post.votes[userVote.voteItem] != null) {
-            post.votes[userVote.voteItem]?.plus(1)
-        }
     }
 
     fun setChoiceText(choiceText: String) {
         this.choiceText.text = choiceText
     }
 
-    fun setTotal(total: Int) {
+    fun setVotes(total: Int) {
         votesText.text = total.toString()
     }
 
@@ -75,7 +72,7 @@ class VotableTextChoiceView(
         votesText.setPadding(2, 5, 5, 5)
         votesText.textSize = 15f
         setBackgroundColor(resources.getColor(R.color.white))
-        setTotal(choiceItem.third)
+        setVotes(choice.votes)
 
         handleVotedItem(userVote)
         addView(votesText)
@@ -90,7 +87,7 @@ class VotableTextChoiceView(
         choiceText.layoutParams = choiceTextParams
         choiceText.setTextColor(resources.getColor(android.R.color.black))
         choiceText.textSize = 21f
-        setChoiceText(choiceItem.second)
+        setChoiceText(choice.data)
         addView(choiceText)
     }
 
@@ -101,15 +98,15 @@ class VotableTextChoiceView(
             votesText.visibility = View.INVISIBLE
         } else {
             votesText.visibility = View.VISIBLE
-            if (choiceItem.first == userVote.voteItem) {
+            if (choice.id == userVote.choiceId) {
                 votesText.setBackgroundResource(R.drawable.circle_gold)
                 if (isUpdate) {
-                    setTotal(choiceItem.third + 1)
+                    setVotes(choice.votes + 1)
                 }
             }
         }
     }
 
     private fun isUsersPost() =
-        UserRepository.currentUser != null && UserRepository.currentUser?.ref == post.ownerRef
+        UserRepository.currentUser != null && UserRepository.currentUser?.ref == postOwnerRef
 }

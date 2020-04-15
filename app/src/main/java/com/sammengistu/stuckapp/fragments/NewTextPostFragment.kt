@@ -15,7 +15,7 @@ import com.sammengistu.stuckapp.utils.KeyboardUtils
 import com.sammengistu.stuckapp.views.ChoiceCardView
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.database.InjectorUtils
-import com.sammengistu.stuckfirebase.models.DraftPostModel
+import com.sammengistu.stuckfirebase.models.PostModel
 import kotlinx.android.synthetic.main.fragment_new_text_post.*
 import kotlinx.android.synthetic.main.new_post_basic_detail_card.*
 
@@ -118,7 +118,7 @@ class NewTextPostFragment : BaseNewPostFragment(), ChoiceCardView.OnClearClicked
         composeAreaContainer.visibility = View.GONE
     }
 
-    private fun updateViewFromDraftItem(draftPost: DraftPostModel) {
+    private fun updateViewFromDraftItem(draftPost: PostModel) {
         choicesContainer.removeAllViews()
         updateViewFromDraft(draftPost)
         if (draftPost.choice1.isNotBlank()) {

@@ -7,7 +7,6 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemsRetrieved
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
 import com.sammengistu.stuckfirebase.database.dao.PostDao
-import com.sammengistu.stuckfirebase.models.DraftPostModel
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
 
@@ -19,9 +18,9 @@ class PostRepository private constructor(val dao: PostDao) {
 
     fun getDraftPost(draftId: Int) = dao.getDraftPost(draftId)
 
-    fun insertDraftPost(post: DraftPostModel) = dao.insertPost(post)
+    fun insertDraftPost(post: PostModel) = dao.insertPost(post)
 
-    fun deleteDraftPost(post: DraftPostModel) = dao.deletePost(post)
+    fun deleteDraftPost(post: PostModel) = dao.deletePost(post)
 
     fun deleteDraftPost(draftId: Int) = dao.deleteByPostId(draftId)
 

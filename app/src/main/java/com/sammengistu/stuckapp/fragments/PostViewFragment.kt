@@ -1,6 +1,7 @@
 package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -13,13 +14,16 @@ import com.sammengistu.stuckapp.collections.UserStarredCollection
 import com.sammengistu.stuckapp.collections.UserVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.utils.StringUtils
-import com.sammengistu.stuckapp.views.VotableImageView
-import com.sammengistu.stuckapp.views.VotableTextChoiceView
+import com.sammengistu.stuckapp.views.ChoiceImageView
+import com.sammengistu.stuckapp.views.ChoiceView
+import com.sammengistu.stuckapp.views.VotableContainer
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
+import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.models.PostModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
 import com.sammengistu.stuckfirebase.utils.DateUtils
 import kotlinx.android.synthetic.main.fragment_post_view.*
@@ -58,14 +62,24 @@ class PostViewFragment : BaseFragment() {
         val username = username
 
         if (PrivacyOptions.ANONYMOUS.toString() == post.privacy) {
-            val avatar = AssetImageUtils.getAvatar(post.avatar)
+            val avatar = AssetImageUtils.getRandomAvatar()
             avatarView.setImageBitmap(avatar)
             username.text = "Anonymous"
             avatarView.setOnClickListener(null)
             username.setOnClickListener(null)
         } else {
-            avatarView.loadImage(post.avatar)
-            username.text = post.userName
+            UserAccess().getItem(post.ownerRef,
+                object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
+                    override fun onSuccess(item: UserModel) {
+                        // TODO: check that views are alive
+                       avatarView.loadImage(item.avatar)
+                        username.text = item.username
+                    }
+
+                    override fun onFailed(e: Exception) {
+                        Log.e(TAG, "Failed to load user data from post", e)
+                    }
+                })
         }
 
         question.text = StringUtils.capitilizeFirstLetter(post.question)
@@ -77,12 +91,7 @@ class PostViewFragment : BaseFragment() {
         menu_icon.visibility = View.INVISIBLE
 
         val userVote = UserVotesCollection.getInstance(context!!).getVoteForPost(post.ref)
-        if (post.type == PostType.TEXT.toString()) {
-            buildTextChoices(choiceContainer, post, userVote)
-        } else if (post.type == PostType.LANDSCAPE.toString()) {
-            buildImageChoices(choiceContainer, post, userVote)
-        }
-
+        buildChoices(choiceContainer, post, userVote)
         updateStarIcon(post, user_star_icon)
 
         show_comments.setOnClickListener {
@@ -103,27 +112,23 @@ class PostViewFragment : BaseFragment() {
         }
     }
 
-    private fun buildTextChoices(
+    private fun buildChoices(
         choiceContainer: LinearLayout,
         post: PostModel,
         userVote: UserVoteModel?
     ) {
         choiceContainer.removeAllViews()
-        for (tripleItem in post.getChoicesToVoteList()) {
-            choiceContainer.addView(
-                VotableTextChoiceView(activity!!, post, tripleItem, userVote, null)
-            )
-        }
-    }
 
-    private fun buildImageChoices(
-        choiceContainer: LinearLayout, post: PostModel, userVote: UserVoteModel?
-    ) {
-        choiceContainer.removeAllViews()
-        for (tripleItem in post.getImagesToVoteList()) {
-            choiceContainer.addView(
-                VotableImageView(context!!, post, tripleItem, userVote, null)
-            )
+        for (choice in post.choicesAsList()) {
+            val choiceView : VotableContainer =
+                when (post.type) {
+                    PostType.TEXT.toString() ->
+                        ChoiceView(context!!, post.ref, post.ownerRef, choice, userVote)
+                    else ->
+                        ChoiceImageView(context!!, post.ref, post.ownerRef, choice, userVote)
+                }
+
+            choiceContainer.addView(choiceView)
         }
     }
 
