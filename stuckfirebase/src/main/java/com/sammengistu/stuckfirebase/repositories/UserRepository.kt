@@ -13,7 +13,6 @@ import com.sammengistu.stuckfirebase.database.dao.UsersDao
 import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 private val TAG = UserRepository::class.java.simpleName
@@ -91,21 +90,30 @@ class UserRepository private constructor(
     }
 
     suspend fun updateUser(user: UserModel) {
-        val updates = usersDao.updateItem(user)
-        Log.d(TAG, "updated $updates users in db")
+//        val updates = usersDao.updateItem(user)
+//        Log.d(TAG, "updated $updates users in db")
     }
 
     suspend fun deleteUser(user: UserModel) {
         Log.d(TAG, "deleting user in db")
-        usersDao.deleteByUserRef(user.ref)
+//        usersDao.deleteByUserRef(user.ref)
     }
 
     companion object {
 
-        var currentUser: UserModel? = null
+        private var currentUser: UserModel? = null
         private val firebaseUser = FirebaseAuth.getInstance().currentUser
-        val firebaseUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        private val firebaseUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         @Volatile private var instance: UserRepository? = null
+
+        /**
+         * Only use this method when needed else use getUserInstance()
+         */
+        fun getCurrentUser() = currentUser
+
+        fun removeCurrentUser() {
+            currentUser = null
+        }
 
         fun getInstance(userAccess: UserAccess, usersDao: UsersDao) =
             instance
@@ -182,9 +190,9 @@ class UserRepository private constructor(
                     override fun onSuccess() {
                         // Todo: delete all posts, votes, avatar
                         currentUser = null
-                        GlobalScope.launch {
-                            InjectorUtils.getUsersRepository(context).deleteUser(user)
-                        }
+//                        GlobalScope.launch {
+//                            InjectorUtils.getUsersRepository(context).deleteUser(user)
+//                        }
                     }
 
                     override fun onFailed(e: Exception) {

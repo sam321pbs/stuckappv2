@@ -108,5 +108,5 @@ class ChoiceView(
     }
 
     private fun isUsersPost() =
-        UserRepository.currentUser != null && UserRepository.currentUser?.ref == postOwnerRef
+        UserRepository.getCurrentUser() != null && UserRepository.getCurrentUser()?.ref == postOwnerRef
 }

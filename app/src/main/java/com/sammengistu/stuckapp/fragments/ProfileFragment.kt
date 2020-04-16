@@ -221,13 +221,7 @@ class ProfileFragment : BaseFragment() {
             UserAccess().updateUserAndAvatar(avatarImage!!, updateUser,
                 object : FirebaseItemAccess.OnItemUpdated {
                     override fun onSuccess() {
-                        if (activity != null) {
-                            progressBar.visibility = View.GONE
-                            userViewModel.updateUser(updateUser)
-                            Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT)
-                                .show()
-                            activity!!.supportFragmentManager.popBackStack()
-                        }
+                        onSuccessfulUserUpdate(updateUser)
                     }
 
                     override fun onFailed(e: Exception) {
@@ -244,6 +238,41 @@ class ProfileFragment : BaseFragment() {
                 })
         } else {
             sendUpdates(updateUser)
+        }
+    }
+
+    private fun sendUpdates(updatedUser: UserModel) {
+        UserAccess().updateItemInFB(
+            updatedUser.ref,
+            updatedUser.convertUserToMap(),
+            object : FirebaseItemAccess.OnItemUpdated {
+                override fun onSuccess() {
+                    onSuccessfulUserUpdate(updatedUser)
+                }
+
+                override fun onFailed(e: Exception) {
+                    if (activity != null) {
+                        progressBar.visibility = View.GONE
+                        ErrorNotifier.notifyError(
+                            activity as Context,
+                            TAG,
+                            "Failed to update profile",
+                            e
+                        )
+                    }
+                }
+            })
+    }
+
+    private fun onSuccessfulUserUpdate(updatedUser: UserModel) {
+        if (activity != null) {
+            progressBar.visibility = View.GONE
+            userViewModel.updateUser(updatedUser)
+            // This will trigger user refresh in the future
+            UserRepository.removeCurrentUser()
+            Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT)
+                .show()
+            activity!!.supportFragmentManager.popBackStack()
         }
     }
 
@@ -272,35 +301,6 @@ class ProfileFragment : BaseFragment() {
                     ErrorNotifier.notifyError(activity, "Error Occurred", TAG, e)
                 }
             }, 1)
-    }
-
-    private fun sendUpdates(updatedUser: UserModel) {
-        UserAccess().updateItemInFB(
-            updatedUser.ref,
-            updatedUser.convertUserToMap(),
-            object : FirebaseItemAccess.OnItemUpdated {
-                override fun onSuccess() {
-                    if (activity != null) {
-                        progressBar.visibility = View.GONE
-                        userViewModel.updateUser(updatedUser)
-                        Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT)
-                            .show()
-                        activity!!.supportFragmentManager.popBackStack()
-                    }
-                }
-
-                override fun onFailed(e: Exception) {
-                    if (activity != null) {
-                        progressBar.visibility = View.GONE
-                        ErrorNotifier.notifyError(
-                            activity as Context,
-                            TAG,
-                            "Failed to update profile",
-                            e
-                        )
-                    }
-                }
-            })
     }
 
     private fun createProfile() {
