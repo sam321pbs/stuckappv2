@@ -4,9 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -19,7 +17,6 @@ import com.sammengistu.stuckapp.constants.Gender.Companion.MALE
 import com.sammengistu.stuckapp.dialog.GetImageFromDialog
 import com.sammengistu.stuckapp.events.GetPhotoFromEvent
 import com.sammengistu.stuckapp.events.OnAvatarSelected
-import com.sammengistu.stuckapp.helpers.KeyboardStateHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper
 import com.sammengistu.stuckapp.utils.LoadImageFromGalleryHelper.Companion.loadImageFromGallery
 import com.sammengistu.stuckapp.views.AvatarView
@@ -34,8 +31,6 @@ import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.util.*
-import kotlin.collections.ArrayList
 
 class ProfileFragment : BaseFragment() {
 
@@ -48,7 +43,6 @@ class ProfileFragment : BaseFragment() {
     private lateinit var educationField: InputFormItemView
     private lateinit var ageGroupSpinner: Spinner
     private lateinit var genderSpinner: Spinner
-    private lateinit var createProfileButton: Button
     private lateinit var progressBar: FrameLayout
 
     private var avatarImage: Bitmap? = null
@@ -59,7 +53,7 @@ class ProfileFragment : BaseFragment() {
     private lateinit var arrayAgeGroup: Array<CharSequence>
     private lateinit var arrayGender: Array<CharSequence>
 
-    val userViewModel: UserViewModel by viewModels {
+    private val userViewModel: UserViewModel by viewModels {
         InjectorUtils.provideUserFactory(requireContext())
     }
 
@@ -81,6 +75,11 @@ class ProfileFragment : BaseFragment() {
     override fun getLayoutId(): Int = R.layout.fragment_profile
 
     override fun getFragmentTag(): String = TAG
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -110,31 +109,6 @@ class ProfileFragment : BaseFragment() {
         addAvatar.setOnClickListener {
             GetImageFromDialog().show(activity!!.supportFragmentManager, GetImageFromDialog.TAG)
         }
-        createProfileButton.setOnClickListener {
-            if (createMode) {
-                createProfile()
-            } else {
-                handleProfileUpdate()
-            }
-        }
-
-        KeyboardStateHelper(view) { open ->
-            if (open) {
-                createProfileButton.visibility = View.GONE
-            } else {
-                Timer().schedule(object : TimerTask() {
-                    override fun run() {
-                        if (activity != null) {
-                            activity!!.runOnUiThread {
-                                if (createProfileButton != null) {
-                                    createProfileButton.visibility = View.VISIBLE
-                                }
-                            }
-                        }
-                    }
-                }, 200)
-            }
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -157,6 +131,33 @@ class ProfileFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_profile, menu)
+        val doneMenuItem: MenuItem = menu.findItem(R.id.menu_item_done)
+        val updateMenuItem: MenuItem = menu.findItem(R.id.menu_item_update)
+        if (createMode) {
+            updateMenuItem.isVisible = false
+            doneMenuItem.isVisible = true
+        } else {
+            updateMenuItem.isVisible = true
+            doneMenuItem.isVisible = false
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item_update -> {
+                handleProfileUpdate()
+                true
+            }
+            R.id.menu_item_done -> {
+                createProfile()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun allFieldsValid(): Boolean {
@@ -195,7 +196,6 @@ class ProfileFragment : BaseFragment() {
             educationField.setText(user.education)
             ageGroupSpinner.setSelection(convertAgeGroupToPos(user.ageGroup))
             genderSpinner.setSelection(convertGenderToPos(user.gender))
-            createProfileButton.text = "Update Profile"
         }
     }
 
@@ -360,7 +360,6 @@ class ProfileFragment : BaseFragment() {
         educationField = education_field
         ageGroupSpinner = age_group_spinner
         genderSpinner = gender_spinner
-        createProfileButton = create_profile_button
         progressBar = progress_bar_container
 
         setupSpinners()
