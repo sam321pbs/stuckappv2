@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import androidx.core.view.GravityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -140,13 +139,10 @@ class MainActivity : LoggedInActivity() {
     }
 
     override fun onSupportNavigateUp() =
-        NavigationUI.navigateUp(appBarNavController, drawer_layout) || super.onSupportNavigateUp()
+        NavigationUI.navigateUp(appBarNavController, appBarConfiguration) || super.onSupportNavigateUp()
 
     override fun onBackPressed() {
-        //the code is beautiful enough without comments
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
+        if (currentNavController?.value?.popBackStack() == false) {
             super.onBackPressed()
         }
     }
