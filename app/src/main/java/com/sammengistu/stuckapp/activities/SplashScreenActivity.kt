@@ -44,7 +44,7 @@ class SplashScreenActivity : BaseActivity() {
                 // response.getError().getErrorCode() and handle the error.
                 // ...
                 notifyError(this, "Error signing in")
-                Log.d(TAG, "Error signing in: ${response!!.error!!.errorCode}")
+                Log.e(TAG, "Error signing in: ${response!!.error!!.errorCode}")
                 try_again_container.visibility = View.VISIBLE
                 progress_bar.visibility = View.GONE
             }
@@ -56,10 +56,12 @@ class SplashScreenActivity : BaseActivity() {
             Log.e(TAG, "User is not signed in")
             launchSignInActivity()
         } else {
-            UserRepository.getUserInstance(this) {
-                if (it == null) {
+            UserRepository.getUserInstance(this) { user ->
+                if (user == null) {
+                    Log.d(TAG, "User needs to create a profile")
                     launchProfileActivity()
                 } else {
+                    Log.d(TAG, "Found user")
                     launchMainActivity()
                 }
             }

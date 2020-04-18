@@ -173,6 +173,8 @@ class MainActivity : LoggedInActivity() {
             UserVotesCollection.getInstance(this)
             DeviceTokenAccess(user.ref).checkTokenExists(this)
             HiddenItemsHelper(user.ref, this)
+        } else {
+            Log.e(TAG, "User was not loaded")
         }
     }
 

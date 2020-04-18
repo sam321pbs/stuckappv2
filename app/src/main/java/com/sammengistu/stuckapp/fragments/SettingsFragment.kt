@@ -13,24 +13,24 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : BaseFragment() {
 
-    private lateinit var notificationItem: TextView
-    private lateinit var deleteAccountItem: TextView
-    private lateinit var logoutItem: TextView
+    private lateinit var notificationTView: TextView
+    private lateinit var deleteAccountTView: TextView
+    private lateinit var logoutTView: TextView
 
     override fun getLayoutId() = R.layout.fragment_settings
     override fun getFragmentTag(): String = TAG
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        notificationItem = notifications_setting
-        deleteAccountItem = delete_account
-        logoutItem = logout
-        notificationItem.setOnClickListener {
+        notificationTView = notifications_setting
+        deleteAccountTView = delete_account
+        logoutTView = logout
+        notificationTView.setOnClickListener {
             val action = SettingsFragmentDirections.actionSettingsFragmentToNotificationSettingsFragment()
             findNavController().navigate(action)
         }
-        deleteAccountItem.setOnClickListener { showDeleteAccountAlertDialog() }
-        logoutItem.setOnClickListener {
+        deleteAccountTView.setOnClickListener { showDeleteAccountAlertDialog() }
+        logoutTView.setOnClickListener {
             UserVotesCollection.getInstance(context!!).clearList()
             UserStarredCollection.getInstance(context!!).clearList()
             UserRepository.logUserOut()

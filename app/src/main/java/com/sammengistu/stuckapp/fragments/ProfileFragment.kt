@@ -306,9 +306,10 @@ class ProfileFragment : BaseFragment() {
     private fun createProfile() {
         if (allFieldsValid()) {
             progressBar.visibility = View.VISIBLE
-            val firebaseUser = FirebaseAuth.getInstance().currentUser
+            val firebaseUser = UserRepository.getFirebaseUser()
             if (firebaseUser != null) {
                 val userModel = buildUserModel(UserModel())
+                userModel.userId = firebaseUser.uid
                 checkUsernameBeforeUpdating(userModel) {
                     UserAccess().createUser(avatarImage!!, userModel,
                         object : FirebaseItemAccess.OnItemCreated<UserModel> {

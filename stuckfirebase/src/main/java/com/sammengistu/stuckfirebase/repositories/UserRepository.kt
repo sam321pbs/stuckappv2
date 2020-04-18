@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
@@ -58,14 +59,16 @@ class UserRepository private constructor(
         // For now disabling getting and adding user from db
         val users : List<UserModel>? = null //usersDao.getUserAsList(firebaseUserId)
         if (users.isNullOrEmpty()) {
-            Log.d(TAG, "users is empty")
+            Log.d(TAG, "users is empty, loading user")
             // get from webservice
             userAccess.getItemsWhereEqual("userId", firebaseUserId,
                 object : FirebaseItemAccess.OnItemsRetrieved<UserModel> {
                     override fun onSuccess(list: List<UserModel>) {
                         if (list.isNullOrEmpty()) {
+                            Log.e(TAG, "Retrieved no users for id")
                             callback.invoke(null)
                         } else {
+                            Log.e(TAG, "Retrieved ${list.size} users")
                             callback.invoke(list[0])
                             // For now disabling getting and adding user from db
 //                            if (isCurrentUser) {
@@ -102,14 +105,15 @@ class UserRepository private constructor(
     companion object {
 
         private var currentUser: UserModel? = null
-        private val firebaseUser = FirebaseAuth.getInstance().currentUser
-        private val firebaseUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
         @Volatile private var instance: UserRepository? = null
 
         /**
          * Only use this method when needed else use getUserInstance()
          */
         fun getCurrentUser() = currentUser
+
+        fun getFirebaseUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
         fun removeCurrentUser() {
             currentUser = null
@@ -127,14 +131,13 @@ class UserRepository private constructor(
 
         fun getUserInstance(context: Context, callback: (m: UserModel?) -> Unit) {
             when {
-                firebaseUser == null -> {
+                FirebaseAuth.getInstance().currentUser == null -> {
                     callback.invoke(null)
                 }
                 currentUser == null -> {
-                    val userId = firebaseUserId
                     val repo = InjectorUtils.getUsersRepository(context)
                     CoroutineScope(Dispatchers.Main).launch {
-                        repo.getUser(userId, true) { user ->
+                        repo.getUser(getFirebaseUser()!!.uid, true) { user ->
                             currentUser = user
                             callback.invoke(user)
                         }
@@ -147,8 +150,8 @@ class UserRepository private constructor(
         }
 
         fun logUserOut() {
-            currentUser = null
             FirebaseAuth.getInstance().signOut()
+            currentUser = null
         }
 
         fun deleteUserAccount(context: Context) {
