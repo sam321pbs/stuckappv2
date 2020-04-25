@@ -10,28 +10,12 @@ class PostAccess: FirebaseItemAccess<PostModel>() {
 
     override fun getCollectionRef() = getEnvironmentCollectionRef(POSTS)
 
-    fun incrementVote(ref: String, key: String) {
-        incrementField(ref, "votes.$key")
-    }
-
-    fun getRecentPosts(listener: OnItemsRetrieved<PostModel>) {
-        getItems(listener)
-    }
-
     fun getRecentPosts(before: Any?, listener: OnItemsRetrieved<PostModel>) {
         getItemsBefore(before, listener)
     }
 
-    fun getPostsInCategory(filterCategory: String, listener: OnItemsRetrieved<PostModel>) {
-        getItemsWhereEqual("category", filterCategory, listener)
-    }
-
     fun getPostsInCategory(filterCategory: String, before: Any?, listener: OnItemsRetrieved<PostModel>) {
         getItemsWhereEqualAndBefore("category", filterCategory, before, listener)
-    }
-
-    fun getOwnerPosts(ownerRef: String, listener: OnItemsRetrieved<PostModel>) {
-        getItemsWhereEqual("ownerRef", ownerRef, listener)
     }
 
     fun getOwnerPosts(ownerRef: String, before: Any?, listener: OnItemsRetrieved<PostModel>) {

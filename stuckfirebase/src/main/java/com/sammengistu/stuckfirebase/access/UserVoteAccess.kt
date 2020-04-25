@@ -13,8 +13,4 @@ class UserVoteAccess : FirebaseItemAccess<UserVoteModel>() {
     override fun getCollectionRef(): CollectionReference {
         return getEnvironmentCollectionRef(USER_VOTES)
     }
-
-    override fun onItemCreated(item: UserVoteModel) {
-        PostAccess().incrementVote(item.postRef, item.choiceId)
-    }
 }

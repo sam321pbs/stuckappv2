@@ -218,8 +218,8 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             var resultList: List<T> = ArrayList()
             if (listenerRef != null) {
                 if (document != null) {
-                    resultList = document.toObjects(getModelClass())
                     Log.d(TAG, "Retrieved ${resultList.size} ${getModelClass().simpleName}")
+                    resultList = document.toObjects(getModelClass())
                     addRefToItems(document, resultList)
                 }
                 listenerRef.onSuccess(resultList)
