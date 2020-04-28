@@ -4,14 +4,14 @@ import android.content.Context
 import android.util.Log
 import com.sammengistu.stuckapp.events.DataChangedEvent
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
-import com.sammengistu.stuckfirebase.access.UserVoteAccess
-import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.access.PostVoteAccess
+import com.sammengistu.stuckfirebase.models.PostVoteModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.greenrobot.eventbus.EventBus
 
-class UserVotesCollection {
+class PostVotesCollection {
 
-    fun addVoteToMap(vote: UserVoteModel) {
+    fun addVoteToMap(vote: PostVoteModel) {
         voteMap[vote.postRef] = vote
     }
 
@@ -22,14 +22,14 @@ class UserVotesCollection {
     }
 
     companion object {
-        private val TAG = UserVotesCollection::class.java.simpleName
-        private val voteMap = HashMap<String, UserVoteModel>()
+        private val TAG = PostVotesCollection::class.java.simpleName
+        private val voteMap = HashMap<String, PostVoteModel>()
 
-        @Volatile private var INSTANCE: UserVotesCollection? = null
+        @Volatile private var INSTANCE: PostVotesCollection? = null
 
-        fun getInstance(context: Context): UserVotesCollection =
+        fun getInstance(context: Context): PostVotesCollection =
             INSTANCE ?: synchronized(this) {
-                INSTANCE ?: UserVotesCollection().also {
+                INSTANCE ?: PostVotesCollection().also {
                     INSTANCE = it
                     loadUserVotes(context)
                 }
@@ -38,9 +38,9 @@ class UserVotesCollection {
         private fun loadUserVotes(context: Context) {
             UserRepository.getUserInstance(context) { user ->
                 if (user != null) {
-                    UserVoteAccess().getItemsWhereEqual("ownerRef", user.ref,
-                        object : FirebaseItemAccess.OnItemsRetrieved<UserVoteModel> {
-                            override fun onSuccess(list: List<UserVoteModel>) {
+                    PostVoteAccess().getItemsWhereEqual("ownerRef", user.ref,
+                        object : FirebaseItemAccess.OnItemsRetrieved<PostVoteModel> {
+                            override fun onSuccess(list: List<PostVoteModel>) {
                                 Log.d(TAG, "Finished votes load")
                                 convertVotesToMap(list)
                                 EventBus.getDefault().post(DataChangedEvent())
@@ -54,9 +54,9 @@ class UserVotesCollection {
             }
         }
 
-        private fun convertVotesToMap(list: List<UserVoteModel>) {
-            for (userVote in list) {
-                voteMap[userVote.postRef] = userVote
+        private fun convertVotesToMap(list: List<PostVoteModel>) {
+            for (postVote in list) {
+                voteMap[postVote.postRef] = postVote
             }
         }
     }

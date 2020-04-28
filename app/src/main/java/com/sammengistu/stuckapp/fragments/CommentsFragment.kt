@@ -35,6 +35,7 @@ class CommentsFragment : BaseFragment() {
     private val args: CommentsFragmentArgs by navArgs()
 
     private lateinit var postRef: String
+    private lateinit var postOwnerRef: String
     private val commentsViewModel: CommentsViewModel by viewModels {
         InjectorUtils.provideCommentFactory()
     }
@@ -52,6 +53,7 @@ class CommentsFragment : BaseFragment() {
         progressBar = progress_bar
 
         postRef = args.postRef
+        postOwnerRef = args.postOwnerRef
         choicePos = args.userChoice
 
         if (postRef.isBlank()) {
@@ -112,6 +114,7 @@ class CommentsFragment : BaseFragment() {
         if (user != null) {
             val commentModel = CommentModel(
                 postRef,
+                postOwnerRef,
                 user.ref,
                 commentET.text.toString(),
                 choicePos

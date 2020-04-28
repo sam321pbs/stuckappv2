@@ -1,7 +1,6 @@
 package com.sammengistu.stuckapp.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.BR
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserStarredCollection
-import com.sammengistu.stuckapp.collections.UserVotesCollection
+import com.sammengistu.stuckapp.collections.PostVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.events.DeletedPostEvent
 import com.sammengistu.stuckapp.fragments.DraftListFragmentDirections
@@ -29,13 +28,11 @@ import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
-import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.exceptions.DocNotExistException
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
-import com.sammengistu.stuckfirebase.models.UserModel
-import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.models.PostVoteModel
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.find
 
@@ -88,7 +85,7 @@ class PostsAdapter(
             holder.username.text = post.owner?.username
         }
 
-        val userVote = UserVotesCollection.getInstance(context).getVoteForPost(post.ref)
+        val userVote = PostVotesCollection.getInstance(context).getVoteForPost(post.ref)
 
         buildChoices(holder, post, userVote)
         handleDraftPost(holder, post)
@@ -191,7 +188,7 @@ class PostsAdapter(
     private fun buildChoices(
         holder: PostViewHolder,
         post: PostModel,
-        userVote: UserVoteModel?
+        postVote: PostVoteModel?
     ) {
         val container = holder.choiceContainer
         container.removeAllViews()
@@ -202,9 +199,9 @@ class PostsAdapter(
             val choiceView : VotableContainer =
                 when (post.type) {
                     PostType.TEXT.toString() ->
-                        ChoiceView(context, post.ref, post.ownerRef, choice, userVote)
+                        ChoiceView(context, post.ref, post.ownerRef, choice, postVote)
                     else ->
-                        ChoiceImageView(context, post.ref, post.ownerRef, choice, userVote)
+                        ChoiceImageView(context, post.ref, post.ownerRef, choice, postVote)
                 }
 
             choiceView.setOnItemVotedListener(listener)
@@ -217,12 +214,12 @@ class PostsAdapter(
         func: (choicePos: String) -> Unit
     ): VotableContainer.OnItemVotedOnListener {
         return object : VotableContainer.OnItemVotedOnListener {
-            override fun onItemVotedOn(userVote: UserVoteModel) {
+            override fun onItemVotedOn(postVote: PostVoteModel) {
                 for (view in container.children) {
                     if (view is VotableContainer) {
-                        view.onNewVoteCreated(userVote)
-                        view.userVote = userVote
-                        func.invoke(userVote.choiceId)
+                        view.onNewVoteCreated(postVote)
+                        view.postVote = postVote
+                        func.invoke(postVote.choiceId)
                     }
                 }
             }

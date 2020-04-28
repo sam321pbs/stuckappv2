@@ -188,7 +188,7 @@ class BottomSheetHelper(
     private fun showComments() {
         hideMenu()
         if (context is MainActivity) {
-            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
+            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0, post.ownerRef)
             context.nav_host_fragment.findNavController().navigate(action)
         }
     }

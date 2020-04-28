@@ -1,7 +1,6 @@
 package com.sammengistu.stuckapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -13,7 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserStarredCollection
-import com.sammengistu.stuckapp.collections.UserVotesCollection
+import com.sammengistu.stuckapp.collections.PostVotesCollection
 import com.sammengistu.stuckapp.constants.PrivacyOptions
 import com.sammengistu.stuckapp.utils.StringUtils
 import com.sammengistu.stuckapp.views.ChoiceImageView
@@ -22,13 +21,10 @@ import com.sammengistu.stuckapp.views.VotableContainer
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
-import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.constants.PostType
 import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.PostModel
-import com.sammengistu.stuckfirebase.models.UserModel
-import com.sammengistu.stuckfirebase.models.UserVoteModel
-import com.sammengistu.stuckfirebase.repositories.UserRepository
+import com.sammengistu.stuckfirebase.models.PostVoteModel
 import com.sammengistu.stuckfirebase.utils.DateUtils
 import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.fragment_post_view.*
@@ -94,12 +90,12 @@ class PostViewFragment : BaseFragment() {
         category.setText(StringUtils.capitilizeFirstLetter(post.category))
         menu_icon.visibility = View.INVISIBLE
 
-        val userVote = UserVotesCollection.getInstance(context!!).getVoteForPost(post.ref)
+        val userVote = PostVotesCollection.getInstance(context!!).getVoteForPost(post.ref)
         buildChoices(choiceContainer, post, userVote)
         updateStarIcon(post, user_star_icon)
 
         show_comments.setOnClickListener {
-            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
+            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0, post.ownerRef)
             findNavController().navigate(action)
         }
     }
@@ -119,7 +115,7 @@ class PostViewFragment : BaseFragment() {
     private fun buildChoices(
         choiceContainer: LinearLayout,
         post: PostModel,
-        userVote: UserVoteModel?
+        postVote: PostVoteModel?
     ) {
         choiceContainer.removeAllViews()
 
@@ -127,9 +123,9 @@ class PostViewFragment : BaseFragment() {
             val choiceView : VotableContainer =
                 when (post.type) {
                     PostType.TEXT.toString() ->
-                        ChoiceView(context!!, post.ref, post.ownerRef, choice, userVote)
+                        ChoiceView(context!!, post.ref, post.ownerRef, choice, postVote)
                     else ->
-                        ChoiceImageView(context!!, post.ref, post.ownerRef, choice, userVote)
+                        ChoiceImageView(context!!, post.ref, post.ownerRef, choice, postVote)
                 }
 
             choiceContainer.addView(choiceView)

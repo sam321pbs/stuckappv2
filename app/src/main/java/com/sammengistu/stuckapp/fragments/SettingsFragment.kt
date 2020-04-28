@@ -7,7 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.collections.UserStarredCollection
-import com.sammengistu.stuckapp.collections.UserVotesCollection
+import com.sammengistu.stuckapp.collections.PostVotesCollection
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import kotlinx.android.synthetic.main.fragment_settings.*
 
@@ -31,7 +31,7 @@ class SettingsFragment : BaseFragment() {
         }
         deleteAccountTView.setOnClickListener { showDeleteAccountAlertDialog() }
         logoutTView.setOnClickListener {
-            UserVotesCollection.getInstance(context!!).clearList()
+            PostVotesCollection.getInstance(context!!).clearList()
             UserStarredCollection.getInstance(context!!).clearList()
             UserRepository.logUserOut()
         }

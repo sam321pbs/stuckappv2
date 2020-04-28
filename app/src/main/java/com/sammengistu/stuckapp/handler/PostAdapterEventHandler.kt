@@ -29,7 +29,7 @@ class PostAdapterEventHandler(private val context: Context,
 
     fun showComments(view: View) {
         if (post._id == null) {
-            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
+            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0, post.ownerRef)
             navController.navigate(action)
         }
     }

@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_to_profileViewFragment"
             app:destination="@id/profileViewFragment" />
+        <argument
+            android:name="postOwnerRef"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/profileViewFragment"

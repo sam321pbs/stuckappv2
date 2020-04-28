@@ -11,10 +11,10 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.collections.UserVotesCollection
+import com.sammengistu.stuckapp.collections.PostVotesCollection
 import com.sammengistu.stuckapp.helpers.ViewHelper
 import com.sammengistu.stuckfirebase.models.ChoiceModel
-import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.models.PostVoteModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.squareup.picasso.Picasso
 import java.io.File
@@ -24,8 +24,8 @@ class ChoiceImageView(
     postRef: String,
     postOwnerRef: String,
     choice: ChoiceModel,
-    userVote: UserVoteModel?
-) : VotableContainer(context, postRef, postOwnerRef, choice, userVote) {
+    postVote: PostVoteModel?
+) : VotableContainer(context, postRef, postOwnerRef, choice, postVote) {
 
     private val imageView = ImageView(context)
     private val votesTextView = TextView(context)
@@ -41,9 +41,9 @@ class ChoiceImageView(
         }
     }
 
-    override fun onNewVoteCreated(userVote: UserVoteModel?) {
+    override fun onNewVoteCreated(postVote: PostVoteModel?) {
         // Todo: start animation to show votes
-        handleVotedItem(userVote, true)
+        handleVotedItem(postVote, true)
     }
 
     fun setTotal(amount: Int) {
@@ -100,7 +100,7 @@ class ChoiceImageView(
 //                    ViewHelper.convertDrawableToBitmap(bitmap))
 //        }
 
-        val userVote = UserVotesCollection.getInstance(context).getVoteForPost(postRef)
+        val userVote = PostVotesCollection.getInstance(context).getVoteForPost(postRef)
         if (userVote == null) {
             votesTextView.visibility = View.GONE
         } else {
@@ -123,19 +123,19 @@ class ChoiceImageView(
         votesTextView.setPadding(5, 5, 5, 5)
         votesTextView.textSize = 15f
         setTotal(choice.votes)
-        handleVotedItem(userVote)
+        handleVotedItem(postVote)
 
         addView(votesTextView)
     }
 
-    private fun handleVotedItem(userVote: UserVoteModel?, isUpdate: Boolean = false) {
+    private fun handleVotedItem(postVote: PostVoteModel?, isUpdate: Boolean = false) {
         if (isUsersPost()) {
             votesTextView.visibility = View.VISIBLE
-        } else if (userVote == null) {
+        } else if (postVote == null) {
             votesTextView.visibility = View.GONE
         } else {
             votesTextView.visibility = View.VISIBLE
-            if (choice.id == userVote.choiceId) {
+            if (choice.id == postVote.choiceId) {
                 votesTextView.setBackgroundResource(R.drawable.circle_gold)
                 if (isUpdate) {
                     setTotal(choice.votes + 1)

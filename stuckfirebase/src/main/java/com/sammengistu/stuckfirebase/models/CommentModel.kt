@@ -5,6 +5,7 @@ import com.google.firebase.firestore.Exclude
 
 data class CommentModel(
     val postRef: String,
+    val postOwnerRef: String,
     val ownerRef: String,
     val message: String,
     val usersChoice: Int,
@@ -15,6 +16,6 @@ data class CommentModel(
     @Exclude
     var owner: UserModel? = null
     constructor() :
-            this("","", "", 0)
+            this("", "", "", "", 0)
 
 }

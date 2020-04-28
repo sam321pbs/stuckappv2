@@ -21,7 +21,7 @@ import com.sammengistu.stuckapp.AssetImageUtils
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.bottomsheet.BottomSheetHelper
 import com.sammengistu.stuckapp.collections.UserStarredCollection
-import com.sammengistu.stuckapp.collections.UserVotesCollection
+import com.sammengistu.stuckapp.collections.PostVotesCollection
 import com.sammengistu.stuckapp.events.ChangeBottomSheetStateEvent
 import com.sammengistu.stuckapp.fragments.CategoriesPostsFragmentArgs
 import com.sammengistu.stuckapp.fragments.PostViewFragmentArgs
@@ -170,7 +170,7 @@ class MainActivity : LoggedInActivity() {
     private fun onUserLoaded(user: UserModel?) {
         if (user != null) {
             UserStarredCollection.getInstance(this)
-            UserVotesCollection.getInstance(this)
+            PostVotesCollection.getInstance(this)
             DeviceTokenAccess(user.ref).checkTokenExists(this)
             HiddenItemsHelper(user.ref, this)
         } else {

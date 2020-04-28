@@ -1,6 +1,6 @@
 package com.sammengistu.stuckfirebase.models
 
-data class UserVoteModel(
+data class PostVoteModel(
     val ownerRef: String,
     val postRef: String,
     val postOwnerRef: String,

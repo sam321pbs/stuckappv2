@@ -8,7 +8,7 @@ import android.widget.TextView
 import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.helpers.ViewHelper
 import com.sammengistu.stuckfirebase.models.ChoiceModel
-import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.models.PostVoteModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 import org.jetbrains.anko.centerVertically
 
@@ -17,8 +17,8 @@ class ChoiceView(
     postRef: String,
     postOwnerRef: String,
     choice: ChoiceModel,
-    userVote: UserVoteModel?
-) : VotableContainer(context, postRef, postOwnerRef, choice, userVote) {
+    postVote: PostVoteModel?
+) : VotableContainer(context, postRef, postOwnerRef, choice, postVote) {
 
     private val TAG = ChoiceView::class.java.simpleName
 
@@ -30,9 +30,9 @@ class ChoiceView(
         buildViews()
     }
 
-    override fun onNewVoteCreated(userVote: UserVoteModel?) {
+    override fun onNewVoteCreated(postVote: PostVoteModel?) {
         // Todo: start animation to show votes
-        handleVotedItem(userVote, true)
+        handleVotedItem(postVote, true)
     }
 
     fun setChoiceText(choiceText: String) {
@@ -74,7 +74,7 @@ class ChoiceView(
         setBackgroundColor(resources.getColor(R.color.white))
         setVotes(choice.votes)
 
-        handleVotedItem(userVote)
+        handleVotedItem(postVote)
         addView(votesText)
     }
 
@@ -91,14 +91,14 @@ class ChoiceView(
         addView(choiceText)
     }
 
-    private fun handleVotedItem(userVote: UserVoteModel?, isUpdate: Boolean = false) {
+    private fun handleVotedItem(postVote: PostVoteModel?, isUpdate: Boolean = false) {
         if (isUsersPost()) {
             votesText.visibility = View.VISIBLE
-        } else if (userVote == null) {
+        } else if (postVote == null) {
             votesText.visibility = View.INVISIBLE
         } else {
             votesText.visibility = View.VISIBLE
-            if (choice.id == userVote.choiceId) {
+            if (choice.id == postVote.choiceId) {
                 votesText.setBackgroundResource(R.drawable.circle_gold)
                 if (isUpdate) {
                     setVotes(choice.votes + 1)

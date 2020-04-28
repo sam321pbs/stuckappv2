@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.sammengistu.stuckapp.R
-import com.sammengistu.stuckapp.collections.UserVotesCollection
-import com.sammengistu.stuckfirebase.access.UserVoteAccess
+import com.sammengistu.stuckapp.collections.PostVotesCollection
+import com.sammengistu.stuckfirebase.access.PostVoteAccess
 import com.sammengistu.stuckfirebase.models.ChoiceModel
 import com.sammengistu.stuckfirebase.models.UserModel
-import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.models.PostVoteModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
 
 abstract class VotableContainer(
@@ -18,7 +18,7 @@ abstract class VotableContainer(
     val postRef: String,
     val postOwnerRef: String,
     var choice: ChoiceModel,
-    var userVote: UserVoteModel?
+    var postVote: PostVoteModel?
 ) : RelativeLayout(context), DoubleTapGesture.DoubleTapListener {
 
     var mGestureDetector = DoubleTapGesture(context, this)
@@ -26,14 +26,14 @@ abstract class VotableContainer(
     private var onItemVotedOnListener: OnItemVotedOnListener? = null
 
     interface OnItemVotedOnListener {
-        fun onItemVotedOn(userVote: UserVoteModel)
+        fun onItemVotedOn(postVote: PostVoteModel)
     }
 
     init {
         applyStyleManually(context)
     }
 
-    abstract fun onNewVoteCreated(userVote: UserVoteModel?)
+    abstract fun onNewVoteCreated(postVote: PostVoteModel?)
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         return mGestureDetector.onTouchEvent(event)
@@ -42,16 +42,16 @@ abstract class VotableContainer(
     override fun onDoubleTapped() {
         UserRepository.getUserInstance(context!!) { user ->
             if (user != null && allowUserToVote(user)) {
-                val userVote = UserVoteModel(
+                val postVote = PostVoteModel(
                     user.ref,
                     postRef,
                     postOwnerRef,
                     choice.id
                 )
-                UserVoteAccess().createItemInFB(userVote)
-                UserVotesCollection.getInstance(context).addVoteToMap(userVote)
-                onNewVoteCreated(userVote)
-                onItemVotedOnListener?.onItemVotedOn(userVote)
+                PostVoteAccess().createItemInFB(postVote)
+                PostVotesCollection.getInstance(context).addVoteToMap(postVote)
+                onNewVoteCreated(postVote)
+                onItemVotedOnListener?.onItemVotedOn(postVote)
             }
         }
     }
@@ -61,7 +61,7 @@ abstract class VotableContainer(
     }
 
     private fun allowUserToVote(user: UserModel?) =
-        postRef.isNotBlank() && userVote == null && user != null && postOwnerRef != user.ref
+        postRef.isNotBlank() && postVote == null && user != null && postOwnerRef != user.ref
 
     private fun applyStyleManually(context: Context) {
         val attrs =
