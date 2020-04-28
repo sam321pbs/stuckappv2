@@ -13,7 +13,6 @@ abstract class FirebaseItem(
     @Exclude
     var ref: String = ""
 
-    // Todo: fix this
     @Ignore
     var createdAt: Any? = FieldValue.serverTimestamp()
 

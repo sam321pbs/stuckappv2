@@ -191,7 +191,7 @@ class UserRepository private constructor(
                 user.ref,
                 object : FirebaseItemAccess.OnItemDeleted {
                     override fun onSuccess() {
-                        // Todo: delete all posts, votes, avatar
+                        // Todo: delete all posts, votes, avatar, comments, comment votes
                         currentUser = null
 //                        GlobalScope.launch {
 //                            InjectorUtils.getUsersRepository(context).deleteUser(user)
