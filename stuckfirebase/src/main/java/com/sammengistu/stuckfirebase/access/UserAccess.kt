@@ -54,8 +54,6 @@ class UserAccess : FirebaseItemAccess<UserModel>() {
     }
 
     companion object {
-        const val MADE_VOTES = "totalMadeVotes"
-        const val RECEIVED_VOTES = "totalReceivedVotes"
         const val RECEIVED_STARS_TOTAL = "totalReceivedStars"
     }
 }

@@ -1,6 +1,7 @@
 package com.sammengistu.stuckfirebase.models
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude
 import com.sammengistu.stuckfirebase.constants.*
@@ -30,6 +31,10 @@ open class PostModel(
     @Exclude
     @PrimaryKey(autoGenerate = true)
     var _id: Int? = null
+
+    @Ignore
+    @Exclude
+    var owner: UserModel? = null
 
     constructor() :
             this("", "", "", "", "",

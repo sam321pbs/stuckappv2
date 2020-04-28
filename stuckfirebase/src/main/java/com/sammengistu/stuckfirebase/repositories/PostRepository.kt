@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess.OnItemsRetrieved
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.StarPostAccess
+import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.database.dao.PostDao
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.StarPostModel
+import com.sammengistu.stuckfirebase.models.UserModel
 
 private const val TAG = "PostRepository"
 
@@ -31,7 +33,7 @@ class PostRepository private constructor(val dao: PostDao) {
             timestamp,
             object : OnItemsRetrieved<StarPostModel> {
                 override fun onSuccess(list: List<StarPostModel>) {
-                    liveData.value = list
+                    mapUsersToPosts(list, liveData)
                 }
 
                 override fun onFailed(e: Exception) {
@@ -49,7 +51,7 @@ class PostRepository private constructor(val dao: PostDao) {
             timestamp,
             object : OnItemsRetrieved<PostModel>{
                 override fun onSuccess(list: List<PostModel>) {
-                    liveData.value = list
+                    mapUsersToPosts(list, liveData)
                 }
 
                 override fun onFailed(e: Exception) {
@@ -68,7 +70,7 @@ class PostRepository private constructor(val dao: PostDao) {
             timestamp,
             object : OnItemsRetrieved<PostModel>{
                 override fun onSuccess(list: List<PostModel>) {
-                    liveData.value = list
+                    mapUsersToPosts(list, liveData)
                 }
 
                 override fun onFailed(e: Exception) {
@@ -86,7 +88,7 @@ class PostRepository private constructor(val dao: PostDao) {
             timestamp,
             object : OnItemsRetrieved<PostModel>{
                 override fun onSuccess(list: List<PostModel>) {
-                    liveData.value = list
+                    mapUsersToPosts(list, liveData)
                 }
 
                 override fun onFailed(e: Exception) {
@@ -96,6 +98,36 @@ class PostRepository private constructor(val dao: PostDao) {
 
             })
         return liveData
+    }
+
+    private fun mapUsersToPosts(posts: List<PostModel>,
+                                liveData: MutableLiveData<List<PostModel>?>) {
+        val postUserIds = mutableSetOf<String>()
+
+        for (post in posts) {
+            postUserIds.add(post.ownerRef)
+        }
+
+        UserAccess().getItemsIn(postUserIds, object : OnItemsRetrieved<UserModel>{
+            override fun onSuccess(list: List<UserModel>) {
+                setOwnerOnPosts(posts, list)
+                liveData.value = posts
+            }
+
+            override fun onFailed(e: Exception) {
+                liveData.value = null
+            }
+        })
+    }
+
+    fun setOwnerOnPosts(posts: List<PostModel>, users: List<UserModel>) {
+        for (post in posts) {
+            for(user in users) {
+                if (post.ownerRef == user.ref) {
+                    post.owner = user
+                }
+            }
+        }
     }
 
     companion object {

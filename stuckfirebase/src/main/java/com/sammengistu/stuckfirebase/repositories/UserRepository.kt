@@ -25,7 +25,7 @@ class UserRepository private constructor(
 
     fun getUserLiveData(
         ownerRef: String
-    ): LiveData<UserModel> {
+    ): LiveData<UserModel?> {
         val liveData = MutableLiveData<UserModel>()
 
 //        if (currentUser?.ref == ownerRef) {

@@ -103,7 +103,7 @@ class CommentsFragment : BaseFragment() {
     }
 
     private fun setupComposeArea() {
-        send_button.setOnClickListener {
+        sendButton.setOnClickListener {
             UserRepository.getUserInstance(context!!) { createComment(it) }
         }
     }
@@ -116,6 +116,7 @@ class CommentsFragment : BaseFragment() {
                 commentET.text.toString(),
                 choicePos
             )
+            commentModel.owner = user
             commentsViewModel.createComment(commentModel)
             commentET.setText("")
             emptyListMessage.visibility = View.GONE

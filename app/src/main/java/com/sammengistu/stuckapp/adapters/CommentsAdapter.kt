@@ -42,18 +42,8 @@ class CommentsAdapter(private val context: Context,
 
     override fun onBindViewHolder(holder: CommentsViewHolder, position: Int) {
         val comment = commentsList[position]
-        UserAccess().getItem(comment.ownerRef,
-            object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
-                override fun onSuccess(item: UserModel) {
-                    // TODO: check that views are alive
-                    holder.avatar.loadImage(item.avatar)
-                    holder.username.text = item.username
-                }
-
-                override fun onFailed(e: Exception) {
-                    Log.e(TAG, "Failed to load user data from post", e)
-                }
-            })
+        holder.avatar.loadImage(comment.owner?.avatar)
+        holder.username.text = comment.owner?.username
         holder.commentText.text = comment.message
         holder.upVoteText.text = comment.upVotes.toString()
         try {

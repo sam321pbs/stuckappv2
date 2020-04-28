@@ -125,6 +125,22 @@ abstract class FirebaseItemAccess<T : FirebaseItem> {
             }
     }
 
+    fun getItemsIn(idsIn: Set<String>, listener: OnItemsRetrieved<T>) {
+        if (idsIn.isEmpty()) {
+            listener.onSuccess(emptyList())
+        } else {
+            getCollectionRef()
+                .limit(QUERY_LIMIT)
+                .whereIn(FieldPath.documentId(), ArrayList(idsIn))
+                .get()
+                .addOnSuccessListener(getSuccessListener(listener))
+                .addOnFailureListener {
+                    Log.e(TAG, "Failed to items by ids, ${getModelClass().simpleName}", it)
+                    listener.onFailed(it)
+                }
+        }
+    }
+
     fun getItemsWhereEqual(field: String, value: Any, listener: OnItemsRetrieved<T>, limit: Long = QUERY_LIMIT) {
         getCollectionRef()
             .limit(limit)

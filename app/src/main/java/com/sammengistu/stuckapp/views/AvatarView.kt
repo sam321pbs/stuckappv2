@@ -28,8 +28,8 @@ class AvatarView(context: Context, attrs: AttributeSet?) : CircleImageView(conte
 
     constructor(context: Context) : this(context, null)
 
-    fun loadImage(url: String) {
-        if (url.isNotBlank()) {
+    fun loadImage(url: String?) {
+        if (!url.isNullOrBlank()) {
             post {
                 Picasso.get()
                     .load(url)
