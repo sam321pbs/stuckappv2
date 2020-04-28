@@ -44,10 +44,6 @@ class PostListViewModel internal constructor(postRepository: PostRepository, loa
         setData("", timestamp)
     }
 
-    fun increaseCommentCount() {
-
-    }
-
     companion object {
         const val QUERY_DATA = "data"
         const val TIMESTAMP = "timestamp"

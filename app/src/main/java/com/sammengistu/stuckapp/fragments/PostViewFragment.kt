@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.sammengistu.stuckapp.AssetImageUtils
@@ -22,10 +24,13 @@ import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.PostAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.constants.PostType
+import com.sammengistu.stuckfirebase.database.InjectorUtils
 import com.sammengistu.stuckfirebase.models.PostModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.models.UserVoteModel
+import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.utils.DateUtils
+import com.sammengistu.stuckfirebase.viewmodels.UserViewModel
 import kotlinx.android.synthetic.main.fragment_post_view.*
 import kotlinx.android.synthetic.main.top_portion_post.*
 
@@ -33,6 +38,10 @@ class PostViewFragment : BaseFragment() {
     lateinit var spinner: ProgressBar
 
     private val args: PostViewFragmentArgs by navArgs()
+
+    private val userViewModel: UserViewModel by viewModels {
+        InjectorUtils.provideUserFactory(requireContext())
+    }
 
     override fun getLayoutId(): Int = R.layout.fragment_post_view
     override fun getFragmentTag(): String = TAG
@@ -68,18 +77,13 @@ class PostViewFragment : BaseFragment() {
             avatarView.setOnClickListener(null)
             username.setOnClickListener(null)
         } else {
-            UserAccess().getItem(post.ownerRef,
-                object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
-                    override fun onSuccess(item: UserModel) {
-                        // TODO: check that views are alive
-                       avatarView.loadImage(item.avatar)
-                        username.text = item.username
-                    }
-
-                    override fun onFailed(e: Exception) {
-                        Log.e(TAG, "Failed to load user data from post", e)
-                    }
-                })
+            userViewModel.userLiveData.observe(viewLifecycleOwner) { user ->
+                if (user != null) {
+                    avatarView.loadImage(user.avatar)
+                    username.text = user.username
+                }
+            }
+            userViewModel.setUserRef(post.ownerRef)
         }
 
         question.text = StringUtils.capitilizeFirstLetter(post.question)

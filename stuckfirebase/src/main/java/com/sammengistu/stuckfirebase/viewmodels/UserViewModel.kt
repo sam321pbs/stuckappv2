@@ -6,8 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.sammengistu.stuckfirebase.models.UserModel
 import com.sammengistu.stuckfirebase.repositories.UserRepository
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class UserViewModel internal constructor(private val repository: UserRepository) : ViewModel() {
     private val _ownerRef = MutableLiveData<String>()
@@ -26,6 +24,6 @@ class UserViewModel internal constructor(private val repository: UserRepository)
     }
 
     fun updateUser(userModel: UserModel) {
-        GlobalScope.launch { repository.updateUser(userModel) }
+//        GlobalScope.launch { repository.updateUser(userModel) }
     }
 }

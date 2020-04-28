@@ -45,6 +45,7 @@ abstract class VotableContainer(
                 val userVote = UserVoteModel(
                     user.ref,
                     postRef,
+                    postOwnerRef,
                     choice.id
                 )
                 UserVoteAccess().createItemInFB(userVote)

@@ -80,7 +80,8 @@ class ChoiceImageView(
     }
 
     private fun isUsersPost() =
-        UserRepository.currentUser != null && UserRepository.currentUser!!.ref == postOwnerRef
+        UserRepository.getCurrentUser() != null &&
+                UserRepository.getCurrentUser()!!.ref == postOwnerRef
 
     private fun buildView() {
         val params = getParams()

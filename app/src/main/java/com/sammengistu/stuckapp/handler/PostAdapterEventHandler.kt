@@ -17,7 +17,7 @@ class PostAdapterEventHandler(private val context: Context,
                               private val post: PostModel) {
 
     fun showProfile(view: View) {
-        if (PrivacyOptions.ANONYMOUS.toString() != post.privacy) {
+        if (PrivacyOptions.ANONYMOUS.toString() != post.privacy && post._id == null) {
             val action = HomeListFragmentDirections.actionToProfileViewFragment(post.ownerRef)
             navController.navigate(action)
         }
@@ -28,10 +28,15 @@ class PostAdapterEventHandler(private val context: Context,
     }
 
     fun showComments(view: View) {
-        val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
-        navController.navigate(action)
+        if (post._id == null) {
+            val action = HomeListFragmentDirections.actionNavToCommentsFragment(post.ref, 0)
+            navController.navigate(action)
+        }
     }
 
+    /**
+     * Deletes post from hidden items
+     */
     fun showPost(view: View) {
         doAsync {
             val itemId = HiddenItemsHelper.getItem(post.ref)?._id

@@ -25,12 +25,16 @@ class FbStorageHelper {
     }
 
     companion object {
+
+        const val AVATARS_PATH = "avatars/"
+        const val IMAGES_PATH = "images/"
+
         fun uploadAvatar(bitmap: Bitmap, callback: UploadCompletionCallback) {
-            uploadImage("avatars/${UUID.randomUUID()}.png", bitmap, callback)
+            uploadImage("$AVATARS_PATH${UUID.randomUUID()}.png", bitmap, callback)
         }
 
         fun uploadImage(bitmap: Bitmap, callback: UploadCompletionCallback) {
-            uploadImage("images/${UUID.randomUUID()}.png", bitmap, callback)
+            uploadImage("$IMAGES_PATH${UUID.randomUUID()}.png", bitmap, callback)
         }
 
        private fun uploadImage(filePath: String, bitmap: Bitmap, callback: UploadCompletionCallback) {
@@ -70,6 +74,17 @@ class FbStorageHelper {
             }.addOnFailureListener {
                 Log.e(TAG, "Failed to download image", it)
                 callback.onFailed(it)
+            }
+        }
+
+        fun deleteImage(imageUrl: String) {
+            if (imageUrl.isNotBlank()) {
+                val imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+                imageRef.delete().addOnSuccessListener {
+                    Log.d(TAG, "Successfully deleted image")
+                } .addOnFailureListener {
+                    Log.e(TAG, "Failed to delete image")
+                }
             }
         }
     }

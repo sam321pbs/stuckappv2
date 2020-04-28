@@ -84,18 +84,8 @@ class PostsAdapter(
             holder.avatarView.setImageBitmap(avatar)
         } else {
             // Load user
-            UserAccess().getItem(post.ownerRef,
-                object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
-                    override fun onSuccess(item: UserModel) {
-                        // TODO: check that views are alive
-                        holder.avatarView.loadImage(item.avatar)
-                        holder.username.text = item.username
-                    }
-
-                    override fun onFailed(e: Exception) {
-                        Log.e(TAG, "Failed to load user data from post", e)
-                    }
-                })
+            holder.avatarView.loadImage(post.owner?.avatar)
+            holder.username.text = post.owner?.username
         }
 
         val userVote = UserVotesCollection.getInstance(context).getVoteForPost(post.ref)

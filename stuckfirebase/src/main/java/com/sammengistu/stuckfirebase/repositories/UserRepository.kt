@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.sammengistu.stuckfirebase.ErrorNotifier
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
 import com.sammengistu.stuckfirebase.access.UserAccess
@@ -13,7 +14,6 @@ import com.sammengistu.stuckfirebase.database.dao.UsersDao
 import com.sammengistu.stuckfirebase.models.UserModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 private val TAG = UserRepository::class.java.simpleName
@@ -25,17 +25,21 @@ class UserRepository private constructor(
 
     fun getUserLiveData(
         ownerRef: String
-    ): LiveData<UserModel> {
+    ): LiveData<UserModel?> {
         val liveData = MutableLiveData<UserModel>()
 
-        if (UserRepository.currentUser?.ref == ownerRef) {
-            // we will retrieve current user from db
-            return usersDao.getUserSingle(ownerRef)
-        } else {
+//        if (currentUser?.ref == ownerRef) {
+//            // we will retrieve current user from db
+//            return usersDao.getUserSingle(ownerRef)
+//        } else {
             userAccess.getItem(ownerRef,
                 object : FirebaseItemAccess.OnItemRetrieved<UserModel> {
                     override fun onSuccess(item: UserModel) {
                         liveData.value = item
+                        if (currentUser?.ref == ownerRef) {
+                            // To set latest data
+                            currentUser = item
+                        }
                     }
 
                     override fun onFailed(e: Exception) {
@@ -44,7 +48,7 @@ class UserRepository private constructor(
                     }
                 }
             )
-        }
+//        }
         return liveData
     }
 
@@ -55,14 +59,16 @@ class UserRepository private constructor(
         // For now disabling getting and adding user from db
         val users : List<UserModel>? = null //usersDao.getUserAsList(firebaseUserId)
         if (users.isNullOrEmpty()) {
-            Log.d(TAG, "users is empty")
+            Log.d(TAG, "users is empty, loading user")
             // get from webservice
             userAccess.getItemsWhereEqual("userId", firebaseUserId,
                 object : FirebaseItemAccess.OnItemsRetrieved<UserModel> {
                     override fun onSuccess(list: List<UserModel>) {
                         if (list.isNullOrEmpty()) {
+                            Log.e(TAG, "Retrieved no users for id")
                             callback.invoke(null)
                         } else {
+                            Log.e(TAG, "Retrieved ${list.size} users")
                             callback.invoke(list[0])
                             // For now disabling getting and adding user from db
 //                            if (isCurrentUser) {
@@ -87,21 +93,31 @@ class UserRepository private constructor(
     }
 
     suspend fun updateUser(user: UserModel) {
-        val updates = usersDao.updateItem(user)
-        Log.d(TAG, "updated $updates users in db")
+//        val updates = usersDao.updateItem(user)
+//        Log.d(TAG, "updated $updates users in db")
     }
 
     suspend fun deleteUser(user: UserModel) {
         Log.d(TAG, "deleting user in db")
-        usersDao.deleteByUserRef(user.ref)
+//        usersDao.deleteByUserRef(user.ref)
     }
 
     companion object {
 
-        var currentUser: UserModel? = null
-        private val firebaseUser = FirebaseAuth.getInstance().currentUser
-        val firebaseUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        private var currentUser: UserModel? = null
+
         @Volatile private var instance: UserRepository? = null
+
+        /**
+         * Only use this method when needed else use getUserInstance()
+         */
+        fun getCurrentUser() = currentUser
+
+        fun getFirebaseUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
+
+        fun removeCurrentUser() {
+            currentUser = null
+        }
 
         fun getInstance(userAccess: UserAccess, usersDao: UsersDao) =
             instance
@@ -115,14 +131,13 @@ class UserRepository private constructor(
 
         fun getUserInstance(context: Context, callback: (m: UserModel?) -> Unit) {
             when {
-                firebaseUser == null -> {
+                FirebaseAuth.getInstance().currentUser == null -> {
                     callback.invoke(null)
                 }
                 currentUser == null -> {
-                    val userId = firebaseUserId
                     val repo = InjectorUtils.getUsersRepository(context)
                     CoroutineScope(Dispatchers.Main).launch {
-                        repo.getUser(userId, true) { user ->
+                        repo.getUser(getFirebaseUser()!!.uid, true) { user ->
                             currentUser = user
                             callback.invoke(user)
                         }
@@ -135,8 +150,8 @@ class UserRepository private constructor(
         }
 
         fun logUserOut() {
-            currentUser = null
             FirebaseAuth.getInstance().signOut()
+            currentUser = null
         }
 
         fun deleteUserAccount(context: Context) {
@@ -176,11 +191,11 @@ class UserRepository private constructor(
                 user.ref,
                 object : FirebaseItemAccess.OnItemDeleted {
                     override fun onSuccess() {
-                        // Todo: delete all posts, votes, avatar
+                        // Todo: delete all posts, votes, avatar, comments, comment votes
                         currentUser = null
-                        GlobalScope.launch {
-                            InjectorUtils.getUsersRepository(context).deleteUser(user)
-                        }
+//                        GlobalScope.launch {
+//                            InjectorUtils.getUsersRepository(context).deleteUser(user)
+//                        }
                     }
 
                     override fun onFailed(e: Exception) {

@@ -1,6 +1,7 @@
 package com.sammengistu.stuckapp.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import com.sammengistu.stuckapp.R
 import com.sammengistu.stuckapp.fragments.CommentsFragmentDirections
 import com.sammengistu.stuckapp.views.AvatarView
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
+import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
+import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.models.CommentVoteModel
 import com.sammengistu.stuckfirebase.models.UserModel
@@ -19,7 +22,7 @@ import com.sammengistu.stuckfirebase.repositories.UserRepository
 import com.sammengistu.stuckfirebase.utils.DateUtils
 import org.jetbrains.anko.find
 
-
+const val TAG = "CommentsAdapter"
 class CommentsAdapter(private val context: Context,
                       private val navController: NavController,
                       private val commentsList: ArrayList<CommentModel>) :
@@ -39,8 +42,8 @@ class CommentsAdapter(private val context: Context,
 
     override fun onBindViewHolder(holder: CommentsViewHolder, position: Int) {
         val comment = commentsList[position]
-        holder.avatar.loadImage(comment.avatar)
-        holder.username.text = comment.username
+        holder.avatar.loadImage(comment.owner?.avatar)
+        holder.username.text = comment.owner?.username
         holder.commentText.text = comment.message
         holder.upVoteText.text = comment.upVotes.toString()
         try {
@@ -164,8 +167,6 @@ class CommentsAdapter(private val context: Context,
     ) {
         val newCommentVote = CommentVoteModel(
             user.ref,
-            user.username,
-            user.avatar,
             comment.ref,
             comment.postRef,
             voteType

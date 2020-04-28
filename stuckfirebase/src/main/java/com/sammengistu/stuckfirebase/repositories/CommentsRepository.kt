@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import com.sammengistu.stuckfirebase.access.CommentAccess
 import com.sammengistu.stuckfirebase.access.CommentsVoteAccess
 import com.sammengistu.stuckfirebase.access.FirebaseItemAccess
+import com.sammengistu.stuckfirebase.access.UserAccess
 import com.sammengistu.stuckfirebase.models.CommentModel
 import com.sammengistu.stuckfirebase.models.CommentVoteModel
+import com.sammengistu.stuckfirebase.models.UserModel
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -37,8 +39,8 @@ class CommentsRepository private constructor(private val commentAccess: CommentA
         return liveData
     }
 
-    fun getItemsWherePostRefEquals(postRef: String): LiveData<List<CommentModel>> {
-        val liveData = MutableLiveData<List<CommentModel>>()
+    fun getItemsWherePostRefEquals(postRef: String): LiveData<List<CommentModel>?> {
+        val liveData = MutableLiveData<List<CommentModel>?>()
 
         commentAccess.getItemsWhereEqual(
             "postRef",
@@ -46,6 +48,7 @@ class CommentsRepository private constructor(private val commentAccess: CommentA
             object : FirebaseItemAccess.OnItemsRetrieved<CommentModel> {
                 override fun onSuccess(list: List<CommentModel>) {
                     liveData.value = ArrayList(list.reversed())
+                    mapUsersToComments(list, liveData)
                 }
 
                 override fun onFailed(e: Exception) {
@@ -61,6 +64,37 @@ class CommentsRepository private constructor(private val commentAccess: CommentA
     fun createComment(commentModel: CommentModel,
                       listener: FirebaseItemAccess.OnItemCreated<CommentModel>) {
         CommentAccess().createItemInFB(commentModel, listener)
+    }
+
+    private fun mapUsersToComments(comments: List<CommentModel>,
+                                   liveData: MutableLiveData<List<CommentModel>?>) {
+        val commentOwnerIds = mutableSetOf<String>()
+
+        for (comment in comments) {
+            commentOwnerIds.add(comment.ownerRef)
+        }
+
+        UserAccess().getItemsIn(commentOwnerIds, object :
+            FirebaseItemAccess.OnItemsRetrieved<UserModel> {
+            override fun onSuccess(list: List<UserModel>) {
+                setOwnerOnComments(comments, list)
+                liveData.value = comments
+            }
+
+            override fun onFailed(e: Exception) {
+                liveData.value = null
+            }
+        })
+    }
+
+    private fun setOwnerOnComments(comments: List<CommentModel>, users: List<UserModel>) {
+        for (comment in comments) {
+            for(user in users) {
+                if (comment.ownerRef == user.ref) {
+                    comment.owner = user
+                }
+            }
+        }
     }
 
     companion object {

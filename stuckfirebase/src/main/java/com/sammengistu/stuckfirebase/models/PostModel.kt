@@ -1,9 +1,10 @@
 package com.sammengistu.stuckfirebase.models
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude
-import com.sammengistu.stuckfirebase.constants.PostType
+import com.sammengistu.stuckfirebase.constants.*
 
 @Entity(tableName = "posts")
 open class PostModel(
@@ -30,6 +31,10 @@ open class PostModel(
     @Exclude
     @PrimaryKey(autoGenerate = true)
     var _id: Int? = null
+
+    @Ignore
+    @Exclude
+    var owner: UserModel? = null
 
     constructor() :
             this("", "", "", "", "",
@@ -94,20 +99,20 @@ open class PostModel(
     fun choicesAsList() : List<ChoiceModel> {
         if (type == PostType.TEXT.toString()) {
             val choiceList = mutableListOf(
-                ChoiceModel("choice1", choice1, votes1),
-                ChoiceModel("choice2", choice2, votes2)
+                ChoiceModel(ID_CHOICE_1, choice1, votes1),
+                ChoiceModel(ID_CHOICE_2, choice2, votes2)
             )
             if (choice3.isNotBlank()) {
-                choiceList.add(ChoiceModel("choice3", choice3, votes3))
+                choiceList.add(ChoiceModel(ID_CHOICE_3, choice3, votes3))
             }
             if (choice4.isNotBlank()) {
-                choiceList.add(ChoiceModel("choice4", choice4, votes4))
+                choiceList.add(ChoiceModel(ID_CHOICE_4, choice4, votes4))
             }
             return choiceList
         } else {
             return mutableListOf(
-                ChoiceModel("image1", image1, votes1),
-                ChoiceModel("image2", image2, votes2)
+                ChoiceModel(ID_IMAGE_1, image1, votes1),
+                ChoiceModel(ID_IMAGE_2, image2, votes2)
             )
         }
     }
